@@ -25,6 +25,13 @@ double Vector::length() const {
 	return sqrt(x() * x() + y() * y() + z() * z());
 }
 
+void Vector::normalize() {
+	if (length() != 1) {
+		double lengthInversion = 1 / length();
+		setCoordinates(x() * lengthInversion, y() * lengthInversion, z() * lengthInversion);
+	}
+}
+
 Vector Vector::operator+(Vector &v) const {
 	return {this->x() + v.x(), this->y() + v.y(), this->z() + v.z()};
 }

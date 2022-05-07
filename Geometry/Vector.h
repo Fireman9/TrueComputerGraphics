@@ -17,6 +17,8 @@ public:
 
 	double length() const;
 
+	void normalize();
+
 	Vector operator+(Vector &v) const;
 
 	Vector operator-(Vector &v) const;
