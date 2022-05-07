@@ -39,6 +39,8 @@ public:
 
 	static Vector crossProduct(Vector &v1, Vector &v2);
 
+	static Vector normalize(Vector &v1);
+
 private:
 	double mX, mY, mZ;
 

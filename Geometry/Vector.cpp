@@ -73,3 +73,12 @@ Vector Vector::crossProduct(Vector &v1, Vector &v2) {
 			v1.z() * v2.x() - v1.x() * v2.z(),
 			v1.x() * v2.y() - v1.y() * v2.x()};
 }
+
+Vector Vector::normalize(Vector &v1) {
+	if (v1.length() != 1) {
+		double lengthInversion = 1 / v1.length();
+		v1.setCoordinates(v1.x() * lengthInversion,
+						  v1.y() * lengthInversion,
+						  v1.z() * lengthInversion);
+	} else return v1;
+}
