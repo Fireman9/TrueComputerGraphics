@@ -1,7 +1,7 @@
 #ifndef TRUECOMPUTERGRAPHICS_GEOMETRY_PLANE_H_
 #define TRUECOMPUTERGRAPHICS_GEOMETRY_PLANE_H_
 
-#include "Vector.h"
+#include "../Vector.h"
 
 class Plane {
 public:

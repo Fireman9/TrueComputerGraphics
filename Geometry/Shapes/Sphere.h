@@ -1,7 +1,7 @@
 #ifndef TRUECOMPUTERGRAPHICS_GEOMETRY_SPHERE_H_
 #define TRUECOMPUTERGRAPHICS_GEOMETRY_SPHERE_H_
 
-#include "Point.h"
+#include "../Point.h"
 
 class Sphere {
 public:
