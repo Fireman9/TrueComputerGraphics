@@ -13,6 +13,8 @@ public:
 
 	Vector(double x, double y, double z);
 
+	explicit Vector(Point p);
+
 	void setCoordinates(double x, double y, double z);
 
 	double length() const;

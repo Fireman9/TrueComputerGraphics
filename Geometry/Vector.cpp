@@ -17,6 +17,8 @@ Vector::Vector(double startX, double startY, double startZ, double endX, double 
 
 Vector::Vector(double x, double y, double z) : mX(x), mY(y), mZ(z) {}
 
+Vector::Vector(Point p) : mX(p.x()), mY(p.y()), mZ(p.z()) {}
+
 void Vector::setCoordinates(double x, double y, double z) {
 	setX(x), setY(y), setZ(z);
 }
