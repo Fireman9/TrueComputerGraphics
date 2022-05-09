@@ -14,10 +14,10 @@ Vector Ray::direction() const {
 	return mDirection;
 }
 
-void Ray::setOrigin(const Point &origin) {
+void Ray::setOrigin(Point origin) {
 	mOrigin = origin;
 }
 
-void Ray::setDirection(const Vector &direction) {
+void Ray::setDirection(Vector direction) {
 	mDirection = direction;
 }

@@ -5,7 +5,7 @@
 
 class Triangle {
 public:
-	Triangle(Point &first, Point &second, Point &third);
+	Triangle(Point first, Point second, Point third);
 
 	Point first();
 
@@ -13,11 +13,11 @@ public:
 
 	Point third();
 
-	void setFirst(Point &first);
+	void setFirst(Point first);
 
-	void setSecond(Point &second);
+	void setSecond(Point second);
 
-	void setThird(Point &third);
+	void setThird(Point third);
 
 private:
 	Point mFirst, mSecond, mThird;

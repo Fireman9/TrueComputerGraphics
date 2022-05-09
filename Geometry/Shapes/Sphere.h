@@ -5,7 +5,7 @@
 
 class Sphere {
 public:
-	Sphere(double radius, Point &center);
+	Sphere(double radius, Point center);
 
 	Sphere(double radius, double x, double y, double z);
 
@@ -15,7 +15,7 @@ public:
 
 	void setRadius(double radius);
 
-	void setCenter(const Point &center);
+	void setCenter(Point center);
 
 private:
 	double mRadius;

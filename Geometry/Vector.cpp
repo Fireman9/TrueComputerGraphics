@@ -3,7 +3,7 @@
 
 Vector::Vector() : mX(0), mY(0), mZ(0) {}
 
-Vector::Vector(Point &start, Point &end) {
+Vector::Vector(Point start, Point end) {
 	this->mX = end.x() - start.x();
 	this->mY = end.y() - start.y();
 	this->mZ = end.z() - start.z();
@@ -32,12 +32,20 @@ void Vector::normalize() {
 	}
 }
 
-Vector Vector::operator+(Vector &v) const {
-	return {this->x() + v.x(), this->y() + v.y(), this->z() + v.z()};
+Point Vector::toPoint() const {
+	return {x(), y(), z()};
 }
 
-Vector Vector::operator-(Vector &v) const {
-	return {this->x() - v.x(), this->y() - v.y(), this->z() - v.z()};
+Vector Vector::operator+(Vector v) const {
+	return {x() + v.x(), y() + v.y(), z() + v.z()};
+}
+
+Vector Vector::operator-(Vector v) const {
+	return {x() - v.x(), y() - v.y(), z() - v.z()};
+}
+
+Vector Vector::operator*(double number) const {
+	return {x() * number, y() * number, z() * number};
 }
 
 double Vector::x() const {
@@ -64,17 +72,17 @@ void Vector::setZ(double z) {
 	this->mZ = z;
 }
 
-double Vector::dotProduct(Vector &v1, Vector &v2) {
+double Vector::dotProduct(Vector v1, Vector v2) {
 	return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
 }
 
-Vector Vector::crossProduct(Vector &v1, Vector &v2) {
+Vector Vector::crossProduct(Vector v1, Vector v2) {
 	return {v1.y() * v2.z() - v1.z() * v2.y(),
 			v1.z() * v2.x() - v1.x() * v2.z(),
 			v1.x() * v2.y() - v1.y() * v2.x()};
 }
 
-Vector Vector::normalize(Vector &v1) {
+Vector Vector::normalize(Vector v1) {
 	if (v1.length() != 1) {
 		double lengthInversion = 1 / v1.length();
 		v1.setCoordinates(v1.x() * lengthInversion,

@@ -9,7 +9,7 @@ void Point::setCoordinates(double x, double y, double z) {
 	setX(x), setY(y), setZ(z);
 }
 
-double Point::distanceTo(Point &p) const {
+double Point::distanceTo(Point p) const {
 	double dx, dy, dz;
 
 	dx = this->x() - p.x();
@@ -29,18 +29,22 @@ double Point::distanceTo(double x, double y, double z) const {
 	return sqrt(dx * dx + dy * dy + dz * dz);
 }
 
-bool Point::isEqual(Point &p, double epsilon) const {
+bool Point::isEqual(Point p, double epsilon) const {
 	return std::abs(this->x() - p.x()) < epsilon &&
 		std::abs(this->y() - p.y()) < epsilon &&
 		std::abs(this->z() - p.z()) < epsilon;
 }
 
-Point Point::operator+(Point &p) const {
-	return {this->x() + p.x(), this->y() + p.y(), this->z() + p.z()};
+Point Point::operator+(Point p) const {
+	return {x() + p.x(), y() + p.y(), z() + p.z()};
 }
 
-Point Point::operator-(Point &p) const {
-	return {this->x() - p.x(), this->y() - p.y(), this->z() - p.z()};
+Point Point::operator-(Point p) const {
+	return {x() - p.x(), y() - p.y(), z() - p.z()};
+}
+
+Point Point::operator*(double number) const {
+	return {x() * number, y() * number, z() * number};
 }
 
 double Point::x() const {

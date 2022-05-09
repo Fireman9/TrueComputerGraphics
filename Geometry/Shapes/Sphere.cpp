@@ -1,6 +1,6 @@
 #include "Sphere.h"
 
-Sphere::Sphere(double radius, Point &center) : mRadius(radius), mCenter(center) {}
+Sphere::Sphere(double radius, Point center) : mRadius(radius), mCenter(center) {}
 
 Sphere::Sphere(double radius, double x, double y, double z) : mRadius(radius), mCenter(Point(x, y, z)) {}
 
@@ -16,6 +16,6 @@ void Sphere::setRadius(double radius) {
 	this->mRadius = radius;
 }
 
-void Sphere::setCenter(const Point &center) {
+void Sphere::setCenter(Point center) {
 	this->mCenter = center;
 }

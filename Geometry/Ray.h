@@ -12,11 +12,11 @@ public:
 
 	Point origin() const;
 
-	void setOrigin(const Point &origin);
+	void setOrigin(Point origin);
 
 	Vector direction() const;
 
-	void setDirection(const Vector &direction);
+	void setDirection(Vector direction);
 
 private:
 	Point mOrigin;

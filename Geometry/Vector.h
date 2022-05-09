@@ -7,7 +7,7 @@ class Vector {
 public:
 	Vector();
 
-	Vector(Point &start, Point &end);
+	Vector(Point start, Point end);
 
 	Vector(double startX, double startY, double startZ, double endX, double endY, double endZ);
 
@@ -19,9 +19,13 @@ public:
 
 	void normalize();
 
-	Vector operator+(Vector &v) const;
+	Point toPoint() const;
 
-	Vector operator-(Vector &v) const;
+	Vector operator+(Vector v) const;
+
+	Vector operator-(Vector v) const;
+
+	Vector operator*(double number) const;
 
 	double x() const;
 
@@ -35,11 +39,11 @@ public:
 
 	void setZ(double z);
 
-	static double dotProduct(Vector &v1, Vector &v2);
+	static double dotProduct(Vector v1, Vector v2);
 
-	static Vector crossProduct(Vector &v1, Vector &v2);
+	static Vector crossProduct(Vector v1, Vector v2);
 
-	static Vector normalize(Vector &v1);
+	static Vector normalize(Vector v1);
 
 private:
 	double mX, mY, mZ;

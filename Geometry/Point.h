@@ -9,15 +9,17 @@ public:
 
 	void setCoordinates(double x, double y, double z);
 
-	double distanceTo(Point &p) const;
+	double distanceTo(Point p) const;
 
 	double distanceTo(double x, double y, double z) const;
 
-	bool isEqual(Point &p, double epsilon = 0.01) const;
+	bool isEqual(Point p, double epsilon = 0.01) const;
 
-	Point operator+(Point &p) const;
+	Point operator+(Point p) const;
 
-	Point operator-(Point &p) const;
+	Point operator-(Point p) const;
+
+	Point operator*(double number) const;
 
 	double x() const;
 

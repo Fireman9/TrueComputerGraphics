@@ -1,6 +1,6 @@
 #include "Triangle.h"
 
-Triangle::Triangle(Point &first, Point &second, Point &third) : mFirst(first),
+Triangle::Triangle(Point first, Point second, Point third) : mFirst(first),
 																mSecond(second),
 																mThird(third) {}
 
@@ -16,14 +16,14 @@ Point Triangle::third() {
 	return mThird;
 }
 
-void Triangle::setFirst(Point &m_first) {
-	mFirst = m_first;
+void Triangle::setFirst(Point first) {
+	mFirst = first;
 }
 
-void Triangle::setSecond(Point &m_second) {
-	mSecond = m_second;
+void Triangle::setSecond(Point second) {
+	mSecond = second;
 }
 
-void Triangle::setThird(Point &m_third) {
-	mThird = m_third;
+void Triangle::setThird(Point third) {
+	mThird = third;
 }
