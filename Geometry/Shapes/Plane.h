@@ -12,9 +12,7 @@ public:
 
 	Vector getNormal() const;
 
-	bool isRayIntersection(Ray ray, double epsilon = 0.01) const;
-
-	Point getRayIntersection(Ray ray, double epsilon = 0.01) const;
+	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01) const;
 
 private:
 	double mA, mB, mC, mD;

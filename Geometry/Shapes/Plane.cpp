@@ -12,19 +12,14 @@ Vector Plane::getNormal() const {
 	return {mA, mB, mC};
 }
 
-bool Plane::isRayIntersection(Ray ray, double epsilon) const {
-	double denominator = Vector::dotProduct(this->getNormal(), ray.direction());
-	if (std::abs(denominator) > epsilon) return true;
-	else return false;
-}
-
-Point Plane::getRayIntersection(Ray ray, double epsilon) const {
+bool Plane::getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon) const {
 	double denominator = Vector::dotProduct(this->getNormal(), ray.direction());
 	if (std::abs(denominator) > epsilon) {
 		double t = -(Vector::dotProduct(
-			Vector(ray.origin().x(), ray.origin().y(), ray.origin().z()),
+			Vector(ray.origin()),
 			this->getNormal()
 		) + mD) / denominator;
-		return (ray.direction() * t).toPoint() + ray.origin();
-	} else return ray.origin();
+		intersectionPoint = (ray.direction() * t).toPoint() + ray.origin();
+		return true;
+	} else return false;
 }
