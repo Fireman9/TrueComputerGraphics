@@ -2,16 +2,19 @@
 #define TRUECOMPUTERGRAPHICS_GEOMETRY_SHAPES_TRIANGLE_H_
 
 #include "../Point.h"
+#include "../Ray.h"
 
 class Triangle {
 public:
 	Triangle(Point first, Point second, Point third);
 
-	Point first();
+	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01) ;
 
-	Point second();
+	Point v0();
 
-	Point third();
+	Point v1();
+
+	Point v2();
 
 	void setFirst(Point first);
 
@@ -20,7 +23,7 @@ public:
 	void setThird(Point third);
 
 private:
-	Point mFirst, mSecond, mThird;
+	Point mV0, mV1, mV2;
 
 };
 
