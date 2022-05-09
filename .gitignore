@@ -1,3 +1,4 @@
 CMakeLists.txt
 .idea
 cmake-build-*
+tests/lib
