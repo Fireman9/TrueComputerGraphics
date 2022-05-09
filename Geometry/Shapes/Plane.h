@@ -2,12 +2,19 @@
 #define TRUECOMPUTERGRAPHICS_GEOMETRY_PLANE_H_
 
 #include "../Vector.h"
+#include "../Ray.h"
 
 class Plane {
 public:
 	Plane(double a, double b, double c, double d);
 
-	Plane(const Vector &normalizedNormal, double d);
+	Plane(Vector normalizedNormal, double d);
+
+	Vector getNormal() const;
+
+	bool isRayIntersection(Ray ray, double epsilon = 0.01) const;
+
+	Point getRayIntersection(Ray ray, double epsilon = 0.01) const;
 
 private:
 	double mA, mB, mC, mD;
