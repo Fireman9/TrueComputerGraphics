@@ -1,6 +1,6 @@
 #include "Ray.h"
 
-Ray::Ray() : mOrigin({0, 0, 0}), mDirection({0, 0, 1}) {}
+Ray::Ray() : mOrigin({0, 0, 0}), mDirection(Vector{0, 0, 1}) {}
 
 Ray::Ray(Point origin, Vector direction) : mOrigin(origin), mDirection(direction) {
 	this->mDirection.normalize();
