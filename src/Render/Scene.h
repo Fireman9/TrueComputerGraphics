@@ -43,6 +43,7 @@ private:
 
 private:
 	double Intersections(double& t, int x, int y);
+	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
 };
 
 #endif //SCENE_H

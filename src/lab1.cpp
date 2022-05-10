@@ -4,7 +4,6 @@
 
 int main()
 {
-    std::cout << "Hello World!\n";
     Scene myS = Scene();
     const Sphere s = Sphere(20, 0,0, 160);
     myS.SetSpheres({ s });
