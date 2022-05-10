@@ -16,6 +16,8 @@ Scene::Scene(Screen S, Vector L) {
     spheres = {};
 };
 
+void Scene::SetScreen(Screen S) { this->screen = S; };
+
 void Scene::SetLight(Vector L) { this->light = L; }
 void Scene::ChangeLight(Vector L) {
 	SetLight(L);

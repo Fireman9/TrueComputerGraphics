@@ -1,7 +1,7 @@
 #include "Screen.h"
 
 Screen::Screen() {
-	SetAllData(20, 20, Point(0,0,0), 50.0);
+	SetAllData(50, 50, Point(0,0,0), 80.0);
 }
 
 Screen::Screen(int W, int H, double Z) {
@@ -57,7 +57,7 @@ void Screen::SetAllData(int W, int H, Point C, double Z) {
 	InicializePixelsArray();
 	SetPixelsToZerro();
 	SetCamera(C);
-	Point sp = (C * 0.5);
+	Point sp = C - Point(W*0.5, H*0.5,0);
 	sp.setZ(Z);
 	SetStartPoint(sp);
 }

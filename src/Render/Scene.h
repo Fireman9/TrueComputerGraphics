@@ -24,6 +24,10 @@ public:
 	void SetScreen(Screen S);
 	void ShowRender();
 
+	void SetSpheres(vector<Sphere> s);
+	void AddNewSphere(Sphere s);
+	void AddNewSphere(vector<Sphere> s);
+
 private:
 	Screen screen;
 	Vector light;
@@ -36,9 +40,6 @@ private:
 
 	void SetLight(Vector L);
 	char GetSymbool(double x);
-	void SetSpheres(vector<Sphere> s);
-	void AddNewSphere(Sphere s);
-	void AddNewSphere(vector<Sphere> s);
 
 private:
 	double Intersections(double& t, int x, int y);
