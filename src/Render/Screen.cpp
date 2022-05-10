@@ -26,6 +26,13 @@ void Screen::ChangePixelsSize(int x, int y) {
 };
 void Screen::SetCamera(Point C) { this->camera = C; };
 void Screen::SetStartPoint(Point start) { this->startPoint = start; };
+
+Point Screen::GetStartPoint() { return this->startPoint; };
+Point Screen::GetCamera() { return this->camera; }
+int Screen::GetWidth() { return this->w; };
+int Screen::GetHeight() { return this->h; };
+double** Screen::GetPixels() { return this->pixels; };
+
 void Screen::SetPixelsToZerro() {
 	for (int i = 0; i < this->w; i++) {
 		for (int j = 0; j < this->h; j++) {

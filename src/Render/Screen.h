@@ -15,6 +15,11 @@ public:
 	void SetPixelsToZerro();
 	void ClearPixelsArray();
 	void ChangePixelsSize(int x, int y);
+	Point GetStartPoint();
+	Point GetCamera();
+	int GetWidth();
+	int GetHeight();
+	double** GetPixels();
 
 private:
 	double** pixels;
