@@ -42,7 +42,7 @@ private:
 	char GetSymbool(double x);
 
 private:
-	double Intersections(double& t, int x, int y);
+	double Intersections(int x, int y);
 	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
 };
 
