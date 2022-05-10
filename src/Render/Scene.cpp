@@ -56,8 +56,8 @@ void Scene::ShowRender() {
 
 char Scene::GetSymbool(double x) {
     //if we want colored background
-    //if (x == -1) return '-';
-    //else 
+    if (x == -2) return '-';
+    else 
         if (x < 0) return ' ';
     else if (x < 0.2) return '.';
     else if (x < 0.5) return '*';
@@ -66,7 +66,7 @@ char Scene::GetSymbool(double x) {
 }
 
 double Scene::Intersections(int x, int y) {
-    double px = -1, t = 0;
+    double px = -2, t = 0;
     Point intersectPoint;
     Point o = this->screen.GetStartPoint() + Point(x, y, 0);
     Vector d = Vector(this->screen.GetCamera(), o);
@@ -76,20 +76,28 @@ double Scene::Intersections(int x, int y) {
     for (int n = 0; n < spheres.size(); n++) {
         double h_px = SphereIntersec(spheres[n], ray, intersectPoint);
         t = intersectPoint.distanceTo(this->screen.GetCamera());
-        if (h_px != -1 && min_t > t) { px = h_px; min_t = t; }
+        if (Scene::isForward(intersectPoint, ray, this->screen.GetCamera()) && h_px != -2 && min_t > t) {
+            px = h_px; min_t = t;
+        }
     }
     return px;
+}
+
+bool Scene::isForward(Point& intersectPoint, Ray ray, Point camera) {
+    Vector intersectDirection = Vector(camera, intersectPoint);
+    intersectDirection.normalize();
+    return Vector::dotProduct(intersectDirection, ray.direction()) > 0;
 }
 
 double Scene::SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint) {
     Sphere::Intersections ans = sphere.isRayIntersection(ray);
     double px = 0;
-    Point first;
-    Point sec;
+    Point first, sec;
+    bool _f,_s;
     switch (ans)
     {
     case Sphere::NoIntersection:
-        return -1;
+        return -2;
         break;
     case Sphere::OnePointIntersection:
         intersectPoint = sphere.getOnePointRayIntersection(ray);
@@ -97,16 +105,27 @@ double Scene::SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint) {
     case Sphere::TwoPointIntersection:
         first = sphere.getTwoPointRayIntersection(ray).first;
         sec = sphere.getTwoPointRayIntersection(ray).second;
-        if (sec.distanceTo(this->screen.GetCamera()) > first.distanceTo(this->screen.GetCamera())) 
-            intersectPoint = first;
-        else intersectPoint = sec;
+        _f = Scene::isForward(first, ray, this->screen.GetCamera());
+        _s = Scene::isForward(sec, ray, this->screen.GetCamera());
+        if (!_f) {
+            if (!_s) { return -2; }
+            intersectPoint = sec;
+        }
+        else {
+            if (!_s) intersectPoint = first;
+            else {
+                if (sec.distanceTo(this->screen.GetCamera()) > first.distanceTo(this->screen.GetCamera()))
+                    intersectPoint = first;
+                else intersectPoint = sec;
+            }
+        }
         break;
     default:
-        return -1;
+        return -2;
         break;
     }
     Vector norm = Vector(sphere.center(), intersectPoint);
     norm.normalize();
-    px = norm.dotProduct(norm, this->light);
+    px = Vector::dotProduct(norm, this->light);
 
 }

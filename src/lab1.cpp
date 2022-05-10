@@ -5,9 +5,10 @@
 int main()
 {
     Scene myS = Scene();
-    const Sphere s = Sphere(20, 0,0, 160);
-    const Sphere s2 = Sphere(50, -20, -20, 0);
-    myS.SetSpheres({ s, s2 });
+    const Sphere s = Sphere(20, 0, 0, 160);
+    const Sphere s2 = Sphere(20, -15, 10, 170);
+    myS.ChangeLight(Vector(2, -4, -3));
+    myS.SetSpheres({ s,s2 });
     myS.RenderScene();
     myS.ShowRender();
 }

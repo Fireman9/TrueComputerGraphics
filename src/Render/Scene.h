@@ -44,6 +44,7 @@ private:
 private:
 	double Intersections(int x, int y);
 	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
+	bool static isForward(Point& intersectPoint, Ray ray, Point camera);
 };
 
 #endif //SCENE_H
