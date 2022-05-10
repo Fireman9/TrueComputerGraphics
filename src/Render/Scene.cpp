@@ -28,6 +28,14 @@ void Scene::SetSpheres(vector<Sphere> s) { this->spheres = s; };
 void Scene::AddNewSphere(Sphere s) { this->spheres.push_back(s); };
 void Scene::AddNewSphere(vector<Sphere> s) { this->spheres.insert(spheres.end(), s.begin(), s.end()); };
 
+void Scene::SetTriangles(vector<Triangle> t) { this->triangles = t; };
+void Scene::AddNewTriangle(Triangle t) { this->triangles.push_back(t); };
+void Scene::AddNewTriangle(vector<Triangle> t) { this->triangles.insert(triangles.end(), t.begin(), t.end()); };
+
+void Scene::SetPlanes(vector<Plane> p) { this->planes = p; };
+void Scene::AddNewPlane(Plane p) { this->planes.push_back(p); };
+void Scene::AddNewPlane(vector<Plane> p) { this->planes.insert(planes.end(), p.begin(), p.end()); };
+
 void Scene::RenderScene() {
     double** pxls = this -> screen.GetPixels();
     for (int y = 0; y < this->screen.GetHeight(); y++) {
@@ -56,8 +64,8 @@ void Scene::ShowRender() {
 
 char Scene::GetSymbool(double x) {
     //if we want colored background
-    if (x == -2) return '-';
-    else 
+    /*if (x == -2) return '-';
+    else */
         if (x < 0) return ' ';
     else if (x < 0.2) return '.';
     else if (x < 0.5) return '*';
@@ -77,6 +85,20 @@ double Scene::Intersections(int x, int y) {
         double h_px = SphereIntersec(spheres[n], ray, intersectPoint);
         t = intersectPoint.distanceTo(this->screen.GetCamera());
         if (Scene::isForward(intersectPoint, ray, this->screen.GetCamera()) && h_px != -2 && min_t > t) {
+            px = h_px; min_t = t;
+        }
+    }
+    for (int n = 0; n < planes.size(); n++) {
+        double h_px = PlaneIntersec(planes[n], ray, intersectPoint);
+        t = intersectPoint.distanceTo(this->screen.GetCamera());
+        if (Scene::isForward(intersectPoint, ray, this->screen.GetCamera()) && h_px != -2 && min_t > t) {
+            px = h_px; min_t = t;
+        }
+    }
+    for (int n = 0; n < triangles.size(); n++) {
+        double h_px = TriangleIntersec(triangles[n], ray, intersectPoint);
+        t = intersectPoint.distanceTo(this->screen.GetCamera());
+        if (h_px != -2 && min_t > t) {
             px = h_px; min_t = t;
         }
     }
@@ -128,4 +150,34 @@ double Scene::SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint) {
     norm.normalize();
     px = Vector::dotProduct(norm, this->light);
 
+}
+
+double Scene::PlaneIntersec(Plane plane, Ray ray, Point& intersectPoint) {
+    double px = -2;
+    if (plane.getRayIntersection(ray, intersectPoint)) {
+        Vector norm = plane.getNormal();
+        norm.normalize();
+            if (!IsFaced(norm)) { norm = norm * -1; }
+        px = Vector::dotProduct(norm, this->light);
+    };
+    return px;
+}
+
+double Scene::TriangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint) {
+    double px = -2;
+    if (triangle.getRayIntersection(ray, intersectPoint)) {
+        Vector v0v1 = Vector(triangle.v0(), triangle.v1());
+        Vector v0v2 = Vector(triangle.v0(), triangle.v2());
+        Vector norm = Vector::crossProduct(v0v1, v0v2);
+        norm.normalize();
+            if (!IsFaced(norm)) { norm = norm * -1; }
+        px = Vector::dotProduct(norm, this->light);
+    };
+    return px;
+}
+
+bool Scene::IsFaced(Vector normal) {
+    Vector direction = Vector(0, 0, 1 ? this->screen.GetStartPoint().z() - this->screen.GetCamera().z()< 0 : -1);
+    if (Vector::dotProduct(normal, direction) > 0) return true;
+    else return false;
 }
