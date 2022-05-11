@@ -12,6 +12,7 @@ public:
 	void SetSize(int x, int y);
 	void SetCamera(Point C);
 	void SetStartPoint(Point start);
+	void SetCoordPerPixel(double x);
 	void SetPixelsToZerro();
 	void ClearPixelsArray();
 	void ChangePixelsSize(int x, int y);
@@ -20,6 +21,7 @@ public:
 	int GetWidth();
 	int GetHeight();
 	double** GetPixels();
+	double GetCoordPerPixel();
 
 private:
 	double** pixels;
@@ -29,5 +31,7 @@ private:
 	void SetAllData(int W, int H, Point C, double Z);
 	void SetAllData(int W, int H, Point C, Point S);
 	void InicializePixelsArray();
+	static const double screenSizeH;
+	double coordPerPixel;
 };
 #endif //SCREEN_H

@@ -1,7 +1,9 @@
 #include "Screen.h"
 
+const double Screen::screenSizeH = 50;
+
 Screen::Screen() {
-	SetAllData(50, 50, Point(0,0,0), 80.0);
+	SetAllData(100, 100, Point(0,0,0), 80.0);
 }
 
 Screen::Screen(int W, int H, double Z) {
@@ -32,6 +34,7 @@ Point Screen::GetCamera() { return this->camera; }
 int Screen::GetWidth() { return this->w; };
 int Screen::GetHeight() { return this->h; };
 double** Screen::GetPixels() { return this->pixels; };
+double Screen::GetCoordPerPixel() { return this->coordPerPixel; };
 
 void Screen::SetPixelsToZerro() {
 	for (int i = 0; i < this->w; i++) {
@@ -52,12 +55,15 @@ void Screen::InicializePixelsArray() {
 	}
 };
 
+void Screen::SetCoordPerPixel(double x) { this->coordPerPixel = x; };
+
 void Screen::SetAllData(int W, int H, Point C, double Z) {
 	SetSize(W, H);
 	InicializePixelsArray();
 	SetPixelsToZerro();
 	SetCamera(C);
-	Point sp = C - Point(W*0.5, H*0.5,0);
+	SetCoordPerPixel(this->screenSizeH / H);
+	Point sp = C - Point(W * this->coordPerPixel *0.5, this->screenSizeH * 0.5, 0);
 	sp.setZ(Z);
 	SetStartPoint(sp);
 }
@@ -67,5 +73,6 @@ void Screen::SetAllData(int W, int H, Point C, Point sp) {
 	InicializePixelsArray();
 	SetPixelsToZerro();
 	SetCamera(C);
+	SetCoordPerPixel(this->screenSizeH / H);
 	SetStartPoint(sp);
 }

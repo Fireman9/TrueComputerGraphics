@@ -48,7 +48,7 @@ private:
 
 	void SetLight(Vector L);
 
-	double Intersections(int x, int y);
+	double Intersections(double x, double y);
 	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
 	double PlaneIntersec(Plane plane, Ray ray, Point& intersectPoint);
 	double TriangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint);

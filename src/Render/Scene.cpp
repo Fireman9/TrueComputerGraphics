@@ -40,7 +40,7 @@ void Scene::RenderScene() {
     double** pxls = this -> screen.GetPixels();
     for (int y = 0; y < this->screen.GetHeight(); y++) {
         for (int x = 0; x < this->screen.GetWidth(); x++) {
-            pxls[y][x] = Intersections(x, y);
+            pxls[y][x] = Intersections(x*this->screen.GetCoordPerPixel(), y * this->screen.GetCoordPerPixel());
         }
     }
 };
@@ -73,7 +73,7 @@ char Scene::GetSymbool(double x) {
     else return '#';
 }
 
-double Scene::Intersections(int x, int y) {
+double Scene::Intersections(double x, double y) {
     double px = -2, t = 0;
     Point intersectPoint;
     Point o = this->screen.GetStartPoint() + Point(x, y, 0);
