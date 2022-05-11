@@ -52,7 +52,7 @@ private:
 	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
 	double PlaneIntersec(Plane plane, Ray ray, Point& intersectPoint);
 	double TriangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint);
-	bool IsFaced(Vector normal);
+	bool IsFaced(Vector normal, Vector direction);
 
 	bool static isForward(Point& intersectPoint, Ray ray, Point camera);
 	char GetSymbool(double x);

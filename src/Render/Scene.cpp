@@ -157,7 +157,7 @@ double Scene::PlaneIntersec(Plane plane, Ray ray, Point& intersectPoint) {
     if (plane.getRayIntersection(ray, intersectPoint)) {
         Vector norm = plane.getNormal();
         norm.normalize();
-            if (!IsFaced(norm)) { norm = norm * -1; }
+            if (!IsFaced(norm, ray.direction())) { norm = norm * -1; }
         px = Vector::dotProduct(norm, this->light);
     };
     return px;
@@ -170,14 +170,13 @@ double Scene::TriangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint
         Vector v0v2 = Vector(triangle.v0(), triangle.v2());
         Vector norm = Vector::crossProduct(v0v1, v0v2);
         norm.normalize();
-            if (!IsFaced(norm)) { norm = norm * -1; }
+            if (!IsFaced(norm, ray.direction())) { norm = norm * -1; }
         px = Vector::dotProduct(norm, this->light);
     };
     return px;
 }
 
-bool Scene::IsFaced(Vector normal) {
-    Vector direction = Vector(0, 0, 1 ? this->screen.GetStartPoint().z() - this->screen.GetCamera().z()< 0 : -1);
-    if (Vector::dotProduct(normal, direction) > 0) return true;
+bool Scene::IsFaced(Vector normal, Vector direction) {
+    if (Vector::dotProduct(normal, direction) < 0) return true;
     else return false;
 }
