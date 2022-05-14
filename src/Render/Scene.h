@@ -36,6 +36,8 @@ public:
 	void AddNewPlane(Plane p);
 	void AddNewPlane(vector<Plane> p);
 
+	double Intersections(double x, double y, Point& intersection);
+
 private:
 	Screen screen;
 	Vector light;
@@ -48,7 +50,6 @@ private:
 
 	void SetLight(Vector L);
 
-	double Intersections(double x, double y);
 	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
 	double PlaneIntersec(Plane plane, Ray ray, Point& intersectPoint);
 	double TriangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint);

@@ -38,9 +38,10 @@ void Scene::AddNewPlane(vector<Plane> p) { this->planes.insert(planes.end(), p.b
 
 void Scene::RenderScene() {
     double** pxls = this -> screen.GetPixels();
+    Point intersectPoint;
     for (int y = 0; y < this->screen.GetHeight(); y++) {
         for (int x = 0; x < this->screen.GetWidth(); x++) {
-            pxls[y][x] = Intersections(x*this->screen.GetCoordPerPixel(), y * this->screen.GetCoordPerPixel());
+            pxls[y][x] = Intersections(x*this->screen.GetCoordPerPixel(), y * this->screen.GetCoordPerPixel(), intersectPoint);
         }
     }
 };
@@ -73,9 +74,8 @@ char Scene::GetSymbool(double x) {
     else return '#';
 }
 
-double Scene::Intersections(double x, double y) {
+double Scene::Intersections(double x, double y, Point& intersectPoint) {
     double px = -2, t = 0;
-    Point intersectPoint;
     Point o = this->screen.GetStartPoint() + Point(x, y, 0);
     Vector d = Vector(this->screen.GetCamera(), o);
     d.normalize();
