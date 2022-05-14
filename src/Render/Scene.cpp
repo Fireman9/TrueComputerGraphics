@@ -74,7 +74,8 @@ char Scene::GetSymbool(double x) {
     else return '#';
 }
 
-double Scene::Intersections(double x, double y, Point& intersectPoint) {
+double Scene::Intersections(double x, double y, Point& intersection) {
+    Point intersectPoint;
     double px = -2, t = 0;
     Point o = this->screen.GetStartPoint() + Point(x, y, 0);
     Vector d = Vector(this->screen.GetCamera(), o);
@@ -85,21 +86,21 @@ double Scene::Intersections(double x, double y, Point& intersectPoint) {
         double h_px = SphereIntersec(spheres[n], ray, intersectPoint);
         t = intersectPoint.distanceTo(this->screen.GetCamera());
         if (Scene::isForward(intersectPoint, ray, this->screen.GetCamera()) && h_px != -2 && min_t > t) {
-            px = h_px; min_t = t;
+            px = h_px; min_t = t; intersection = intersectPoint;
         }
     }
     for (int n = 0; n < planes.size(); n++) {
         double h_px = PlaneIntersec(planes[n], ray, intersectPoint);
         t = intersectPoint.distanceTo(this->screen.GetCamera());
         if (Scene::isForward(intersectPoint, ray, this->screen.GetCamera()) && h_px != -2 && min_t > t) {
-            px = h_px; min_t = t;
+            px = h_px; min_t = t; intersection = intersectPoint;
         }
     }
     for (int n = 0; n < triangles.size(); n++) {
         double h_px = TriangleIntersec(triangles[n], ray, intersectPoint);
         t = intersectPoint.distanceTo(this->screen.GetCamera());
         if (h_px != -2 && min_t > t) {
-            px = h_px; min_t = t;
+            px = h_px; min_t = t; intersection = intersectPoint;
         }
     }
     return px;
