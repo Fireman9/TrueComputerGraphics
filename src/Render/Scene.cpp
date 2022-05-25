@@ -43,11 +43,14 @@ void Scene::addNewPlane(Plane p) { this->planes.push_back(p); };
 void Scene::addNewPlane(vector<Plane> p) { this->planes.insert(planes.end(), p.begin(), p.end()); };
 
 void Scene::renderScene() {
-    vector<vector<double>> pxls = this -> screen.getPixels();
+    vector<vector<double>> pxls = {};
     Point intersectPoint;
     for (int y = 0; y < this->screen.getHeight(); y++) {
         vector<double> h = {};
         for (int x = 0; x < this->screen.getWidth(); x++) {
+            // or for 1d vector
+            // pxls.pupush_back(intersections(x*this->screen.getCoordPerPixel(), y * this->screen.getCoordPerPixel(), intersectPoint));
+            // x,y coordinate than pxlr[y*screen.getWeight()+x]
             h.push_back(intersections(x*this->screen.getCoordPerPixel(), y * this->screen.getCoordPerPixel(), intersectPoint));
         }
         pxls.push_back(h);
