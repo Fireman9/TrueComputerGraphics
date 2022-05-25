@@ -57,3 +57,19 @@ void Matrix4x::setMatrix(vector<vector<double>> m) {
 	}
 	this->matrix = m;
 };
+
+Matrix4x Matrix4x::operator* (Matrix4x m) {
+	vector<vector<double>> res = { {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0} };
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			for (int n = 0; n < 4; n++) {
+				res[i][j] += this->matrix[i][n] * m.getMatrix()[n][j];
+			}
+		}
+	}
+	return Matrix4x(res);
+};
+
+vector<vector<double>> Matrix4x::getMatrix() {
+	return this->matrix;
+};
