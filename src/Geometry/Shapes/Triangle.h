@@ -6,9 +6,11 @@
 
 class Triangle {
 public:
-	Triangle(Point first, Point second, Point third);
+	Triangle(Point v0, Point v1, Point v2);
 
-	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01) ;
+	Triangle(Point v0, Point v1, Point v2, Vector v0Normal, Vector v1Normal, Vector v2Normal);
+
+	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01);
 
 	Point v0();
 
@@ -16,14 +18,27 @@ public:
 
 	Point v2();
 
-	void setFirst(Point first);
+	void setV0(Point v0);
 
-	void setSecond(Point second);
+	void setV1(Point v1);
 
-	void setThird(Point third);
+	void setV2(Point v2);
+
+	Vector v0Normal();
+
+	Vector v1Normal();
+
+	Vector v2Normal();
+
+	void setV0Normal(Vector v0Normal);
+
+	void setV1Normal(Vector v1Normal);
+
+	void setV2Normal(Vector v2Normal);
 
 private:
 	Point mV0, mV1, mV2;
+	Vector mV0Normal, mV1Normal, mV2Normal;
 
 };
 
