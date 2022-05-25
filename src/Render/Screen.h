@@ -1,6 +1,10 @@
 #ifndef SCREEN_H
 #define SCREEN_H
+
+using namespace std;
+
 #include "../Geometry/Point.h"
+#include <vector>
 
 class Screen {
 public:
@@ -13,18 +17,17 @@ public:
 	void setCamera(Point C);
 	void setStartPoint(Point start);
 	void setCoordPerPixel(double x);
-	void setPixelsToZerro();
-	void clearPixelsArray();
+	void setPixels(vector<vector<double>> p);
 	void changePixelsSize(int x, int y);
 	Point getStartPoint();
 	Point getCamera();
 	int getWidth();
 	int getHeight();
-	double** getPixels();
+	vector<vector<double>> getPixels();
 	double getCoordPerPixel();
 
 private:
-	double** pixels;
+	vector<vector<double>> pixels;
 	int w, h;
 	Point startPoint; //top left corner of screen 
 	Point camera; //for different camera angle, but screen always with normal(0,0,1)

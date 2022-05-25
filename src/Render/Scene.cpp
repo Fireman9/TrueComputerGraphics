@@ -7,16 +7,16 @@ Scene::Scene() {
     triangles = {};
     planes = {};
 };
-Scene::Scene(Screen S) {
-	setScreen(S);
+Scene::Scene(Screen s) {
+	setScreen(s);
 	setLight(Vector(2, -4, -3));
     spheres = {};
     triangles = {};
     planes = {};
 };
-Scene::Scene(Screen S, Vector L) {
-	setScreen(S);
-	setLight(L);
+Scene::Scene(Screen s, Vector l) {
+	setScreen(s);
+	setLight(l);
     spheres = {};
     triangles = {};
     planes = {};
@@ -43,21 +43,25 @@ void Scene::addNewPlane(Plane p) { this->planes.push_back(p); };
 void Scene::addNewPlane(vector<Plane> p) { this->planes.insert(planes.end(), p.begin(), p.end()); };
 
 void Scene::renderScene() {
-    double** pxls = this -> screen.getPixels();
+    vector<vector<double>> pxls = this -> screen.getPixels();
     Point intersectPoint;
     for (int y = 0; y < this->screen.getHeight(); y++) {
+        vector<double> h = {};
         for (int x = 0; x < this->screen.getWidth(); x++) {
-            pxls[y][x] = intersections(x*this->screen.getCoordPerPixel(), y * this->screen.getCoordPerPixel(), intersectPoint);
+            h.push_back(intersections(x*this->screen.getCoordPerPixel(), y * this->screen.getCoordPerPixel(), intersectPoint));
         }
+        pxls.push_back(h);
     }
+    screen.setPixels(pxls);
 };
 
 void Scene::showRender() {
     int H = this->screen.getHeight();
     int W = this->screen.getWidth();
-    double** pixels = this->screen.getPixels();
+    vector<vector<double>> pixels = this->screen.getPixels();
     for (int y = 0; y < W + 1; y++) cout << "--";
     cout << endl;
+
     for (int y = 0; y < H; y++) {
         cout << '|';
         for (int x = 0; x < W; x++) {
