@@ -70,6 +70,10 @@ std::string OBJReader::getSubstring(std::string &string, std::string delimiter) 
 	return result;
 }
 
+void OBJReader::setFilepath(std::string filepath) {
+	mFilepath = filepath;
+}
+
 std::vector<Point> OBJReader::getVertices() {
 	return mVertices;
 }

@@ -15,6 +15,8 @@ public:
 
 	static std::string getSubstring(std::string &string, std::string delimiter);
 
+	void setFilepath(std::string filepath);
+
 	std::vector<Point> getVertices();
 
 	std::vector<Vector> getNormals();
