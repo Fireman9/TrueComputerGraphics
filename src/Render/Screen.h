@@ -5,32 +5,32 @@
 class Screen {
 public:
 	Screen();
-	Screen(int W, int H, double Z );
-	Screen(int W, int H, Point start);
-	Screen(double X, double Y, double Z, int W, int H, double Z_s);
-	Screen(double X, double Y, double Z, int W, int H, Point start);
-	void SetSize(int x, int y);
-	void SetCamera(Point C);
-	void SetStartPoint(Point start);
-	void SetCoordPerPixel(double x);
-	void SetPixelsToZerro();
-	void ClearPixelsArray();
-	void ChangePixelsSize(int x, int y);
-	Point GetStartPoint();
-	Point GetCamera();
-	int GetWidth();
-	int GetHeight();
-	double** GetPixels();
-	double GetCoordPerPixel();
+	Screen(int w, int h, double z );
+	Screen(int w, int h, Point start);
+	Screen(double x, double y, double z, int w, int h, double z_s);
+	Screen(double x, double y, double z, int w, int h, Point start);
+	void setSize(int x, int y);
+	void setCamera(Point C);
+	void setStartPoint(Point start);
+	void setCoordPerPixel(double x);
+	void setPixelsToZerro();
+	void clearPixelsArray();
+	void changePixelsSize(int x, int y);
+	Point getStartPoint();
+	Point getCamera();
+	int getWidth();
+	int getHeight();
+	double** getPixels();
+	double getCoordPerPixel();
 
 private:
 	double** pixels;
 	int w, h;
 	Point startPoint; //top left corner of screen 
 	Point camera; //for different camera angle, but screen always with normal(0,0,1)
-	void SetAllData(int W, int H, Point C, double Z);
-	void SetAllData(int W, int H, Point C, Point S);
-	void InicializePixelsArray();
+	void setAllData(int w, int h, Point c, double z);
+	void setAllData(int w, int h, Point c, Point s);
+	void inicializePixelsArray();
 	static const double screenSizeH;
 	double coordPerPixel;
 };

@@ -17,26 +17,26 @@ using namespace std;
 class Scene {
 public:
 	Scene();
-	Scene(Screen S);
-	Scene(Screen S, Vector L);
-	void ChangeLight(Vector L);
-	void RenderScene();
-	void SetScreen(Screen S);
-	void ShowRender();
+	Scene(Screen s);
+	Scene(Screen s, Vector l);
+	void changeLight(Vector l);
+	void renderScene();
+	void setScreen(Screen s);
+	void showRender();
 
-	void SetSpheres(vector<Sphere> s);
-	void AddNewSphere(Sphere s);
-	void AddNewSphere(vector<Sphere> s);
+	void setSpheres(vector<Sphere> s);
+	void addNewSphere(Sphere s);
+	void addNewSphere(vector<Sphere> s);
 
-	void SetTriangles(vector<Triangle> t);
-	void AddNewTriangle(Triangle t);
-	void AddNewTriangle(vector<Triangle> t);
+	void setTriangles(vector<Triangle> t);
+	void addNewTriangle(Triangle t);
+	void addNewTriangle(vector<Triangle> t);
 
-	void SetPlanes(vector<Plane> p);
-	void AddNewPlane(Plane p);
-	void AddNewPlane(vector<Plane> p);
+	void setPlanes(vector<Plane> p);
+	void addNewPlane(Plane p);
+	void addNewPlane(vector<Plane> p);
 
-	double Intersections(double x, double y, Point& intersection);
+	double intersections(double x, double y, Point& intersection);
 
 private:
 	Screen screen;
@@ -48,15 +48,15 @@ private:
 	//String outputFileName;
 	//String inputFileName;
 
-	void SetLight(Vector L);
+	void setLight(Vector L);
 
-	double SphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
-	double PlaneIntersec(Plane plane, Ray ray, Point& intersectPoint);
-	double TriangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint);
-	bool IsFaced(Vector normal, Vector direction);
+	double sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
+	double planeIntersec(Plane plane, Ray ray, Point& intersectPoint);
+	double triangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint);
+	bool isFaced(Vector normal, Vector direction);
 
 	bool static isForward(Point& intersectPoint, Ray ray, Point camera);
-	char GetSymbool(double x);
+	char getSymbool(double x);
 
 };
 

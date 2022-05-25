@@ -13,9 +13,9 @@ int main()
     const Triangle t = Triangle(Point(10, 0, 180), Point(-15, 10, 120), Point(-25, -30, 160));
     const Triangle t2 = Triangle(Point(17, -3, 180), Point(-7, 15, 120), Point(10, -20, 120));
     //myS.ChangeLight(Vector(0, -1, 0));
-    myS.SetSpheres({ s,s2 });
-    myS.SetPlanes({ p });
-    myS.SetTriangles({ t, t2 });
-    myS.RenderScene();
-    myS.ShowRender();
+    myS.setSpheres({ s,s2 });
+    myS.setPlanes({ p });
+    myS.setTriangles({ t, t2 });
+    myS.renderScene();
+    myS.showRender();
 }
