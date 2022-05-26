@@ -78,10 +78,10 @@ void Scene::showRender() {
 
 char Scene::getSymbool(double x) {
     //if we want colored background
-    /*if (x == -2) return '-';
-    else */
+    if (x == -2) return '.';
+    else 
         if (x < 0) return ' ';
-    else if (x < 0.2) return '.';
+    else if (x < 0.2) return '-';
     else if (x < 0.5) return '*';
     else if (x < 0.8) return 'O';
     else return '#';
