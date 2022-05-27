@@ -79,8 +79,8 @@ void Scene::showRender() {
 char Scene::getSymbool(double x) {
     //if we want colored background
     if (x == -2) return '.';
-    else 
-        if (x < 0) return ' ';
+    else
+        if (x <= 0) return ' ';
     else if (x < 0.2) return '-';
     else if (x < 0.5) return '*';
     else if (x < 0.8) return 'O';
@@ -96,7 +96,7 @@ double Scene::intersections(double x, double y, Point& intersection) {
     const Ray ray(o, d);
     double min_t = 999999;
     for (int n = 0; n < spheres.size(); n++) {
-        double h_px = sphereIntersec(spheres[n], ray, intersectPoint);
+        double h_px = sphereIntersec(spheres[n], ray, intersectPoint, this->screen.getCamera());
         t = intersectPoint.distanceTo(this->screen.getCamera());
         if (Scene::isForward(intersectPoint, ray, this->screen.getCamera()) && h_px != -2 && min_t > t) {
             px = h_px; min_t = t; intersection = intersectPoint;
@@ -116,7 +116,33 @@ double Scene::intersections(double x, double y, Point& intersection) {
             px = h_px; min_t = t; intersection = intersectPoint;
         }
     }
+    if (px != -2 && shadow(intersection, this->light)) { px = min(0.0, px); }
     return px;
+}
+
+bool Scene::shadow(Point start, Vector lightDir) {
+    Point intersectPoint;
+    Ray r = Ray(start, lightDir);
+    for (int n = 0; n < spheres.size(); n++) {
+        double h_px = sphereIntersec(spheres[n], r, intersectPoint, start);
+
+        if (!intersectPoint.isEqual(start) && Scene::isForward(intersectPoint, r, start) && h_px != -2) {
+            return true;
+        }
+    }
+    for (int n = 0; n < planes.size(); n++) {
+        double h_px = planeIntersec(planes[n], r, intersectPoint);
+        if (!intersectPoint.isEqual(start) && Scene::isForward(intersectPoint, r, start) && h_px != -2) {
+            return true;
+        }
+    }
+    for (int n = 0; n < triangles.size(); n++) {
+        double h_px = triangleIntersec(triangles[n], r, intersectPoint);
+        if (!intersectPoint.isEqual(start) && h_px != -2) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Scene::isForward(Point& intersectPoint, Ray ray, Point camera) {
@@ -125,7 +151,7 @@ bool Scene::isForward(Point& intersectPoint, Ray ray, Point camera) {
     return Vector::dotProduct(intersectDirection, ray.direction()) > 0;
 }
 
-double Scene::sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint) {
+double Scene::sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint, Point start) {
     Sphere::Intersections ans = sphere.isRayIntersection(ray);
     double px = 0;
     Point first, sec;
@@ -141,8 +167,8 @@ double Scene::sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint) {
     case Sphere::TwoPointIntersection:
         first = sphere.getTwoPointRayIntersection(ray).first;
         sec = sphere.getTwoPointRayIntersection(ray).second;
-        _f = Scene::isForward(first, ray, this->screen.getCamera());
-        _s = Scene::isForward(sec, ray, this->screen.getCamera());
+        _f = Scene::isForward(first, ray, start);
+        _s = Scene::isForward(sec, ray, start);
         if (!_f) {
             if (!_s) { return -2; }
             intersectPoint = sec;
@@ -150,7 +176,7 @@ double Scene::sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint) {
         else {
             if (!_s) intersectPoint = first;
             else {
-                if (sec.distanceTo(this->screen.getCamera()) > first.distanceTo(this->screen.getCamera()))
+                if (sec.distanceTo(start) > first.distanceTo(start))
                     intersectPoint = first;
                 else intersectPoint = sec;
             }
