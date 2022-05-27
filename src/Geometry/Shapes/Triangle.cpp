@@ -1,9 +1,10 @@
 #include <cmath>
 #include "Triangle.h"
 
-Triangle::Triangle(Point first, Point second, Point third) : mV0(first),
-															 mV1(second),
-															 mV2(third) {}
+Triangle::Triangle(Point v0, Point v1, Point v2) : mV0(v0), mV1(v1), mV2(v2) {}
+
+Triangle::Triangle(Point v0, Point v1, Point v2, Vector v0Normal, Vector v1Normal, Vector v2Normal)
+	: mV0(v0), mV1(v1), mV2(v2), mV0Normal(v0Normal), mV1Normal(v1Normal), mV2Normal(v2Normal) {}
 
 bool Triangle::getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon) {
 	Vector v0v1 = Vector(v0(), v1());
@@ -51,14 +52,38 @@ Point Triangle::v2() {
 	return mV2;
 }
 
-void Triangle::setFirst(Point first) {
-	mV0 = first;
+void Triangle::setV0(Point v0) {
+	mV0 = v0;
 }
 
-void Triangle::setSecond(Point second) {
-	mV1 = second;
+void Triangle::setV1(Point v1) {
+	mV1 = v1;
 }
 
-void Triangle::setThird(Point third) {
-	mV2 = third;
+void Triangle::setV2(Point v2) {
+	mV2 = v2;
+}
+
+Vector Triangle::v0Normal() {
+	return mV0Normal;
+}
+
+Vector Triangle::v1Normal() {
+	return mV1Normal;
+}
+
+Vector Triangle::v2Normal() {
+	return mV2Normal;
+}
+
+void Triangle::setV0Normal(Vector v0Normal) {
+	mV0Normal = v0Normal;
+}
+
+void Triangle::setV1Normal(Vector v1Normal) {
+	mV1Normal = v1Normal;
+}
+
+void Triangle::setV2Normal(Vector v2Normal) {
+	mV2Normal = v2Normal;
 }
