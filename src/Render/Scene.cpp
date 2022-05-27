@@ -116,7 +116,7 @@ double Scene::intersections(double x, double y, Point& intersection) {
             px = h_px; min_t = t; intersection = intersectPoint;
         }
     }
-    if (px != -2 && shadow(intersection, this->light)) { px = 0; }
+    if (px != -2 && shadow(intersection, this->light)) { px = min(0.0, px); }
     return px;
 }
 

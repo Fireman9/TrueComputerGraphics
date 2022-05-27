@@ -14,10 +14,10 @@ TEST(MultipleIntersections, With3Plane) {
 
 	Scene sc;
 	Screen scr;
-	scr.SetStartPoint(Point(0, 0, 1));
-	sc.SetScreen(scr);
-	sc.AddNewPlane({ p1,p2,p3 });
-	sc.Intersections(0, 0, inter);
+	scr.setStartPoint(Point(0, 0, 1));
+	sc.setScreen(scr);
+	sc.addNewPlane({ p1,p2,p3 });
+	sc.intersections(0, 0, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 1)));
 }
 TEST(MultipleIntersections, With3Shpere) {
@@ -28,10 +28,10 @@ TEST(MultipleIntersections, With3Shpere) {
 
 	Scene sc;
 	Screen scr;
-	scr.SetStartPoint(Point(0, 0, 1));
-	sc.SetScreen(scr);
-	sc.AddNewSphere({ s1,s2, s3 });
-	sc.Intersections(0, 0, inter);
+	scr.setStartPoint(Point(0, 0, 1));
+	sc.setScreen(scr);
+	sc.addNewSphere({ s1,s2, s3 });
+	sc.intersections(0, 0, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 30)));
 }
 TEST(MultipleIntersections, With2Triangle) {
@@ -41,10 +41,10 @@ TEST(MultipleIntersections, With2Triangle) {
 
 	Scene sc;
 	Screen scr;
-	scr.SetStartPoint(Point(0, 0, 1));
-	sc.SetScreen(scr);
-	sc.AddNewTriangle({ t1,t2 });
-	sc.Intersections(0, 0, inter);
+	scr.setStartPoint(Point(0, 0, 1));
+	sc.setScreen(scr);
+	sc.addNewTriangle({ t1,t2 });
+	sc.intersections(0, 0, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 5)));
 }
 TEST(MultipleIntersections, WithAll) {
@@ -55,12 +55,12 @@ TEST(MultipleIntersections, WithAll) {
 
 	Scene sc;
 	Screen scr;
-	scr.SetStartPoint(Point(0, 0, 1));
-	sc.SetScreen(scr);
-	sc.AddNewSphere({ s1 });
-	sc.AddNewPlane({ p1 });
-	sc.AddNewTriangle({ t1 });
-	sc.Intersections(0, 0, inter);
+	scr.setStartPoint(Point(0, 0, 1));
+	sc.setScreen(scr);
+	sc.addNewSphere({ s1 });
+	sc.addNewPlane({ p1 });
+	sc.addNewTriangle({ t1 });
+	sc.intersections(0, 0, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 30)));
 }
 TEST(MultipleIntersections, WithNothing) {
@@ -72,11 +72,11 @@ TEST(MultipleIntersections, WithNothing) {
 
 	Scene sc;
 	Screen scr;
-	scr.SetStartPoint(Point(0, 0, 1));
-	sc.SetScreen(scr);
-	sc.AddNewSphere({ s1 });
-	sc.AddNewPlane({ p1 });
-	sc.AddNewTriangle({ t1 });
-	sc.Intersections(0, 0, inter);
+	scr.setStartPoint(Point(0, 0, 1));
+	sc.setScreen(scr);
+	sc.addNewSphere({ s1 });
+	sc.addNewPlane({ p1 });
+	sc.addNewTriangle({ t1 });
+	sc.intersections(0, 0, inter);
 	EXPECT_EQ(inter.x(), NULL);
 }
