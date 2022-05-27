@@ -3,6 +3,7 @@
 
 #include "../Point.h"
 #include "../Ray.h"
+#include "../../Matrix/Matrix4x4.h"
 
 class Triangle {
 public:
@@ -35,6 +36,9 @@ public:
 	void setV1Normal(Vector v1Normal);
 
 	void setV2Normal(Vector v2Normal);
+
+	Triangle transform(Matrix4x4 matrix, Point transPoint);
+
 
 private:
 	Point mV0, mV1, mV2;

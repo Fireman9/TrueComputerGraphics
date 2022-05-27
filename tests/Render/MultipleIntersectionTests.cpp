@@ -4,7 +4,7 @@
 #include "../../../src/Geometry/Shapes/Sphere.h"
 #include "../../../src/Geometry/Shapes/Triangle.h"
 #include "../../../src/Render/Scene.h"
-#include ".../../../src/Render/Screen.h"
+#include "../../../src/Render/Screen.h"
 
 TEST(MultipleIntersections, With3Plane) {
 	Point inter;
