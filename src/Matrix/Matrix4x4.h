@@ -1,12 +1,11 @@
+#ifndef MATRIX4X4_H
+#define MATRIX4X4_H
 #include <vector>
 
 #include "../Geometry/Point.h"
 
 #include "../Geometry/Vector.h"
-
-#include "../Geometry/Shapes/Triangle.h"
 using namespace std;
-
 
 class Matrix4x4 {
 public:
@@ -20,7 +19,6 @@ public:
 	Matrix4x4 operator* (Matrix4x4 m) const;
 	Point operator* (Point m) const;
 	Vector operator* (Vector m) const;
-	Triangle operator* (Triangle m) const;
 	vector<vector<double>> getMatrix();
 private:
 	Matrix4x4();
@@ -28,3 +26,4 @@ private:
 	vector<vector<double>> matrix;
 	void setMatrix(vector<vector<double>> m);
 };
+#endif //#MATRIX4X4_H

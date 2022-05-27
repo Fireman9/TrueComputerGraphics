@@ -92,14 +92,6 @@ Vector Matrix4x4::operator* (Vector m) const {
 	return Vector(res[0], res[1], res[2]);
 };
 
-Triangle Matrix4x4::operator* (Triangle m) const {
-	Matrix4x4 tmp = Matrix4x4(this->matrix);
-	Point t1 = tmp * m.v0();
-	Point t2 = tmp * m.v1();
-	Point t3 = tmp * m.v2();
-	return Triangle(t1,t2,t3);
-};
-
 vector<vector<double>> Matrix4x4::getMatrix() {
 	return this->matrix;
 };
