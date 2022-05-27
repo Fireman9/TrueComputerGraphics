@@ -50,7 +50,7 @@ private:
 
 	void setLight(Vector L);
 
-	double sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint);
+	double sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint, Point start);
 	double planeIntersec(Plane plane, Ray ray, Point& intersectPoint);
 	double triangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint);
 	bool isFaced(Vector normal, Vector direction);
@@ -58,6 +58,7 @@ private:
 	bool static isForward(Point& intersectPoint, Ray ray, Point camera);
 	char getSymbool(double x);
 
+	bool shadow(Point start, Vector lightDir);
 };
 
 #endif //SCENE_H
