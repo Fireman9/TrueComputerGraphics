@@ -99,7 +99,7 @@ double Scene::intersections(double x, double y, Point &intersection) {
 			intersection = intersectPoint;
 		}
 	}
-	if (px != -2 && shadow(intersection, mLight)) px = min(0.0, px);
+	if (px != -2 && shadow(intersection, mLight)) px = std::min(0.0, px);
 	return px;
 }
 
