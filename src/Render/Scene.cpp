@@ -1,222 +1,241 @@
 #include "Scene.h"
 
-Scene::Scene() {
-	setScreen(Screen());
-	setLight(Vector(2,-4,-3));
-    spheres = {};
-    triangles = {};
-    planes = {};
-};
-Scene::Scene(Screen s) {
-	setScreen(s);
-	setLight(Vector(2, -4, -3));
-    spheres = {};
-    triangles = {};
-    planes = {};
-};
-Scene::Scene(Screen s, Vector l) {
-	setScreen(s);
-	setLight(l);
-    spheres = {};
-    triangles = {};
-    planes = {};
-};
+Scene::Scene()
+	: Scene(Screen(), Vector(2, -4, -3), Point(0, 0, 0), 50) {}
 
-void Scene::setScreen(Screen s) { this->screen = s; };
+Scene::Scene(Screen screen)
+	: Scene(screen, Vector(2, -4, -3), Point(0, 0, 0), 50) {}
 
-void Scene::setLight(Vector l) { l.normalize(); this->light = l; }
-void Scene::changeLight(Vector l) {
-	setLight(l);
-	renderScene();
-};
-
-void Scene::setSpheres(vector<Sphere> s) { this->spheres = s; };
-void Scene::addNewSphere(Sphere s) { this->spheres.push_back(s); };
-void Scene::addNewSphere(vector<Sphere> s) { this->spheres.insert(spheres.end(), s.begin(), s.end()); };
-
-void Scene::setTriangles(vector<Triangle> t) { this->triangles = t; };
-void Scene::addNewTriangle(Triangle t) { this->triangles.push_back(t); };
-void Scene::addNewTriangle(vector<Triangle> t) { this->triangles.insert(triangles.end(), t.begin(), t.end()); };
-
-void Scene::setPlanes(vector<Plane> p) { this->planes = p; };
-void Scene::addNewPlane(Plane p) { this->planes.push_back(p); };
-void Scene::addNewPlane(vector<Plane> p) { this->planes.insert(planes.end(), p.begin(), p.end()); };
+Scene::Scene(Screen screen, Vector light, Point camera, double cameraToScreenDist) {
+	setScreen(screen);
+	setLight(light);
+	setCamera(camera);
+	mCameraToScreenDist = cameraToScreenDist;
+}
 
 void Scene::renderScene() {
-    vector<vector<double>> pxls = {};
-    Point intersectPoint;
-    for (int y = 0; y < this->screen.getHeight(); y++) {
-        vector<double> h = {};
-        for (int x = 0; x < this->screen.getWidth(); x++) {
-            // or for 1d vector
-            // pxls.pupush_back(intersections(x*this->screen.getCoordPerPixel(), y * this->screen.getCoordPerPixel(), intersectPoint));
-            // x,y coordinate than pxlr[y*screen.getWeight()+x]
-            h.push_back(intersections(x*this->screen.getCoordPerPixel(), y * this->screen.getCoordPerPixel(), intersectPoint));
-        }
-        pxls.push_back(h);
-    }
-    screen.setPixels(pxls);
-};
-
-void Scene::showRender() {
-    int H = this->screen.getHeight();
-    int W = this->screen.getWidth();
-    vector<vector<double>> pixels = this->screen.getPixels();
-    for (int y = 0; y < W + 1; y++) cout << "--";
-    cout << endl;
-
-    for (int y = 0; y < H; y++) {
-        cout << '|';
-        for (int x = 0; x < W; x++) {
-            cout << getSymbool(pixels[y][x]) << ' ';
-        }
-        cout << '|' << endl;
-    }
-    for (int y = 0; y < W + 1; y++) cout << "--";
-    cout << endl;
+	vector<vector<double>> pixels(mScreen.getHeight(), vector<double>(mScreen.getWidth()));
+	Point intersectionPoint;
+	for (int y = 0; y < mScreen.getHeight(); y++) {
+		for (int x = 0; x < mScreen.getWidth(); x++) {
+			pixels[y][x] = intersections(x * mScreen.getCoordPerPixel(),
+										 y * mScreen.getCoordPerPixel(),
+										 intersectionPoint);
+		}
+	}
+	mScreen.setPixels(pixels);
 }
 
-char Scene::getSymbool(double x) {
-    //if we want colored background
-    if (x == -2) return '.';
-    else
-        if (x <= 0) return ' ';
-    else if (x < 0.2) return '-';
-    else if (x < 0.5) return '*';
-    else if (x < 0.8) return 'O';
-    else return '#';
+void Scene::writeRenderToPPM(PPMWriter &ppmWriter) {
+	ppmWriter.setPixels(mScreen.getPixels());
+	ppmWriter.convert();
+	ppmWriter.write();
 }
 
-double Scene::intersections(double x, double y, Point& intersection) {
-    Point intersectPoint;
-    double px = -2, t = 0;
-    Point o = this->screen.getStartPoint() + Point(x, y, 0);
-    Vector d = Vector(this->screen.getCamera(), o);
-    d.normalize();
-    const Ray ray(o, d);
-    double min_t = 999999;
-    for (int n = 0; n < spheres.size(); n++) {
-        double h_px = sphereIntersec(spheres[n], ray, intersectPoint, this->screen.getCamera());
-        t = intersectPoint.distanceTo(this->screen.getCamera());
-        if (Scene::isForward(intersectPoint, ray, this->screen.getCamera()) && h_px != -2 && min_t > t) {
-            px = h_px; min_t = t; intersection = intersectPoint;
-        }
-    }
-    for (int n = 0; n < planes.size(); n++) {
-        double h_px = planeIntersec(planes[n], ray, intersectPoint);
-        t = intersectPoint.distanceTo(this->screen.getCamera());
-        if (Scene::isForward(intersectPoint, ray, this->screen.getCamera()) && h_px != -2 && min_t > t) {
-            px = h_px; min_t = t; intersection = intersectPoint;
-        }
-    }
-    for (int n = 0; n < triangles.size(); n++) {
-        double h_px = triangleIntersec(triangles[n], ray, intersectPoint);
-        t = intersectPoint.distanceTo(this->screen.getCamera());
-        if (h_px != -2 && min_t > t) {
-            px = h_px; min_t = t; intersection = intersectPoint;
-        }
-    }
-    if (px != -2 && shadow(intersection, this->light)) { px = min(0.0, px); }
-    return px;
+void Scene::showRenderToConsole() {
+	int height = mScreen.getHeight();
+	int width = mScreen.getWidth();
+	vector<vector<double>> pixels = mScreen.getPixels();
+	for (int y = 0; y < width + 1; y++) cout << "--";
+	cout << endl;
+
+	for (int y = 0; y < height; y++) {
+		cout << '|';
+		for (int x = 0; x < width; x++) {
+			cout << getSymbol(pixels[y][x]) << ' ';
+		}
+		cout << '|' << endl;
+	}
+
+	for (int y = 0; y < width + 1; y++) cout << "--";
+	cout << endl;
+}
+
+char Scene::getSymbol(double x) {
+	//if we want colored background
+	if (x == -2) return '.';
+	else if (x <= 0) return ' ';
+	else if (x < 0.2) return '-';
+	else if (x < 0.5) return '*';
+	else if (x < 0.8) return 'O';
+	else return '#';
+}
+
+double Scene::intersections(double x, double y, Point &intersection) {
+	Point intersectPoint;
+	double px = -2, dist;
+	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
+											  mScreen.getHeight() * 0.5, 0);
+	screenTopLeft.setZ(mCameraToScreenDist);
+	Point curPoint = screenTopLeft + Point(x, y, 0);
+	Vector dir = Vector(mCamera, curPoint);
+	dir.normalize();
+	Ray ray(mCamera, dir);
+	double minDist = 999999;
+	for (auto &sphere : mSpheres) {
+		double h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
+	for (auto &plane : mPlanes) {
+		double h_px = planeIntersection(plane, ray, intersectPoint);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
+	for (auto &triangle : mTriangles) {
+		double h_px = triangleIntersection(triangle, ray, intersectPoint);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
+	if (px != -2 && shadow(intersection, mLight)) px = min(0.0, px);
+	return px;
 }
 
 bool Scene::shadow(Point start, Vector lightDir) {
-    Point intersectPoint;
-    Ray r = Ray(start, lightDir);
-    for (int n = 0; n < spheres.size(); n++) {
-        double h_px = sphereIntersec(spheres[n], r, intersectPoint, start);
-
-        if (!intersectPoint.isEqual(start) && Scene::isForward(intersectPoint, r, start) && h_px != -2) {
-            return true;
-        }
-    }
-    for (int n = 0; n < planes.size(); n++) {
-        double h_px = planeIntersec(planes[n], r, intersectPoint);
-        if (!intersectPoint.isEqual(start) && Scene::isForward(intersectPoint, r, start) && h_px != -2) {
-            return true;
-        }
-    }
-    for (int n = 0; n < triangles.size(); n++) {
-        double h_px = triangleIntersec(triangles[n], r, intersectPoint);
-        if (!intersectPoint.isEqual(start) && h_px != -2) {
-            return true;
-        }
-    }
-    return false;
+	Point intersectPoint;
+	Ray ray = Ray(start, lightDir);
+	for (auto &sphere : mSpheres) {
+		double h_px = sphereIntersection(sphere, ray, intersectPoint, start);
+		if (!intersectPoint.isEqual(start) &&
+			Scene::isForward(intersectPoint, ray, start) &&
+			h_px != -2) {
+			return true;
+		}
+	}
+	for (auto &plane : mPlanes) {
+		double h_px = planeIntersection(plane, ray, intersectPoint);
+		if (!intersectPoint.isEqual(start) &&
+			Scene::isForward(intersectPoint, ray, start) &&
+			h_px != -2) {
+			return true;
+		}
+	}
+	for (auto &triangle : mTriangles) {
+		double h_px = triangleIntersection(triangle, ray, intersectPoint);
+		if (!intersectPoint.isEqual(start) && h_px != -2) return true;
+	}
+	return false;
 }
 
-bool Scene::isForward(Point& intersectPoint, Ray ray, Point camera) {
-    Vector intersectDirection = Vector(camera, intersectPoint);
-    intersectDirection.normalize();
-    return Vector::dotProduct(intersectDirection, ray.direction()) > 0;
+bool Scene::isForward(Point &intersectPoint, Ray ray, Point camera) {
+	Vector intersectDir = Vector(camera, intersectPoint);
+	intersectDir.normalize();
+	return Vector::dotProduct(intersectDir, ray.direction()) > 0;
 }
 
-double Scene::sphereIntersec(Sphere sphere, Ray ray, Point& intersectPoint, Point start) {
-    Sphere::Intersections ans = sphere.isRayIntersection(ray);
-    double px = 0;
-    Point first, sec;
-    bool _f,_s;
-    switch (ans)
-    {
-    case Sphere::NoIntersection:
-        return -2;
-        break;
-    case Sphere::OnePointIntersection:
-        intersectPoint = sphere.getOnePointRayIntersection(ray);
-        break;
-    case Sphere::TwoPointIntersection:
-        first = sphere.getTwoPointRayIntersection(ray).first;
-        sec = sphere.getTwoPointRayIntersection(ray).second;
-        _f = Scene::isForward(first, ray, start);
-        _s = Scene::isForward(sec, ray, start);
-        if (!_f) {
-            if (!_s) { return -2; }
-            intersectPoint = sec;
-        }
-        else {
-            if (!_s) intersectPoint = first;
-            else {
-                if (sec.distanceTo(start) > first.distanceTo(start))
-                    intersectPoint = first;
-                else intersectPoint = sec;
-            }
-        }
-        break;
-    default:
-        return -2;
-        break;
-    }
-    Vector norm = Vector(sphere.center(), intersectPoint);
-    norm.normalize();
-    px = Vector::dotProduct(norm, this->light);
-
+double Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start) {
+	Sphere::Intersections ans = sphere.isRayIntersection(ray);
+	Point first, sec;
+	bool firstIsForward, secondIsForward;
+	switch (ans) {
+		case Sphere::NoIntersection: return -2;
+		case Sphere::OnePointIntersection: {
+			intersectPoint = sphere.getOnePointRayIntersection(ray);
+			break;
+		}
+		case Sphere::TwoPointIntersection: {
+			first = sphere.getTwoPointRayIntersection(ray).first;
+			sec = sphere.getTwoPointRayIntersection(ray).second;
+			firstIsForward = isForward(first, ray, start);
+			secondIsForward = isForward(sec, ray, start);
+			if (!firstIsForward) {
+				if (!secondIsForward) return -2;
+				intersectPoint = sec;
+			} else {
+				if (!secondIsForward) intersectPoint = first;
+				else {
+					if (sec.distanceTo(start) > first.distanceTo(start))
+						intersectPoint = first;
+					else intersectPoint = sec;
+				}
+			}
+			break;
+		}
+		default: return -2;
+	}
+	Vector norm = Vector(sphere.center(), intersectPoint);
+	norm.normalize();
+	return Vector::dotProduct(norm, mLight);
 }
 
-double Scene::planeIntersec(Plane plane, Ray ray, Point& intersectPoint) {
-    double px = -2;
-    if (plane.getRayIntersection(ray, intersectPoint)) {
-        Vector norm = plane.getNormal();
-        norm.normalize();
-            if (!isFaced(norm, ray.direction())) { norm = norm * -1; }
-        px = Vector::dotProduct(norm, this->light);
-    };
-    return px;
+double Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint) {
+	double px = -2;
+	if (plane.getRayIntersection(ray, intersectPoint)) {
+		Vector norm = plane.getNormal();
+		norm.normalize();
+		if (!isFaced(norm, ray.direction())) norm = norm * -1;
+		px = Vector::dotProduct(norm, mLight);
+	}
+	return px;
 }
 
-double Scene::triangleIntersec(Triangle triangle, Ray ray, Point& intersectPoint) {
-    double px = -2;
-    if (triangle.getRayIntersection(ray, intersectPoint)) {
-        Vector v0v1 = Vector(triangle.v0(), triangle.v1());
-        Vector v0v2 = Vector(triangle.v0(), triangle.v2());
-        Vector norm = Vector::crossProduct(v0v1, v0v2);
-        norm.normalize();
-            if (!isFaced(norm, ray.direction())) { norm = norm * -1; }
-        px = Vector::dotProduct(norm, this->light);
-    };
-    return px;
+double Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint) {
+	double px = -2;
+	if (triangle.getRayIntersection(ray, intersectPoint)) {
+		Vector v0v1 = Vector(triangle.v0(), triangle.v1());
+		Vector v0v2 = Vector(triangle.v0(), triangle.v2());
+		Vector norm = Vector::crossProduct(v0v1, v0v2);
+		norm.normalize();
+		if (!isFaced(norm, ray.direction())) norm = norm * -1;
+		px = Vector::dotProduct(norm, mLight);
+	}
+	return px;
 }
 
 bool Scene::isFaced(Vector normal, Vector direction) {
-    if (Vector::dotProduct(normal, direction) < 0) return true;
-    else return false;
+	if (Vector::dotProduct(normal, direction) < 0) return true;
+	else return false;
 }
+
+void Scene::setScreen(Screen screen) { mScreen = screen; }
+
+Point Scene::getCamera() { return mCamera; }
+
+void Scene::setCamera(Point camera) { mCamera = camera; }
+
+void Scene::setLight(Vector light) {
+	light.normalize();
+	mLight = light;
+}
+
+double Scene::getCameraToScreenDist() { return mCameraToScreenDist; }
+
+void Scene::setCameraToScreenDist(double cameraToScreenDist) {
+	mCameraToScreenDist = cameraToScreenDist;
+}
+
+void Scene::addNewSphere(Sphere sphere) { mSpheres.push_back(sphere); }
+
+void Scene::addNewSpheres(vector<Sphere> spheres) {
+	mSpheres.insert(mSpheres.end(), spheres.begin(), spheres.end());
+}
+
+void Scene::setSpheres(vector<Sphere> spheres) { mSpheres = spheres; }
+
+void Scene::addNewTriangle(Triangle triangle) { mTriangles.push_back(triangle); }
+
+void Scene::addNewTriangles(vector<Triangle> triangles) {
+	mTriangles.insert(mTriangles.end(), triangles.begin(), triangles.end());
+}
+
+void Scene::setTriangles(vector<Triangle> triangles) { mTriangles = triangles; }
+
+void Scene::addNewPlane(Plane plane) { mPlanes.push_back(plane); }
+
+void Scene::addNewPlanes(vector<Plane> planes) {
+	mPlanes.insert(mPlanes.end(), planes.begin(), planes.end());
+}
+
+void Scene::setPlanes(vector<Plane> planes) { mPlanes = planes; }
