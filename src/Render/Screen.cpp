@@ -1,7 +1,5 @@
 #include "Screen.h"
 
-#include <utility>
-
 Screen::Screen() : Screen(100, 100) {}
 
 Screen::Screen(int width, int height) {
