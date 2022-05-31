@@ -15,15 +15,28 @@ Scene::Scene(Screen screen, Vector light, Point camera, double cameraToScreenDis
 
 void Scene::renderScene() {
 	vector<vector<double>> pixels(mScreen.getHeight(), vector<double>(mScreen.getWidth()));
+	unsigned int numOfThreads = std::thread::hardware_concurrency();
+	std::vector<std::thread> threads;
+	int i, itemsPerThread = pixels.size() / numOfThreads;
+	for (i = 0; i < numOfThreads - 1; i++) {
+		threads.emplace_back([this, &pixels](int yFrom, int yTo) {
+			renderSceneRange(yFrom, yTo, pixels);
+		}, i * itemsPerThread, i * itemsPerThread + itemsPerThread);
+	}
+	renderSceneRange(i * itemsPerThread, pixels.size(), pixels);
+	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
+	mScreen.setPixels(pixels);
+}
+
+void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<double>> &pixels) {
 	Point intersectionPoint;
-	for (int y = 0; y < mScreen.getHeight(); y++) {
-		for (int x = 0; x < mScreen.getWidth(); x++) {
+	for (int y = yFrom; y < yTo; y++) {
+		for (int x = 0; x < pixels[y].size(); x++) {
 			pixels[y][x] = intersections(x * mScreen.getCoordPerPixel(),
 										 y * mScreen.getCoordPerPixel(),
 										 intersectionPoint);
 		}
 	}
-	mScreen.setPixels(pixels);
 }
 
 void Scene::writeRenderToPPM(PPMWriter &ppmWriter) {

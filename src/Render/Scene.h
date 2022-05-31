@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <thread>
+#include <algorithm>
 
 #include "Screen.h"
 #include "../Geometry/Vector.h"
@@ -16,6 +18,7 @@
 using std::vector;
 using std::cout;
 using std::endl;
+using std::thread;
 
 class Scene {
 public:
@@ -64,6 +67,7 @@ public:
 	void setPlanes(vector<Plane> planes);
 
 private:
+
 	double mCameraToScreenDist;
 	Point mCamera;
 	Vector mLight;
@@ -85,6 +89,8 @@ private:
 	static char getSymbol(double x);
 
 	bool shadow(Point start, Vector lightDir);
+
+	void renderSceneRange(int yFrom, int yTo, vector<vector<double>> &pixels);
 };
 
 #endif //SCENE_H
