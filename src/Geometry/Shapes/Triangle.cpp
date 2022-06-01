@@ -40,6 +40,25 @@ bool Triangle::getRayIntersection(Ray ray, Point &intersectionPoint, double epsi
 	return true;
 }
 
+Triangle Triangle::transform(Matrix4x4 matrix, Point transPoint) {
+	Matrix4x4 h = Matrix4x4::transpose(-transPoint.x(), -transPoint.y(), -transPoint.z());
+	Matrix4x4 h2 = Matrix4x4::transpose(transPoint.x(), transPoint.y(), transPoint.z());
+
+	Matrix4x4 total = h * matrix * h2;
+
+	Point t1 = total * v0();
+	Point t2 = total * v1();
+	Point t3 = total * v2();
+	Vector n1 = total * v0Normal();
+	Vector n2 = total * v1Normal();
+	Vector n3 = total * v2Normal();
+	n1.normalize();
+	n2.normalize();
+	n3.normalize();
+
+	return {t1, t2, t3, n1, n2, n3};
+}
+
 Point Triangle::v0() {
 	return mV0;
 }
@@ -87,22 +106,3 @@ void Triangle::setV1Normal(Vector v1Normal) {
 void Triangle::setV2Normal(Vector v2Normal) {
 	mV2Normal = v2Normal;
 }
-
-Triangle Triangle::transform(Matrix4x4 matrix, Point transPoint) {
-	Matrix4x4 h = Matrix4x4::transpose(-transPoint.x(), -transPoint.y(), -transPoint.z());
-	Matrix4x4 h2 = Matrix4x4::transpose(transPoint.x(), transPoint.y(), transPoint.z());
-
-	Matrix4x4 total = h * matrix * h2;
-
-	Point t1 = total * this -> v0();
-	Point t2 = total * this -> v1();
-	Point t3 = total * this -> v2();
-	Vector n1 = total * this -> v0Normal();
-	Vector n2 = total * this -> v1Normal();
-	Vector n3 = total * this -> v2Normal();
-	n1.normalize();
-	n2.normalize();
-	n3.normalize();
-
-	return Triangle(t1, t2, t3, n1, n2, n3);
-};

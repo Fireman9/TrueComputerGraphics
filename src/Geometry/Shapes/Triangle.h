@@ -11,7 +11,9 @@ public:
 
 	Triangle(Point v0, Point v1, Point v2, Vector v0Normal, Vector v1Normal, Vector v2Normal);
 
-	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01);
+	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.0000001);
+
+	Triangle transform(Matrix4x4 matrix, Point transPoint);
 
 	Point v0();
 
@@ -36,9 +38,6 @@ public:
 	void setV1Normal(Vector v1Normal);
 
 	void setV2Normal(Vector v2Normal);
-
-	Triangle transform(Matrix4x4 matrix, Point transPoint);
-
 
 private:
 	Point mV0, mV1, mV2;

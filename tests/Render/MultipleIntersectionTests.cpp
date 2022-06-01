@@ -14,12 +14,13 @@ TEST(MultipleIntersections, With3Plane) {
 
 	Scene sc;
 	Screen scr;
-	scr.setStartPoint(Point(0, 0, 1));
+	sc.setCameraToScreenDist(1);
 	sc.setScreen(scr);
-	sc.addNewPlane({ p1,p2,p3 });
-	sc.intersections(0, 0, inter);
+	sc.addNewPlanes({p1, p2, p3});
+	sc.intersections(50, 50, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 1)));
 }
+
 TEST(MultipleIntersections, With3Shpere) {
 	Point inter;
 	Sphere s1(20, 0, 0, 50);
@@ -28,12 +29,13 @@ TEST(MultipleIntersections, With3Shpere) {
 
 	Scene sc;
 	Screen scr;
-	scr.setStartPoint(Point(0, 0, 1));
+	sc.setCameraToScreenDist(1);
 	sc.setScreen(scr);
-	sc.addNewSphere({ s1,s2, s3 });
-	sc.intersections(0, 0, inter);
+	sc.addNewSpheres({s1, s2, s3});
+	sc.intersections(50, 50, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 30)));
 }
+
 TEST(MultipleIntersections, With2Triangle) {
 	Point inter;
 	Triangle t1(Point(-1, -1, 5), Point(-1, 4, 5), Point(3, -1, 5));
@@ -41,12 +43,13 @@ TEST(MultipleIntersections, With2Triangle) {
 
 	Scene sc;
 	Screen scr;
-	scr.setStartPoint(Point(0, 0, 1));
+	sc.setCameraToScreenDist(1);
 	sc.setScreen(scr);
-	sc.addNewTriangle({ t1,t2 });
-	sc.intersections(0, 0, inter);
+	sc.addNewTriangles({t1, t2});
+	sc.intersections(50, 50, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 5)));
 }
+
 TEST(MultipleIntersections, WithAll) {
 	Point inter;
 	Sphere s1(20, 0, 0, 50);
@@ -55,14 +58,15 @@ TEST(MultipleIntersections, WithAll) {
 
 	Scene sc;
 	Screen scr;
-	scr.setStartPoint(Point(0, 0, 1));
+	sc.setCameraToScreenDist(1);
 	sc.setScreen(scr);
-	sc.addNewSphere({ s1 });
-	sc.addNewPlane({ p1 });
-	sc.addNewTriangle({ t1 });
-	sc.intersections(0, 0, inter);
+	sc.addNewSphere({s1});
+	sc.addNewPlane({p1});
+	sc.addNewTriangle({t1});
+	sc.intersections(50, 50, inter);
 	EXPECT_TRUE(inter.isEqual(Point(0, 0, 30)));
 }
+
 TEST(MultipleIntersections, WithNothing) {
 	Point inter(NULL, NULL, NULL);
 	Point inter_f = inter;
@@ -72,11 +76,11 @@ TEST(MultipleIntersections, WithNothing) {
 
 	Scene sc;
 	Screen scr;
-	scr.setStartPoint(Point(0, 0, 1));
+	sc.setCameraToScreenDist(1);
 	sc.setScreen(scr);
-	sc.addNewSphere({ s1 });
-	sc.addNewPlane({ p1 });
-	sc.addNewTriangle({ t1 });
-	sc.intersections(0, 0, inter);
+	sc.addNewSphere({s1});
+	sc.addNewPlane({p1});
+	sc.addNewTriangle({t1});
+	sc.intersections(50, 50, inter);
 	EXPECT_EQ(inter.x(), NULL);
 }

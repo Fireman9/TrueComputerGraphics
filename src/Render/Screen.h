@@ -1,40 +1,37 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-using namespace std;
+#include <vector>
+#include <utility>
 
 #include "../Geometry/Point.h"
-#include <vector>
+
+using std::vector;
 
 class Screen {
 public:
 	Screen();
-	Screen(int w, int h, double z );
-	Screen(int w, int h, Point start);
-	Screen(double x, double y, double z, int w, int h, double z_s);
-	Screen(double x, double y, double z, int w, int h, Point start);
-	void setSize(int x, int y);
-	void setCamera(Point C);
-	void setStartPoint(Point start);
+
+	Screen(int width, int height);
+
+	void setSize(int width, int height);
+
+	void setPixels(vector<vector<double>> pixels);
+
 	void setCoordPerPixel(double x);
-	void setPixels(vector<vector<double>> p);
-	void changePixelsSize(int x, int y);
-	Point getStartPoint();
-	Point getCamera();
+
 	int getWidth();
+
 	int getHeight();
-	vector<vector<double>> getPixels();
+
 	double getCoordPerPixel();
 
+	vector<vector<double>> getPixels();
+
 private:
-	vector<vector<double>> pixels;
-	int w, h;
-	Point startPoint; //top left corner of screen 
-	Point camera; //for different camera angle, but screen always with normal(0,0,1)
-	void setAllData(int w, int h, Point c, double z);
-	void setAllData(int w, int h, Point c, Point s);
-	void inicializePixelsArray();
-	static const double screenSizeH;
-	double coordPerPixel;
+	int mWidth, mHeight;
+	double mCoordPerPixel;
+	vector<vector<double>> mPixels;
 };
+
 #endif //SCREEN_H
