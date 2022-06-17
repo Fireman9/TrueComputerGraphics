@@ -115,7 +115,7 @@ double Scene::intersectionsTree(double x, double y, Point& intersection, Node* t
 	double minDist = 999999;
 	vector<Node*> leafs;
 	//find Node(s)
-	tree->findAllNodes(ray, leafs);
+	tree->findAllNodes(ray, &leafs);
 	//look in Nodes
 	for (auto& leaf : leafs) {
 		for (auto& triangle : leaf->triangles()) {
@@ -137,7 +137,7 @@ bool Scene::shadowTree(Point start, Vector lightDir, Node* tree) {
 	Ray ray = Ray(start, lightDir);
 	vector<Node*> leafs;
 	//find Node(s)
-	tree->findAllNodes(ray, leafs);
+	tree->findAllNodes(ray, &leafs);
 	//look in Nodes
 	for (auto& leaf : leafs) {
 		for (auto& triangle : leaf->triangles()) {

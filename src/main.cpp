@@ -12,10 +12,10 @@ int main(int argc, char *argv[]) {
 
 	PPMWriter ppmWriter(arguments);
 
-	Screen screen(200, 150);
-	Scene scene(screen, Vector(0, -5, -20), Point(0, 0, -5), 1000);
+	Screen screen(400, 300);
+	Scene scene(screen, Vector(0, -5, -20), Point(0, 0, -5), 2000);
 
-	Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
+	Matrix4x4 matrix = Matrix4x4::rotateX(-2.57) * Matrix4x4::rotateY(-1.735);
 	vector<Triangle> triangles = objReader.getTriangles();
 	for (auto& triangle : triangles) {
 		triangle = triangle.transform(matrix, Point(0, 0, 0));

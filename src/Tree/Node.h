@@ -32,21 +32,22 @@ public:
 	Point end();
 	vector<Triangle> triangles();
 	int trianglesCount();
-	void findAllNodes(Ray r, vector<Node*> n);
+	void findAllNodes(Ray r, vector<Node*>* n);
+	int calcNodesSize(Node* n, int c);
+	void fitBox();
 
 private:
 	Point startP;
 	Point endP;
 	vector<Triangle> trianglesList;
 	static int const MAX_SIZE = 500;
-	double const EPSILON = 0.001;
+	double const EPSILON = 0.01;
 	Node* leftN;
 	Node* rightN;
 	Node* parentN;
 	int divIndex = 0;
 	int deep = 0;
 
-	void fitBox();
 	void divade();
 	void setTriangleToSide(Triangle t);
 	bool isPointInBox(Point p, Point s, Point e);

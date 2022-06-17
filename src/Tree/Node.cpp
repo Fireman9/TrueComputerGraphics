@@ -1,4 +1,5 @@
 #include "Node.h"
+#include <iostream>
 
 Node::Node() : Node(Point(-1000,-1000,-1000), Point(1000,1000,1000)) {}
 Node::Node(Point start, Point end) : Node(start, end, {},NULL,NULL,NULL) {}
@@ -49,7 +50,6 @@ bool Node::isPointInBox(Point p, Point s, Point e) {
 
 void Node::setTriangleToSide(Triangle t) {
 	bool ansLeft = true;
-	bool ansRight = false;
 	Point m = (start() + end()) * 0.5;
 	Point c = t.center();
 	Point tmp_l = Point(end());
@@ -118,8 +118,8 @@ void Node::fitBox() {
 			if (p.z() < min_t.z()) min_t.setZ(p.z());
 		}
 	}
-	endP.setCoordinates(max_t.x(), max_t.y(), max_t.z());
-	startP.setCoordinates(min_t.x(), min_t.y(), min_t.z());
+	endP.setCoordinates(max_t.x()+EPSILON, max_t.y() + EPSILON, max_t.z() + EPSILON);
+	startP.setCoordinates(min_t.x() - EPSILON, min_t.y() - EPSILON, min_t.z() - EPSILON);
 }
 
 void Node::findDivIndex() {
@@ -184,15 +184,28 @@ void Node::divade() {
 	this->trianglesList = {};
 }
 
-void Node::findAllNodes(Ray r, vector<Node*> n) {
+void Node::findAllNodes(Ray r, vector<Node*>* n) {
 	if (isRayInBox(r, this)) {
-		if (left() == NULL && right() == NULL) n.push_back(this);
+		if (left() == NULL && right() == NULL) {
+			if (triangles().size() > 0) {
+				n->push_back(this);
+			}
+		}
 		else {
 			if (left() != NULL) left()->findAllNodes(r, n);
 			if (right() != NULL) right()->findAllNodes(r, n);
 		}
 	}
 
+}
+
+int Node::calcNodesSize(Node* n, int c) {
+	if (n->right() == NULL && n->left() == NULL) c += n->trianglesCount();
+	else {
+		c = calcNodesSize(n->left(),c);
+		c = calcNodesSize(n->right(),c);
+	}
+	return c;
 }
 
 bool Node::isRayInBox(Ray r, Node* n) {
@@ -210,8 +223,8 @@ bool Node::isRayInBox(Ray r, Node* n) {
 	double tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
 	double tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
 
-	if (tmax < 0) return false; //box behind
-	if (tmin > tmax) return false; //miss
+	if (tmax < + EPSILON) return false; //box behind
+	if (tmin > tmax - EPSILON) return false; //miss
 
 	return true;
 }
