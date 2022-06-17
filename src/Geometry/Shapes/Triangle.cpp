@@ -106,3 +106,7 @@ void Triangle::setV1Normal(Vector v1Normal) {
 void Triangle::setV2Normal(Vector v2Normal) {
 	mV2Normal = v2Normal;
 }
+
+Point Triangle::center() {
+	return (v0() + v1() + v2()) * (1 / 3);
+}

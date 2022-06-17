@@ -4,6 +4,7 @@
 #include "../Geometry/Point.h"
 #include "../Geometry/Shapes/Triangle.h"
 #include <vector>
+#include <algorithm>
 
 using std::vector;
 
@@ -12,6 +13,7 @@ public:
 	Node();
 	Node(Point start, Point end);
 	Node(Point start, Point end, vector<Triangle> list);
+	Node(Point start, Point end, Node* p);
 	Node(Node* l, Node* r, Node* p);
 	Node(Point start, Point end, vector<Triangle> list, Node* l, Node* r, Node* p);
 	void setStart(Point start);
@@ -39,6 +41,10 @@ private:
 	Node* leftN;
 	Node* rightN;
 	Node* parentN;
+
+	Point findMidle(Point* min, Point* max);
+	void fitBox();
+	void divade();
 };
 
 #endif //NODE_H
