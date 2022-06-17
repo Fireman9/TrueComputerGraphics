@@ -3,6 +3,7 @@
 #include "File/OBJReader.h"
 #include "Matrix/Matrix4x4.h"
 #include "File/PPMWriter.h"
+#include "Tree/Node.h"
 
 int main(int argc, char *argv[]) {
 	std::vector<std::string> arguments(argv + 1, argv + argc);
@@ -16,11 +17,18 @@ int main(int argc, char *argv[]) {
 
 	Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
 	vector<Triangle> triangles = objReader.getTriangles();
-	for (auto &triangle : triangles) {
+	for (auto& triangle : triangles) {
 		triangle = triangle.transform(matrix, Point(0, 0, 0));
 	}
-	scene.setTriangles(triangles);
 
-	scene.renderScene();
-	scene.writeRenderToPPM(ppmWriter);
+	scene.setTriangles(triangles);
+	
+	Node tree = Node();
+
+	std::cout << "Start tree" << endl;
+	tree.setTriangles(triangles);
+	std::cout << "End tree" << endl;
+
+	//scene.renderScene();
+	//scene.writeRenderToPPM(ppmWriter);
 }

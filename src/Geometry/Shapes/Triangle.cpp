@@ -108,5 +108,5 @@ void Triangle::setV2Normal(Vector v2Normal) {
 }
 
 Point Triangle::center() {
-	return (v0() + v1() + v2()) * (1 / 3);
+	return (v0() + v1() + v2()) * (1.0 / 3.0);
 }
