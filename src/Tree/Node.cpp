@@ -27,8 +27,67 @@ void Node::addTriangles(vector<Triangle> t) {
 	this->trianglesList.insert(this->trianglesList.end(), t.begin(), t.end());
 	if (trianglesCount() > MAX_SIZE) divade();
 }
-void Node::addTriangle(Triangle t) { this->trianglesList.push_back(t); 
-	if (trianglesCount() > MAX_SIZE) divade();
+void Node::addTriangle(Triangle t) { 
+
+	if (left() == NULL && right() == NULL) {
+		this->trianglesList.push_back(t);
+		if (trianglesCount() > MAX_SIZE) divade();
+	}
+	else {
+		this->setTriangleToSide(t);
+	}
+}
+
+bool Node::isPointInBox(Point p, Point s, Point e) {
+	double pDist = p.distanceTo(0, 0, 0);
+	double sDist = s.distanceTo(0, 0, 0);
+	double eDist = e.distanceTo(0, 0, 0);
+	if (sDist > eDist) std::swap(sDist, eDist);
+	return sDist - EPSILON <= sDist <= eDist + EPSILON;
+}
+
+void Node::setTriangleToSide(Triangle t) {
+	bool ansLeft = true;
+	bool ansRight = false;
+	Point m = (start() + end()) * 0.5;
+	Point c = t.center();
+	Point tmp_l = Point(end());
+	Point tmp_r = Point(start());
+	switch (divIndex)
+	{
+	case 0:
+		tmp_l.setX(m.x());
+		tmp_r.setX(m.x());
+		break;
+	case 1:
+		tmp_l.setY(m.y());
+		tmp_r.setY(m.y());
+		break;
+	case 2:
+		tmp_l.setZ(m.z());
+		tmp_r.setZ(m.z());
+		break;
+	default:
+		break;
+	}
+	ansLeft = isPointInBox(c, start(), tmp_l);
+	ansRight = isPointInBox(c, tmp_r, end());
+	if (ansLeft) {
+		if (left() != NULL) { left()->addTriangle(t); }
+		else { 
+			Node l = Node(start(), tmp_l, this);
+			l.addTriangle(t);
+			setLeft(&l);
+		}
+	}
+	else {
+		if (right() != NULL) { right()->addTriangle(t); }
+		else {
+			Node r = Node(tmp_r, end(), this);
+			r.addTriangle(t);
+			setRight(&r);
+		}
+	}
 }
 
 Node* Node::right() { return this->rightN; }
@@ -71,9 +130,9 @@ void Node::divade() {
 	Point tmp_l = Point(end());
 	vector<double> sizes = { end().x() - start().x(),end().y() - start().y(),end().z() - start().z()};
 	double maxDif = *std::max_element(sizes.begin(), sizes.end());
-	int indexDif = std::distance(sizes.begin(), std::find(sizes.begin(), sizes.end(), maxDif));
+	divIndex = std::distance(sizes.begin(), std::find(sizes.begin(), sizes.end(), maxDif));
 	Point change = (start()+end())*0.5;
-	switch (indexDif)
+	switch (divIndex)
 	{
 	case 0:
 		tmp_r.setX(change.x());
@@ -92,7 +151,7 @@ void Node::divade() {
 	}
 	for (auto& t : this->trianglesList) {
 		bool ans = false;
-		switch (indexDif)
+		switch (divIndex)
 		{
 		case 0:
 			ans = t.center().x() > change.x();
@@ -109,8 +168,10 @@ void Node::divade() {
 		if (ans) r.addTriangle(t);
 		else l.addTriangle(t);
 	}
+	l.fitBox();
+	r.fitBox();
 	this->setLeft(&l);
 	this->setRight(&r);
-
+	this->trianglesList.clear();
 }
 

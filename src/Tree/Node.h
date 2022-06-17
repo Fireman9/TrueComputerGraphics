@@ -32,19 +32,23 @@ public:
 	Point end();
 	vector<Triangle> triangles();
 	int trianglesCount();
-	
+
 private:
 	Point startP;
 	Point endP;
 	vector<Triangle> trianglesList;
 	static int const MAX_SIZE = 50;
+	double const EPSILON = 0.01;
 	Node* leftN;
 	Node* rightN;
 	Node* parentN;
+	int divIndex = 0;
 
 	Point findMidle(Point* min, Point* max);
 	void fitBox();
 	void divade();
+	void setTriangleToSide(Triangle t);
+	bool isPointInBox(Point p, Point s, Point e);
 };
 
 #endif //NODE_H
