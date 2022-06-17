@@ -32,6 +32,7 @@ public:
 	Point end();
 	vector<Triangle> triangles();
 	int trianglesCount();
+	void findAllNodes(Ray r, vector<Node*> n);
 
 private:
 	Point startP;
@@ -50,6 +51,7 @@ private:
 	void setTriangleToSide(Triangle t);
 	bool isPointInBox(Point p, Point s, Point e);
 	void findDivIndex();
+	bool isRayInBox(Ray r, Node* n);
 };
 
 #endif //NODE_H

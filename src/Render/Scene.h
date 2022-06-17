@@ -5,6 +5,7 @@
 #include <vector>
 #include <thread>
 #include <algorithm>
+#include <functional>
 
 #include "Screen.h"
 #include "../Geometry/Vector.h"
@@ -14,6 +15,7 @@
 #include "../Geometry/Shapes/Sphere.h"
 #include "../Geometry/Shapes/Triangle.h"
 #include "../File/PPMWriter.h"
+#include "../Tree/Node.h"
 
 using std::vector;
 using std::cout;
@@ -30,11 +32,15 @@ public:
 
 	void renderScene();
 
+	void renderSceneTree();
+
 	void writeRenderToPPM(PPMWriter &ppmWriter);
 
 	void showRenderToConsole();
 
 	double intersections(double x, double y, Point &intersection);
+
+	double intersectionsTree(double x, double y, Point& intersection, Node* tree);
 
 	void setScreen(Screen screen);
 
@@ -66,6 +72,8 @@ public:
 
 	void setPlanes(vector<Plane> planes);
 
+	void setTree(Node* t);
+
 private:
 
 	double mCameraToScreenDist;
@@ -75,6 +83,7 @@ private:
 	vector<Plane> mPlanes;
 	vector<Sphere> mSpheres;
 	vector<Triangle> mTriangles;
+	Node* tree;
 
 	double sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start);
 
@@ -90,7 +99,11 @@ private:
 
 	bool shadow(Point start, Vector lightDir);
 
+	bool shadowTree(Point start, Vector lightDir, Node* tree);
+
 	void renderSceneRange(int yFrom, int yTo, vector<vector<double>> &pixels);
+
+	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<double>> &pixels);
 };
 
 #endif //SCENE_H

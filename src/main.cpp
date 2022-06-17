@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
 
 	PPMWriter ppmWriter(arguments);
 
-	Screen screen(852, 480);
-	Scene scene(screen, Vector(0, -5, -20), Point(0, 0, -5), 3000);
+	Screen screen(200, 150);
+	Scene scene(screen, Vector(0, -5, -20), Point(0, 0, -5), 1000);
 
 	Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
 	vector<Triangle> triangles = objReader.getTriangles();
@@ -23,12 +23,15 @@ int main(int argc, char *argv[]) {
 
 	scene.setTriangles(triangles);
 	
-	Node tree = Node();
+	Node* tree = new Node();
 
 	std::cout << "Start tree" << endl;
-	tree.setTriangles(triangles);
+	tree->setTriangles(triangles);
 	std::cout << "End tree" << endl;
 
+	scene.setTree(tree);
+	scene.renderSceneTree();
+
 	//scene.renderScene();
-	//scene.writeRenderToPPM(ppmWriter);
+	scene.writeRenderToPPM(ppmWriter);
 }

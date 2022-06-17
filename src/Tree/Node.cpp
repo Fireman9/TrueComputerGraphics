@@ -184,3 +184,35 @@ void Node::divade() {
 	this->trianglesList = {};
 }
 
+void Node::findAllNodes(Ray r, vector<Node*> n) {
+	if (isRayInBox(r, this)) {
+		if (left() == NULL && right() == NULL) n.push_back(this);
+		else {
+			if (left() != NULL) left()->findAllNodes(r, n);
+			if (right() != NULL) right()->findAllNodes(r, n);
+		}
+	}
+
+}
+
+bool Node::isRayInBox(Ray r, Node* n) {
+	double dx = 1.0 / r.direction().x();
+	double dy = 1.0 / r.direction().y();
+	double dz = 1.0 / r.direction().z();
+
+	double t1 = (n->start().x() - r.origin().x()) * dx;
+	double t2 = (n->end().x() - r.origin().x()) * dx;
+	double t3 = (n->start().y() - r.origin().y()) * dy;
+	double t4 = (n->end().y() - r.origin().y()) * dy;
+	double t5 = (n->start().z() - r.origin().z()) * dz;
+	double t6 = (n->end().z() - r.origin().z()) * dz;
+
+	double tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+	double tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+	if (tmax < 0) return false; //box behind
+	if (tmin > tmax) return false; //miss
+
+	return true;
+}
+
