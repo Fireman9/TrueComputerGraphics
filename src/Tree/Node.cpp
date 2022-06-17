@@ -12,3 +12,22 @@ Node::Node(Point start_p, Point end_p, vector<Triangle> list, Node* l, Node* r, 
 	setRight(r);
 	setParent(p);
 }
+
+void Node::setStart(Point start) { this->startP = start; }
+void Node::setEnd(Point end) { this->endP = end; }
+void Node::setLeft(Node* l) { this->leftN = l; }
+void Node::setRight(Node* r) { this->rightN = r; }
+void Node::setParent(Node* p) { this->parentN = p; }
+void Node::setTriangles(vector<Triangle> t) { this->trianglesList = t; }
+void Node::addTriangles(vector<Triangle> t) {
+	this->trianglesList.insert(this->trianglesList.end(), t.begin(), t.end());
+}
+void Node::addTriangle(Triangle t) { this->trianglesList.push_back(t); }
+
+Node* Node::right() { return this->rightN; }
+Node* Node::left() { return this->leftN; }
+Node* Node::parent() { return this->parentN; }
+Point Node::start() { return this->startP; }
+Point Node::end() { return this->endP; }
+vector<Triangle> Node::triangles() { return this->trianglesList; }
+int Node::trianglesCount() { return this->trianglesList.size(); }
