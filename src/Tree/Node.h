@@ -41,7 +41,7 @@ private:
 	Point startP;
 	Point endP;
 	vector<Triangle> trianglesList;
-	static int const MAX_SIZE = 500;
+	static int const MAX_SIZE = 5000; //500 for cow, 7k? for dragon
 	double const EPSILON = 0.01;
 	Node* leftN;
 	Node* rightN;

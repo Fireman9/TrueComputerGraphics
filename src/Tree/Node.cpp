@@ -1,4 +1,5 @@
 #include "Node.h"
+#include <iostream>
 
 Node::Node() : Node(Point(-1000,-1000,-1000), Point(1000,1000,1000)) {}
 Node::Node(Point start, Point end) : Node(start, end, {},NULL,NULL,NULL) {}
@@ -17,8 +18,8 @@ Node::Node(Point start_p, Point end_p, vector<Triangle> list, Node* l, Node* r, 
 Node* Node::createNode(vector<Triangle> list) {
 	Node* tree = new Node();
 	tree->fitBox(tree, list);
-
 	tree->setTriangles(list);
+	std::cout<<tree->calcNodesSize(tree, 0)<<"\n";
 	return tree;
 }
 
@@ -30,25 +31,28 @@ void Node::setParent(Node* p) { this->parentN = p; }
 
 void Node::setTriangles(vector<Triangle> t) { 
 	this->trianglesList = t;
-	fitBox();
+	//fitBox();
 	if (trianglesCount() >= MAX_SIZE) divade();
 }
 
 void Node::addTriangles(vector<Triangle> t) {
 	this->trianglesList.insert(this->trianglesList.end(), t.begin(), t.end());
-	fitBox();
+	//fitBox();
 	if (trianglesCount() >= MAX_SIZE) divade();
 }
 
 void Node::addTriangle(Triangle t) { 
+
 	if (left() == NULL && right() == NULL) {
 		this->trianglesList.push_back(t);
+		if (trianglesCount() >= MAX_SIZE - 2) {
+			fitBox();
+		}
 	}
 	else {
 		this->setTriangleToSide(t);
 	}
-	fitBox();
-	if (trianglesCount() >= MAX_SIZE - 1) divade();
+	if (trianglesCount() >= MAX_SIZE) divade();
 }
 
 bool Node::isPointInBox(Point p, Point s, Point e) {
@@ -137,7 +141,6 @@ void Node::fitBox(Node* n, vector<Triangle> v) {
 	Point min_t = Point(1000, 1000, 1000);
 	Point tmp = Point();
 	for (auto& t : v) {
-		tmp = t.center();
 		vector<Point> allPoints = { t.v0(), t.v1(),t.v2() };
 		for (auto& p : allPoints) {
 			if (p.x() > max_t.x()) max_t.setX(p.x());
@@ -149,8 +152,8 @@ void Node::fitBox(Node* n, vector<Triangle> v) {
 		}
 	}
 	
-	n->start().setCoordinates(max_t.x(), max_t.y(), max_t.z());
-	n->end().setCoordinates(min_t.x(), min_t.y(), min_t.z());
+	n->endP.setCoordinates(max_t.x(), max_t.y(), max_t.z());
+	n->startP.setCoordinates(min_t.x(), min_t.y(), min_t.z());
 }
 
 void Node::findDivIndex() {
@@ -160,8 +163,6 @@ void Node::findDivIndex() {
 }
 
 void Node::divade() {
-	if (trianglesCount() < MAX_SIZE) return;
-
 	Node* l = new Node(start(), end(), this);
 	Node* r = new Node(start(), end(), this);
 	l->deep = this->deep + 1;
@@ -253,8 +254,8 @@ bool Node::isRayInBox(Ray r, Node* n) {
 	double tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
 	double tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
 
-	if (tmax < + EPSILON) return false; //box behind
-	if (tmin > tmax - EPSILON) return false; //miss
+	if (tmax < -EPSILON) return false; //box behind
+	if (tmin > tmax + EPSILON) return false; //miss
 
 	return true;
 }
