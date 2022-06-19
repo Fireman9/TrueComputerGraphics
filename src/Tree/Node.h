@@ -16,6 +16,7 @@ public:
 	Node(Point start, Point end, Node* p);
 	Node(Node* l, Node* r, Node* p);
 	Node(Point start, Point end, vector<Triangle> list, Node* l, Node* r, Node* p);
+	static Node* createNode(vector<Triangle> list);
 	void setStart(Point start);
 	void setEnd(Point end);
 	void setLeft(Node* l);
@@ -34,7 +35,7 @@ public:
 	int trianglesCount();
 	void findAllNodes(Ray r, vector<Node*>* n);
 	int calcNodesSize(Node* n, int c);
-	void fitBox();
+	void static fitBox(Node* n, vector<Triangle> v);
 
 private:
 	Point startP;
@@ -53,6 +54,7 @@ private:
 	bool isPointInBox(Point p, Point s, Point e);
 	void findDivIndex();
 	bool isRayInBox(Ray r, Node* n);
+	void fitBox();
 };
 
 #endif //NODE_H

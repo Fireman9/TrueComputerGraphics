@@ -1,5 +1,4 @@
 #include "Node.h"
-#include <iostream>
 
 Node::Node() : Node(Point(-1000,-1000,-1000), Point(1000,1000,1000)) {}
 Node::Node(Point start, Point end) : Node(start, end, {},NULL,NULL,NULL) {}
@@ -15,6 +14,14 @@ Node::Node(Point start_p, Point end_p, vector<Triangle> list, Node* l, Node* r, 
 	setParent(p);
 }
 
+Node* Node::createNode(vector<Triangle> list) {
+	Node* tree = new Node();
+	tree->fitBox(tree, list);
+
+	tree->setTriangles(list);
+	return tree;
+}
+
 void Node::setStart(Point start) { this->startP = start; }
 void Node::setEnd(Point end) { this->endP = end; }
 void Node::setLeft(Node* l) { this->leftN = l; }
@@ -23,22 +30,25 @@ void Node::setParent(Node* p) { this->parentN = p; }
 
 void Node::setTriangles(vector<Triangle> t) { 
 	this->trianglesList = t;
+	fitBox();
 	if (trianglesCount() >= MAX_SIZE) divade();
 }
 
 void Node::addTriangles(vector<Triangle> t) {
 	this->trianglesList.insert(this->trianglesList.end(), t.begin(), t.end());
+	fitBox();
 	if (trianglesCount() >= MAX_SIZE) divade();
 }
 
 void Node::addTriangle(Triangle t) { 
-	if (trianglesCount() >= MAX_SIZE) divade();
 	if (left() == NULL && right() == NULL) {
 		this->trianglesList.push_back(t);
 	}
 	else {
 		this->setTriangleToSide(t);
 	}
+	fitBox();
+	if (trianglesCount() >= MAX_SIZE - 1) divade();
 }
 
 bool Node::isPointInBox(Point p, Point s, Point e) {
@@ -118,8 +128,29 @@ void Node::fitBox() {
 			if (p.z() < min_t.z()) min_t.setZ(p.z());
 		}
 	}
-	endP.setCoordinates(max_t.x()+EPSILON, max_t.y() + EPSILON, max_t.z() + EPSILON);
-	startP.setCoordinates(min_t.x() - EPSILON, min_t.y() - EPSILON, min_t.z() - EPSILON);
+	endP.setCoordinates(max_t.x(), max_t.y(), max_t.z());
+	startP.setCoordinates(min_t.x(), min_t.y(), min_t.z());
+}
+
+void Node::fitBox(Node* n, vector<Triangle> v) {
+	Point max_t = Point(-1000, -1000, -1000);
+	Point min_t = Point(1000, 1000, 1000);
+	Point tmp = Point();
+	for (auto& t : v) {
+		tmp = t.center();
+		vector<Point> allPoints = { t.v0(), t.v1(),t.v2() };
+		for (auto& p : allPoints) {
+			if (p.x() > max_t.x()) max_t.setX(p.x());
+			if (p.y() > max_t.y()) max_t.setY(p.y());
+			if (p.z() > max_t.z()) max_t.setZ(p.z());
+			if (p.x() < min_t.x()) min_t.setX(p.x());
+			if (p.y() < min_t.y()) min_t.setY(p.y());
+			if (p.z() < min_t.z()) min_t.setZ(p.z());
+		}
+	}
+	
+	n->start().setCoordinates(max_t.x(), max_t.y(), max_t.z());
+	n->end().setCoordinates(min_t.x(), min_t.y(), min_t.z());
 }
 
 void Node::findDivIndex() {
@@ -130,7 +161,6 @@ void Node::findDivIndex() {
 
 void Node::divade() {
 	if (trianglesCount() < MAX_SIZE) return;
-	fitBox();
 
 	Node* l = new Node(start(), end(), this);
 	Node* r = new Node(start(), end(), this);
