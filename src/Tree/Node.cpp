@@ -1,5 +1,4 @@
 #include "Node.h"
-#include <iostream>
 
 Node::Node() : Node(Point(-1000,-1000,-1000), Point(1000,1000,1000)) {}
 Node::Node(Point start, Point end) : Node(start, end, {},NULL,NULL,NULL) {}
@@ -19,7 +18,7 @@ Node* Node::createNode(vector<Triangle> list) {
 	Node* tree = new Node();
 	tree->fitBox(tree, list);
 	tree->setTriangles(list);
-	std::cout<<tree->calcNodesSize(tree, 0)<<"\n";
+	tree->fitAllBoxes();
 	return tree;
 }
 
@@ -45,7 +44,7 @@ void Node::addTriangle(Triangle t) {
 
 	if (left() == NULL && right() == NULL) {
 		this->trianglesList.push_back(t);
-		if (trianglesCount() >= MAX_SIZE - 2) {
+		if (MAX_SIZE +1 >= trianglesCount() >= MAX_SIZE - 1) {
 			fitBox();
 		}
 	}
@@ -163,6 +162,7 @@ void Node::findDivIndex() {
 }
 
 void Node::divade() {
+	if (deep > MAX_DEEP) return;
 	Node* l = new Node(start(), end(), this);
 	Node* r = new Node(start(), end(), this);
 	l->deep = this->deep + 1;
@@ -260,3 +260,21 @@ bool Node::isRayInBox(Ray r, Node* n) {
 	return true;
 }
 
+std::pair<Point, Point> Node::fitAllBoxes() {
+	if (right() == NULL && left() == NULL) {
+		if (trianglesCount() > 0) fitBox();
+	}
+	else {
+		std::pair<Point, Point> l = left()->fitAllBoxes();
+		std::pair<Point, Point> r = right()->fitAllBoxes();
+		Point s = Point(std::min(std::min(l.first.x(), l.second.x()), std::min(r.first.x(), r.second.x())),
+			std::min(std::min(l.first.y(), l.second.y()), std::min(r.first.y(), r.second.y())),
+			std::min(std::min(l.first.z(), l.second.z()), std::min(r.first.z(), r.second.z())));
+		Point e = Point(std::max(std::max(l.first.x(), l.second.x()), std::max(r.first.x(), r.second.x())),
+			std::max(std::max(l.first.y(), l.second.y()), std::max(r.first.y(), r.second.y())),
+			std::max(std::max(l.first.z(), l.second.z()), std::max(r.first.z(), r.second.z())));
+		setStart(s);
+		setEnd(e);
+	}
+	return {start(), end()};
+}

@@ -4,6 +4,7 @@
 #include "../Geometry/Point.h"
 #include "../Geometry/Shapes/Triangle.h"
 #include <vector>
+#include <utility>
 #include <algorithm>
 
 using std::vector;
@@ -41,8 +42,9 @@ private:
 	Point startP;
 	Point endP;
 	vector<Triangle> trianglesList;
-	static int const MAX_SIZE = 5000; //500 for cow, 7k? for dragon
+	static int const MAX_SIZE = 3000; //500 for cow, 3k? for dragon
 	double const EPSILON = 0.01;
+	int const MAX_DEEP = 100;
 	Node* leftN;
 	Node* rightN;
 	Node* parentN;
@@ -55,6 +57,7 @@ private:
 	void findDivIndex();
 	bool isRayInBox(Ray r, Node* n);
 	void fitBox();
+	std::pair<Point, Point> fitAllBoxes();
 };
 
 #endif //NODE_H

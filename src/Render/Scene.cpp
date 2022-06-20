@@ -105,8 +105,6 @@ char Scene::getSymbol(double x) {
 double Scene::intersectionsTree(double x, double y, Point& intersection, Node* tree) {
 	Point intersectPoint;
 	double px = -2, dist;
-	if (x==0 && y==0)
-	std::cout<< mScreen.getCoordPerPixel() <<"\n";
 	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
 		mScreen.getHeight() * mScreen.getCoordPerPixel()  * 0.5, 0);
 	screenTopLeft.setZ(mCameraToScreenDist);
