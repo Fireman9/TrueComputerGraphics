@@ -4,7 +4,8 @@ Screen::Screen() : Screen(100, 100) {}
 
 Screen::Screen(int width, int height) {
 	setSize(width, height);
-	setCoordPerPixel(1);
+	//setCoordPerPixel(1);
+	setCoordPerPixel((double)FIX_HEIGHT/height);
 }
 
 void Screen::setSize(int width, int height) {

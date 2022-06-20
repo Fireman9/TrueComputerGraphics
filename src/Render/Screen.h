@@ -32,6 +32,7 @@ private:
 	int mWidth, mHeight;
 	double mCoordPerPixel;
 	vector<vector<double>> mPixels;
+	int FIX_HEIGHT = 120;
 };
 
 #endif //SCREEN_H
