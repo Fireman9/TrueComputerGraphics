@@ -128,6 +128,25 @@ double Scene::intersectionsTree(double x, double y, Point& intersection, Node* t
 			}
 		}
 	}
+	// for not only triangles render
+	for (auto& plane : mPlanes) {
+		double h_px = planeIntersection(plane, ray, intersectPoint);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
+	for (auto& sphere : mSpheres) {
+		double h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
 	if (px != -2 && shadowTree(intersection, mLight, tree)) px = std::min(0.0, px);
 	return px;
 }
@@ -143,6 +162,23 @@ bool Scene::shadowTree(Point start, Vector lightDir, Node* tree) {
 		for (auto& triangle : leaf->triangles()) {
 			double h_px = triangleIntersection(triangle, ray, intersectPoint);
 			if (!intersectPoint.isEqual(start) && h_px != -2) return true;
+		}
+	}
+	// for not only triangles render
+	for (auto & sphere : mSpheres) {
+		double h_px = sphereIntersection(sphere, ray, intersectPoint, start);
+		if (!intersectPoint.isEqual(start) &&
+			Scene::isForward(intersectPoint, ray, start) &&
+			h_px != -2) {
+			return true;
+		}
+	}
+	for (auto& plane : mPlanes) {
+		double h_px = planeIntersection(plane, ray, intersectPoint);
+		if (!intersectPoint.isEqual(start) &&
+			Scene::isForward(intersectPoint, ray, start) &&
+			h_px != -2) {
+			return true;
 		}
 	}
 	return false;
