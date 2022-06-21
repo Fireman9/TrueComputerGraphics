@@ -1,4 +1,5 @@
 #include "Light.h"
+#include <iostream>
 
 Light::Light(): Light(Color::white(), 1) {}
 Light::Light(Color c): Light(c, 1) {}
@@ -18,10 +19,9 @@ Color Light::apply(Color startColor, Vector normal, Point dot) {
 	return { r,g,b,startColor.a() };
 }
 Vector Light::getDir(Point d) { 
-	srand(time(0));
-	double x = -20 + (double)rand() / ((double)(RAND_MAX / (20 - (-20))));
-	double y = -20 + (double)rand() / ((double)(RAND_MAX / (20 - (-20))));
-	double z = -20 + (double)rand() / ((double)(RAND_MAX / (20 - (-20))));
+	double x = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
+	double y = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
+	double z = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
 	Vector v(x,y,z);
 	v.normalize();
 	return v; }

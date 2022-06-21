@@ -1,7 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include <random>
+#include <stdlib.h>
 #include <time.h>
 
 #include "../Color.h"

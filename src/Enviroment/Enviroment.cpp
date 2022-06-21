@@ -43,8 +43,11 @@ Scene Enviroment::prepare() {
 
 	Screen screen(width(), height());
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color::red()),new DotLight(Point(-2,-2,2),Color::green()), new DotLight(Point(0,3,0), Color::blue())};
-	vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
+	//vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color(255,0,255,255), 0.7) };
+	vector<Light*> light = { new DirectLight(Vector(2, -4, -3),Color::red(), 0.7),
+	new DotLight(Point(-2,-2,2),Color::green()), new DotLight(Point(0,3,0), Color::blue()),
+	new Light(Color(255,0,255,255), 0.03)};
 	Scene scene(screen, light, Point(0, 0, -2), 250);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
@@ -61,6 +64,7 @@ Scene Enviroment::prepare() {
 
 void Enviroment::writeTofile(Scene scene) {
 	PPMWriter ppmWriter(arg);
+	std::srand(time(NULL));
 	if (isTesting()) {
 		this->tStart = clock();
 		scene.renderScene();

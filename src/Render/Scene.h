@@ -18,6 +18,7 @@
 #include "../Tree/Node.h"
 #include "Lights/Light.h"
 #include "Lights/DotLight.h"
+#include "Lights/DirectLight.h"
 
 using std::vector;
 using std::cout;
