@@ -42,10 +42,14 @@ Scene Enviroment::prepare() {
 	OBJReader objReader = readTriangles();
 
 	Screen screen(width(), height());
-	Scene scene(screen, { DotLight(Color(255,255,13,255))}, Point(0, 0, -5), 250);
+	//vector<Light*> light = { new DotLight(Point(2,2,2),Color::red()),new DotLight(Point(-2,-2,2),Color::green()), new DotLight(Point(0,3,0), Color::blue())};
+	vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
+	//vector<Light*> light = { new DotLight(Point(2,2,2),Color(255,0,255,255), 0.7) };
+	Scene scene(screen, light, Point(0, 0, -2), 250);
+	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
-	//Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
-	Matrix4x4 matrix = Matrix4x4::rotateX(-4.0) * Matrix4x4::rotateY(-1.235) * Matrix4x4::transpose(0, 0.3, 0);
+	Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
+	//Matrix4x4 matrix = Matrix4x4::rotateX(-4.0) * Matrix4x4::rotateY(-1.235) * Matrix4x4::transpose(0, 0.3, 0);
 	//Matrix4x4 matrix = Matrix4x4::rotateX(0) * Matrix4x4::rotateY(0);
 
 	triangles = transformTriangles(matrix, objReader, Point(0,0,0));

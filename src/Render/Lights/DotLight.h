@@ -17,9 +17,7 @@ public:
 	void setPosition(Point p);
 	Point position();
 
-	Color apply(Color startColor, Vector normal, Point dot);
-	Vector getDir(Point dot);
-	bool isMain = false;
+	Vector getDir(Point dot) override;
 private:
 	Point positionL;
 };

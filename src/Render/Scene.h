@@ -30,7 +30,7 @@ public:
 
 	Scene(Screen screen);
 
-	Scene(Screen screen, vector<Light> light, Point camera, double cameraToScreenDist);
+	Scene(Screen screen, vector<Light*> light, Point camera, double cameraToScreenDist);
 
 	void renderScene();
 
@@ -46,7 +46,7 @@ public:
 
 	void setScreen(Screen screen);
 
-	void setLight(vector<Light> light);
+	void setLight(vector<Light*> light);
 
 	double getCameraToScreenDist();
 
@@ -80,7 +80,7 @@ private:
 
 	double mCameraToScreenDist;
 	Point mCamera;
-	vector<Light> mLight;
+	vector<Light*> mLight;
 	Screen mScreen;
 	vector<Plane> mPlanes;
 	vector<Sphere> mSpheres;
@@ -99,17 +99,17 @@ private:
 
 	static char getSymbol(Color x);
 
-	bool shadow(Point start, vector<Light> lightDir, Color &c, Color startColor, Vector norm);
+	bool shadow(Point start, vector<Light*> lightDir, Color &c, Color startColor, Vector norm);
 
-	bool shadowTree(Point start, vector<Light> lightDir, Node *tree, Color& c, Color startColor, Vector norm);
+	bool shadowTree(Point start, vector<Light*> lightDir, Node *tree, Color& c, Color startColor, Vector norm);
 
 	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels);
 
 	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixels);
 
-	Color firstIntersection(Point start, Light l, Color startColor, Vector norm);
+	Color firstIntersection(Point start, Light* l, Color startColor, Vector norm);
 
-	Color firstIntersectionTree(Point start, Light l, Color startColor, Vector norm, Node* tree);
+	Color firstIntersectionTree(Point start, Light* l, Color startColor, Vector norm, Node* tree);
 };
 
 #endif //SCENE_H

@@ -1,6 +1,9 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
+#include <random>
+#include <time.h>
+
 #include "../Color.h"
 #include "../../Geometry/Vector.h"
 #include "../../Geometry/Point.h"
@@ -17,11 +20,9 @@ public:
 
 	Color color();
 	double intensity();
-	Vector getDir(Point dot);
+	virtual Vector getDir(Point dot);
 
 	Color apply(Color startColor, Vector normal, Point dot);
-
-	bool isMain = true;
 private:
 	Color colorW;
 	double intens;
