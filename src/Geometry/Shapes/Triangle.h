@@ -39,6 +39,8 @@ public:
 
 	void setV2Normal(Vector v2Normal);
 
+	Point center();
+
 private:
 	Point mV0, mV1, mV2;
 	Vector mV0Normal, mV1Normal, mV2Normal;

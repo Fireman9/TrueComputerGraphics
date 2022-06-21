@@ -13,6 +13,34 @@ Scene::Scene(Screen screen, Vector light, Point camera, double cameraToScreenDis
 	mCameraToScreenDist = cameraToScreenDist;
 }
 
+void Scene::setTree(Node* t) { this->tree = t; }
+
+void Scene::renderSceneTree() {
+	vector<vector<double>> pixels(mScreen.getHeight(), vector<double>(mScreen.getWidth()));
+	unsigned int numOfThreads = std::thread::hardware_concurrency();
+	std::vector<std::thread> threads;
+	int i, itemsPerThread = pixels.size() / numOfThreads;
+	for (i = 0; i < numOfThreads - 1; i++) {
+		threads.emplace_back([this, &pixels](int yFrom, int yTo) {
+			renderSceneRangeTree(yFrom, yTo, pixels);
+			}, i * itemsPerThread, i * itemsPerThread + itemsPerThread);
+	}
+	renderSceneRangeTree(i * itemsPerThread, pixels.size(), pixels);
+	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
+	mScreen.setPixels(pixels);
+}
+
+void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<double>>& pixels) {
+	Point intersectionPoint;
+	for (int y = yFrom; y < yTo; y++) {
+		for (int x = 0; x < pixels[y].size(); x++) {
+			pixels[y][x] = intersectionsTree(x * mScreen.getCoordPerPixel(),
+				y * mScreen.getCoordPerPixel(),
+				intersectionPoint,tree);
+		}
+	}
+}
+
 void Scene::renderScene() {
 	vector<vector<double>> pixels(mScreen.getHeight(), vector<double>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
@@ -74,11 +102,93 @@ char Scene::getSymbol(double x) {
 	else return '#';
 }
 
+double Scene::intersectionsTree(double x, double y, Point& intersection, Node* tree) {
+	Point intersectPoint;
+	double px = -2, dist;
+	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
+		mScreen.getHeight() * mScreen.getCoordPerPixel()  * 0.5, 0);
+	screenTopLeft.setZ(mCameraToScreenDist);
+	Point curPoint = screenTopLeft + Point(x, y, 0);
+	Vector dir = Vector(mCamera, curPoint);
+	dir.normalize();
+	Ray ray(mCamera, dir);
+	double minDist = 999999;
+	vector<Node*> leafs;
+	//find Node(s)
+	tree->findAllNodes(ray, &leafs);
+	//look in Nodes
+	for (auto& leaf : leafs) {
+		for (auto& triangle : leaf->triangles()) {
+			double h_px = triangleIntersection(triangle, ray, intersectPoint);
+			dist = intersectPoint.distanceTo(mCamera);
+			if (h_px != -2 && minDist > dist) {
+				px = h_px;
+				minDist = dist;
+				intersection = intersectPoint;
+			}
+		}
+	}
+	// for not only triangles render
+	for (auto& plane : mPlanes) {
+		double h_px = planeIntersection(plane, ray, intersectPoint);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
+	for (auto& sphere : mSpheres) {
+		double h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
+		dist = intersectPoint.distanceTo(mCamera);
+		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+			px = h_px;
+			minDist = dist;
+			intersection = intersectPoint;
+		}
+	}
+	if (px != -2 && shadowTree(intersection, mLight, tree)) px = std::min(0.0, px);
+	return px;
+}
+
+bool Scene::shadowTree(Point start, Vector lightDir, Node* tree) {
+	Point intersectPoint;
+	Ray ray = Ray(start, lightDir);
+	vector<Node*> leafs;
+	//find Node(s)
+	tree->findAllNodes(ray, &leafs);
+	//look in Nodes
+	for (auto& leaf : leafs) {
+		for (auto& triangle : leaf->triangles()) {
+			double h_px = triangleIntersection(triangle, ray, intersectPoint);
+			if (!intersectPoint.isEqual(start) && h_px != -2) return true;
+		}
+	}
+	// for not only triangles render
+	for (auto & sphere : mSpheres) {
+		double h_px = sphereIntersection(sphere, ray, intersectPoint, start);
+		if (!intersectPoint.isEqual(start) &&
+			Scene::isForward(intersectPoint, ray, start) &&
+			h_px != -2) {
+			return true;
+		}
+	}
+	for (auto& plane : mPlanes) {
+		double h_px = planeIntersection(plane, ray, intersectPoint);
+		if (!intersectPoint.isEqual(start) &&
+			Scene::isForward(intersectPoint, ray, start) &&
+			h_px != -2) {
+			return true;
+		}
+	}
+	return false;
+}
+
 double Scene::intersections(double x, double y, Point &intersection) {
 	Point intersectPoint;
 	double px = -2, dist;
 	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
-											  mScreen.getHeight() * 0.5, 0);
+											  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5, 0);
 	screenTopLeft.setZ(mCameraToScreenDist);
 	Point curPoint = screenTopLeft + Point(x, y, 0);
 	Vector dir = Vector(mCamera, curPoint);
