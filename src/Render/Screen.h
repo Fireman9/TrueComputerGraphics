@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "../Geometry/Point.h"
+#include "../Render/Color.h"
 
 using std::vector;
 
@@ -16,7 +17,7 @@ public:
 
 	void setSize(int width, int height);
 
-	void setPixels(vector<vector<double>> pixels);
+	void setPixels(vector<vector<Color>> pixels);
 
 	void setCoordPerPixel(double x);
 
@@ -26,12 +27,12 @@ public:
 
 	double getCoordPerPixel();
 
-	vector<vector<double>> getPixels();
+	vector<vector<Color>> getPixels();
 
 private:
 	int mWidth, mHeight;
 	double mCoordPerPixel;
-	vector<vector<double>> mPixels;
+	vector<vector<Color>> mPixels;
 	int FIX_HEIGHT = 120;
 };
 

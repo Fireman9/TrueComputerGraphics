@@ -16,7 +16,7 @@ Scene::Scene(Screen screen, Vector light, Point camera, double cameraToScreenDis
 void Scene::setTree(Node* t) { this->tree = t; }
 
 void Scene::renderSceneTree() {
-	vector<vector<double>> pixels(mScreen.getHeight(), vector<double>(mScreen.getWidth()));
+	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
 	int i, itemsPerThread = pixels.size() / numOfThreads;
@@ -30,7 +30,7 @@ void Scene::renderSceneTree() {
 	mScreen.setPixels(pixels);
 }
 
-void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<double>>& pixels) {
+void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>>& pixels) {
 	Point intersectionPoint;
 	for (int y = yFrom; y < yTo; y++) {
 		for (int x = 0; x < pixels[y].size(); x++) {
@@ -42,7 +42,7 @@ void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<double>>& pix
 }
 
 void Scene::renderScene() {
-	vector<vector<double>> pixels(mScreen.getHeight(), vector<double>(mScreen.getWidth()));
+	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
 	int i, itemsPerThread = pixels.size() / numOfThreads;
@@ -56,7 +56,7 @@ void Scene::renderScene() {
 	mScreen.setPixels(pixels);
 }
 
-void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<double>> &pixels) {
+void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels) {
 	Point intersectionPoint;
 	for (int y = yFrom; y < yTo; y++) {
 		for (int x = 0; x < pixels[y].size(); x++) {
@@ -76,7 +76,7 @@ void Scene::writeRenderToPPM(PPMWriter &ppmWriter) {
 void Scene::showRenderToConsole() {
 	int height = mScreen.getHeight();
 	int width = mScreen.getWidth();
-	vector<vector<double>> pixels = mScreen.getPixels();
+	vector<vector<Color>> pixels = mScreen.getPixels();
 	for (int y = 0; y < width + 1; y++) cout << "--";
 	cout << endl;
 
@@ -92,19 +92,21 @@ void Scene::showRenderToConsole() {
 	cout << endl;
 }
 
-char Scene::getSymbol(double x) {
+char Scene::getSymbol(Color c) {
 	//if we want colored background
+	int x = (c.r() + c.g() + c.b())/3;
 	if (x == -2) return '.';
 	else if (x <= 0) return ' ';
-	else if (x < 0.2) return '-';
-	else if (x < 0.5) return '*';
-	else if (x < 0.8) return 'O';
+	else if (x < 0.2 * 255) return '-';
+	else if (x < 0.5 * 255) return '*';
+	else if (x < 0.8 * 255) return 'O';
 	else return '#';
 }
 
-double Scene::intersectionsTree(double x, double y, Point& intersection, Node* tree) {
+Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tree) {
 	Point intersectPoint;
-	double px = -2, dist;
+	Color px(-2,-2,-2,-2);
+	double dist;
 	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
 		mScreen.getHeight() * mScreen.getCoordPerPixel()  * 0.5, 0);
 	screenTopLeft.setZ(mCameraToScreenDist);
@@ -119,9 +121,9 @@ double Scene::intersectionsTree(double x, double y, Point& intersection, Node* t
 	//look in Nodes
 	for (auto& leaf : leafs) {
 		for (auto& triangle : leaf->triangles()) {
-			double h_px = triangleIntersection(triangle, ray, intersectPoint);
+			Color h_px = triangleIntersection(triangle, ray, intersectPoint);
 			dist = intersectPoint.distanceTo(mCamera);
-			if (h_px != -2 && minDist > dist) {
+			if (h_px.a() != -2 && minDist > dist) {
 				px = h_px;
 				minDist = dist;
 				intersection = intersectPoint;
@@ -130,24 +132,24 @@ double Scene::intersectionsTree(double x, double y, Point& intersection, Node* t
 	}
 	// for not only triangles render
 	for (auto& plane : mPlanes) {
-		double h_px = planeIntersection(plane, ray, intersectPoint);
+		Color  h_px = planeIntersection(plane, ray, intersectPoint);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			intersection = intersectPoint;
 		}
 	}
 	for (auto& sphere : mSpheres) {
-		double h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
+		Color h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			intersection = intersectPoint;
 		}
 	}
-	if (px != -2 && shadowTree(intersection, mLight, tree)) px = std::min(0.0, px);
+	if (px.a() != -2 && shadowTree(intersection, mLight, tree)) px = Color(std::min(0, px.r()), std::min(0, px.g()), std::min(0, px.b()), std::min(0, px.a()));
 	return px;
 }
 
@@ -160,33 +162,34 @@ bool Scene::shadowTree(Point start, Vector lightDir, Node* tree) {
 	//look in Nodes
 	for (auto& leaf : leafs) {
 		for (auto& triangle : leaf->triangles()) {
-			double h_px = triangleIntersection(triangle, ray, intersectPoint);
-			if (!intersectPoint.isEqual(start) && h_px != -2) return true;
+			Color h_px = triangleIntersection(triangle, ray, intersectPoint);
+			if (!intersectPoint.isEqual(start) && h_px.a() != -2) return true;
 		}
 	}
 	// for not only triangles render
 	for (auto & sphere : mSpheres) {
-		double h_px = sphereIntersection(sphere, ray, intersectPoint, start);
+		Color h_px = sphereIntersection(sphere, ray, intersectPoint, start);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px != -2) {
+			h_px.a() != -2) {
 			return true;
 		}
 	}
 	for (auto& plane : mPlanes) {
-		double h_px = planeIntersection(plane, ray, intersectPoint);
+		Color h_px = planeIntersection(plane, ray, intersectPoint);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px != -2) {
+			h_px.a() != -2) {
 			return true;
 		}
 	}
 	return false;
 }
 
-double Scene::intersections(double x, double y, Point &intersection) {
+Color Scene::intersections(double x, double y, Point &intersection) {
 	Point intersectPoint;
-	double px = -2, dist;
+	Color px(-2,-2,-2,-2);
+	double dist;
 	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
 											  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5, 0);
 	screenTopLeft.setZ(mCameraToScreenDist);
@@ -196,33 +199,33 @@ double Scene::intersections(double x, double y, Point &intersection) {
 	Ray ray(mCamera, dir);
 	double minDist = 999999;
 	for (auto &sphere : mSpheres) {
-		double h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
+		Color h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			intersection = intersectPoint;
 		}
 	}
 	for (auto &plane : mPlanes) {
-		double h_px = planeIntersection(plane, ray, intersectPoint);
+		Color h_px = planeIntersection(plane, ray, intersectPoint);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			intersection = intersectPoint;
 		}
 	}
 	for (auto &triangle : mTriangles) {
-		double h_px = triangleIntersection(triangle, ray, intersectPoint);
+		Color h_px = triangleIntersection(triangle, ray, intersectPoint);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (h_px != -2 && minDist > dist) {
+		if (h_px.a() != -2 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			intersection = intersectPoint;
 		}
 	}
-	if (px != -2 && shadow(intersection, mLight)) px = std::min(0.0, px);
+	if (px.a() != -2 && shadow(intersection, mLight)) px = Color(std::min(0, px.r()), std::min(0, px.g()), std::min(0, px.b()), std::min(0, px.a()));
 	return px;
 }
 
@@ -230,24 +233,24 @@ bool Scene::shadow(Point start, Vector lightDir) {
 	Point intersectPoint;
 	Ray ray = Ray(start, lightDir);
 	for (auto &sphere : mSpheres) {
-		double h_px = sphereIntersection(sphere, ray, intersectPoint, start);
+		Color h_px = sphereIntersection(sphere, ray, intersectPoint, start);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px != -2) {
+			h_px.a() != -2) {
 			return true;
 		}
 	}
 	for (auto &plane : mPlanes) {
-		double h_px = planeIntersection(plane, ray, intersectPoint);
+		Color h_px = planeIntersection(plane, ray, intersectPoint);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px != -2) {
+			h_px.a() != -2) {
 			return true;
 		}
 	}
 	for (auto &triangle : mTriangles) {
-		double h_px = triangleIntersection(triangle, ray, intersectPoint);
-		if (!intersectPoint.isEqual(start) && h_px != -2) return true;
+		Color h_px = triangleIntersection(triangle, ray, intersectPoint);
+		if (!intersectPoint.isEqual(start) && h_px.a() != -2) return true;
 	}
 	return false;
 }
@@ -258,12 +261,12 @@ bool Scene::isForward(Point &intersectPoint, Ray ray, Point camera) {
 	return Vector::dotProduct(intersectDir, ray.direction()) > 0;
 }
 
-double Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start) {
+Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start) {
 	Sphere::Intersections ans = sphere.isRayIntersection(ray);
 	Point first, sec;
 	bool firstIsForward, secondIsForward;
 	switch (ans) {
-		case Sphere::NoIntersection: return -2;
+		case Sphere::NoIntersection: return Color(-2,-2,-2,-2);
 		case Sphere::OnePointIntersection: {
 			intersectPoint = sphere.getOnePointRayIntersection(ray);
 			break;
@@ -274,7 +277,7 @@ double Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, 
 			firstIsForward = isForward(first, ray, start);
 			secondIsForward = isForward(sec, ray, start);
 			if (!firstIsForward) {
-				if (!secondIsForward) return -2;
+				if (!secondIsForward) return Color(-2,-2,-2,-2);
 				intersectPoint = sec;
 			} else {
 				if (!secondIsForward) intersectPoint = first;
@@ -286,33 +289,34 @@ double Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, 
 			}
 			break;
 		}
-		default: return -2;
+		default: return Color(-2,-2,-2,-2);
 	}
 	Vector norm = Vector(sphere.center(), intersectPoint);
 	norm.normalize();
-	return Vector::dotProduct(norm, mLight);
+	return Color::white() * Vector::dotProduct(norm, mLight);
 }
 
-double Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint) {
-	double px = -2;
+Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint) {
+	Color px(-2,-2,-2,-2);
 	if (plane.getRayIntersection(ray, intersectPoint)) {
 		Vector norm = plane.getNormal();
 		norm.normalize();
 		if (!isFaced(norm, ray.direction())) norm = norm * -1;
-		px = Vector::dotProduct(norm, mLight);
+		px = Color::white() * Vector::dotProduct(norm, mLight);
 	}
 	return px;
 }
 
-double Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint) {
-	double px = -2;
+Color Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint) {
+	Color px(-2,-2,-2,-2);
 	if (triangle.getRayIntersection(ray, intersectPoint)) {
 		Vector v0v1 = Vector(triangle.v0(), triangle.v1());
 		Vector v0v2 = Vector(triangle.v0(), triangle.v2());
 		Vector norm = Vector::crossProduct(v0v1, v0v2);
 		norm.normalize();
 		if (!isFaced(norm, ray.direction())) norm = norm * -1;
-		px = Vector::dotProduct(norm, mLight);
+		std::cout << Vector::dotProduct(norm, mLight)<<" | "<<(Color::white() * Vector::dotProduct(norm, mLight)).r() << " \n ";
+		px = Color::white() * Vector::dotProduct(norm, mLight);
 	}
 	return px;
 }

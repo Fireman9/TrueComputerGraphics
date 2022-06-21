@@ -38,9 +38,9 @@ public:
 
 	void showRenderToConsole();
 
-	double intersections(double x, double y, Point &intersection);
+	Color intersections(double x, double y, Point &intersection);
 
-	double intersectionsTree(double x, double y, Point& intersection, Node* tree);
+	Color intersectionsTree(double x, double y, Point& intersection, Node* tree);
 
 	void setScreen(Screen screen);
 
@@ -85,25 +85,25 @@ private:
 	vector<Triangle> mTriangles;
 	Node* tree;
 
-	double sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start);
+	Color sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start);
 
-	double planeIntersection(Plane plane, Ray ray, Point &intersectPoint);
+	Color planeIntersection(Plane plane, Ray ray, Point &intersectPoint);
 
-	double triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint);
+	Color triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint);
 
 	static bool isFaced(Vector normal, Vector direction);
 
 	bool static isForward(Point &intersectPoint, Ray ray, Point camera);
 
-	static char getSymbol(double x);
+	static char getSymbol(Color x);
 
 	bool shadow(Point start, Vector lightDir);
 
 	bool shadowTree(Point start, Vector lightDir, Node* tree);
 
-	void renderSceneRange(int yFrom, int yTo, vector<vector<double>> &pixels);
+	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels);
 
-	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<double>> &pixels);
+	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixels);
 };
 
 #endif //SCENE_H

@@ -21,18 +21,11 @@ void PPMWriter::convert() {
 	for (int i = 0; i < mPixels.size(); ++i) {
 		for (int j = 0; j < mPixels[i].size(); ++j) {
 			Vector white(255, 255, 255);
-			if (mPixels[i][j] == -2) {
+			if (mPixels[i][j].a() == -2) {
 				mOutput[i][j] = {0, 0, 0};
 			} else {
-				if (mPixels[i][j] > 0) {
-					mOutput[i][j] = {
-						floor((white * mPixels[i][j]).x()),
-						floor((white * mPixels[i][j]).y()),
-						floor((white * mPixels[i][j]).z())
-					};
-				} else {
-					mOutput[i][j] = {0, 0, 0};
-				}
+				mPixels[i][j].normalize();
+				mOutput[i][j] = {(double)mPixels[i][j].r(), (double)mPixels[i][j].g(), (double)mPixels[i][j].b()};
 			}
 		}
 	}
@@ -57,6 +50,6 @@ void PPMWriter::setFilepath(string filepath) {
 	this->mFilepath = filepath;
 }
 
-void PPMWriter::setPixels(vector<vector<double>> pixels) {
+void PPMWriter::setPixels(vector<vector<Color>> pixels) {
 	this->mPixels = std::move(pixels);
 }
