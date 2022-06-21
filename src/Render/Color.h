@@ -1,6 +1,6 @@
 #ifndef COLOR_H
 #define COLOR_H
-#include <math.h> 
+#include <algorithm>
 
 class Color {
 public:

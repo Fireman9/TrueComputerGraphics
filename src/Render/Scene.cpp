@@ -315,7 +315,6 @@ Color Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPo
 		Vector norm = Vector::crossProduct(v0v1, v0v2);
 		norm.normalize();
 		if (!isFaced(norm, ray.direction())) norm = norm * -1;
-		std::cout << Vector::dotProduct(norm, mLight)<<" | "<<(Color::white() * Vector::dotProduct(norm, mLight)).r() << " \n ";
 		px = Color::white() * Vector::dotProduct(norm, mLight);
 	}
 	return px;

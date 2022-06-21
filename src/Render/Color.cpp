@@ -1,5 +1,4 @@
 #include "Color.h"
-#include <iostream>
 
 Color::Color():Color(255,255,255,255) {}
 Color::Color(int rW, int gW, int bW, int aW) {
@@ -9,10 +8,13 @@ Color::Color(int rW, int gW, int bW, int aW) {
 	setAlpha(aW);
 }
 Color::Color(double rW, double gW, double bW, double aW) {
-	setRed(rW);
-	setGreen(gW);
-	setBlue(bW);
-	setAlpha(aW);
+	double minimum = std::min({ rW,gW,bW,aW });
+	double maximum = std::max({ rW,gW,bW,aW });
+	double scale = 255.0/(maximum - minimum);
+	setRed((int)(minimum - rW) * scale);
+	setGreen((int)(minimum - gW) * scale);
+	setBlue((int)(minimum - bW) * scale);
+	setAlpha((int)(minimum - aW) * scale);
 }
 
 Color Color::white() { return Color(); }
