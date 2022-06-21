@@ -16,6 +16,9 @@
 #include "../Geometry/Shapes/Triangle.h"
 #include "../File/PPMWriter.h"
 #include "../Tree/Node.h"
+#include "Lights/Light.h"
+#include "Lights/DotLight.h"
+#include "Lights/DirectLight.h"
 
 using std::vector;
 using std::cout;
@@ -28,7 +31,7 @@ public:
 
 	Scene(Screen screen);
 
-	Scene(Screen screen, Vector light, Point camera, double cameraToScreenDist);
+	Scene(Screen screen, vector<Light*> light, Point camera, double cameraToScreenDist);
 
 	void renderScene();
 
@@ -38,13 +41,13 @@ public:
 
 	void showRenderToConsole();
 
-	double intersections(double x, double y, Point &intersection);
+	Color intersections(double x, double y, Point &intersection);
 
-	double intersectionsTree(double x, double y, Point& intersection, Node* tree);
+	Color intersectionsTree(double x, double y, Point& intersection, Node* tree);
 
 	void setScreen(Screen screen);
 
-	void setLight(Vector light);
+	void setLight(vector<Light*> light);
 
 	double getCameraToScreenDist();
 
@@ -78,32 +81,36 @@ private:
 
 	double mCameraToScreenDist;
 	Point mCamera;
-	Vector mLight;
+	vector<Light*> mLight;
 	Screen mScreen;
 	vector<Plane> mPlanes;
 	vector<Sphere> mSpheres;
 	vector<Triangle> mTriangles;
 	Node* tree;
 
-	double sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start);
+	Color sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start, Vector& normal);
 
-	double planeIntersection(Plane plane, Ray ray, Point &intersectPoint);
+	Color planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vector& normal);
 
-	double triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint);
+	Color triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint, Vector& normal);
 
 	static bool isFaced(Vector normal, Vector direction);
 
 	bool static isForward(Point &intersectPoint, Ray ray, Point camera);
 
-	static char getSymbol(double x);
+	static char getSymbol(Color x);
 
-	bool shadow(Point start, Vector lightDir);
+	bool shadow(Point start, vector<Light*> lightDir, Color &c, Color startColor, Vector norm);
 
-	bool shadowTree(Point start, Vector lightDir, Node* tree);
+	bool shadowTree(Point start, vector<Light*> lightDir, Node *tree, Color& c, Color startColor, Vector norm);
 
-	void renderSceneRange(int yFrom, int yTo, vector<vector<double>> &pixels);
+	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels);
 
-	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<double>> &pixels);
+	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixels);
+
+	Color firstIntersection(Point start, Light* l, Color startColor, Vector norm);
+
+	Color firstIntersectionTree(Point start, Light* l, Color startColor, Vector norm, Node* tree);
 };
 
 #endif //SCENE_H

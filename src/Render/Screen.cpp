@@ -15,7 +15,7 @@ void Screen::setSize(int width, int height) {
 
 void Screen::setCoordPerPixel(double x) { mCoordPerPixel = x; }
 
-void Screen::setPixels(vector<vector<double>> pixels) { mPixels = std::move(pixels); }
+void Screen::setPixels(vector<vector<Color>> pixels) { mPixels = std::move(pixels); }
 
 int Screen::getWidth() { return mWidth; }
 
@@ -23,4 +23,4 @@ int Screen::getHeight() { return mHeight; }
 
 double Screen::getCoordPerPixel() { return mCoordPerPixel; }
 
-vector<vector<double>> Screen::getPixels() { return mPixels; }
+vector<vector<Color>> Screen::getPixels() { return mPixels; }

@@ -5,12 +5,13 @@
 #include <vector>
 #include <string>
 #include <time.h>
+#include <stdlib.h>
 #include "../File/PPMWriter.h"
 #include "../File/OBJReader.h"
 #include "../Geometry/Shapes/Triangle.h"
 #include "../Render/Scene.h"
 #include "../Render/Screen.h"
-#include"../Geometry/Point.h"
+#include "../Geometry/Point.h"
 #include "../Tree/Node.h"
 
 using std::vector;

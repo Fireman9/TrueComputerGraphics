@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "../Geometry/Vector.h"
+#include "../Render/Color.h"
 
 using std::vector;
 using std::string;
@@ -25,11 +26,11 @@ public:
 
 	void setFilepath(string filepath);
 
-	void setPixels(vector<vector<double>> pixels);
+	void setPixels(vector<vector<Color>> pixels);
 
 private:
 	string mFilepath;
-	vector<vector<double>> mPixels;
+	vector<vector<Color>> mPixels;
 	vector<vector<Vector>> mOutput;
 };
 
