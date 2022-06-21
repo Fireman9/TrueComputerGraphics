@@ -27,9 +27,11 @@ public:
 	void setGreen(double gW);
 	void setBlue(double bW);
 	void setAlpha(double aW);
+	void setAll(int rW, int gW, int bW, int aW);
 
 	Color operator* (double x) const;
 	Color operator+ (Color c) const;
+	Color operator- (Color c) const;
 	void normalize();
 
 private:

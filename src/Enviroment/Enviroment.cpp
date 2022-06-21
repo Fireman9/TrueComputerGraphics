@@ -42,7 +42,7 @@ Scene Enviroment::prepare() {
 	OBJReader objReader = readTriangles();
 
 	Screen screen(width(), height());
-	Scene scene(screen, Vector(0, -5, -20), Point(0, 0, -5), 250);
+	Scene scene(screen, { DotLight(Color(255,255,13,255))}, Point(0, 0, -5), 250);
 
 	//Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
 	Matrix4x4 matrix = Matrix4x4::rotateX(-4.0) * Matrix4x4::rotateY(-1.235) * Matrix4x4::transpose(0, 0.3, 0);

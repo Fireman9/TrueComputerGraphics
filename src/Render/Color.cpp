@@ -36,12 +36,21 @@ void Color::setRed(double rW) { rW = 255 * rW; this->redW = (rW < 0) ? 0 : (rW >
 void Color::setGreen(double gW) { gW = 255 * gW; this->greenW = (gW < 0) ? 0 : (gW > 255) ? 255 : gW; }
 void Color::setBlue(double bW) { bW = 255 * bW; this->blueW = (bW < 0) ? 0 : (bW > 255) ? 255 : bW; }
 void Color::setAlpha(double aW) { aW = 255 * aW; this->alphaW = (aW < 0) ? 0 : (aW > 255) ? 255 : aW; }
+void Color::setAll(int rW, int gW, int bW, int aW) {
+	setAlpha(aW);
+	setRed(rW);
+	setGreen(gW);
+	setBlue(bW);
+}
 
 Color Color::operator* (double x) const { 
 	return { (int)(r()*x),(int)(g() * x),(int)(b() * x),(int)(a() * x)};
 }
 Color Color::operator+ (Color c) const {
 	return { r() + c.r(), g() + c.g(), b() + c.b(),a() + c.a() };
+}
+Color Color::operator- (Color c) const {
+	return { r() - c.r(), g() - c.g(), b() - c.b(),a() - c.a() };
 }
 void Color::normalize() {
 	setRed(r()<0 ? 0 : r()>255 ? 255 : r());
