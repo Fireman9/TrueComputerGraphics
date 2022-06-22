@@ -16,6 +16,6 @@ DirectLight::DirectLight(Vector p, Color c, double i) {
 void DirectLight::setDirection(Vector p) { p.normalize(); this->directionV = p; }
 Vector DirectLight::direction() { return this->directionV; }
 
-Vector DirectLight::getDir(Point dot) {
+const Vector DirectLight::getDir(Point dot) {
 	return direction();
 }

@@ -7,15 +7,6 @@ Color::Color(int rW, int gW, int bW, int aW) {
 	setBlue(bW);
 	setAlpha(aW);
 }
-Color::Color(double rW, double gW, double bW, double aW) {
-	double minimum = std::min({ rW,gW,bW,aW });
-	double maximum = std::max({ rW,gW,bW,aW });
-	double scale = 255.0/(maximum - minimum);
-	setRed((int)(minimum - rW) * scale);
-	setGreen((int)(minimum - gW) * scale);
-	setBlue((int)(minimum - bW) * scale);
-	setAlpha((int)(minimum - aW) * scale);
-}
 
 Color Color::white() { return Color(); }
 Color Color::black() { return Color(0,0,0,255); }
@@ -32,10 +23,6 @@ void Color::setRed(int rW) { this->redW = rW; }
 void Color::setGreen(int gW) { this->greenW = gW; }
 void Color::setBlue(int bW) { this->blueW = bW; }
 void Color::setAlpha(int aW) { this->alphaW = aW; }
-void Color::setRed(double rW) { rW = 255 * rW; this->redW = (rW < 0) ? 0 : (rW > 255) ? 255 : rW; }
-void Color::setGreen(double gW) { gW = 255 * gW; this->greenW = (gW < 0) ? 0 : (gW > 255) ? 255 : gW; }
-void Color::setBlue(double bW) { bW = 255 * bW; this->blueW = (bW < 0) ? 0 : (bW > 255) ? 255 : bW; }
-void Color::setAlpha(double aW) { aW = 255 * aW; this->alphaW = (aW < 0) ? 0 : (aW > 255) ? 255 : aW; }
 void Color::setAll(int rW, int gW, int bW, int aW) {
 	setAlpha(aW);
 	setRed(rW);

@@ -1,5 +1,4 @@
 #include "Light.h"
-#include <iostream>
 
 Light::Light(): Light(Color::white(), 1) {}
 Light::Light(Color c): Light(c, 1) {}
@@ -18,7 +17,7 @@ Color Light::apply(Color startColor, Vector normal, Point dot) {
 	int b = startColor.b() * (color().b() / 255.0) * intensity() * Vector::dotProduct(normal, getDir(dot));
 	return { r,g,b,startColor.a() };
 }
-Vector Light::getDir(Point d) { 
+const Vector Light::getDir(Point d) { 
 	double x = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
 	double y = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
 	double z = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));

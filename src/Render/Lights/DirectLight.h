@@ -17,7 +17,7 @@ public:
 	void setDirection(Vector p);
 	Vector direction();
 
-	Vector getDir(Point dot) override;
+	virtual const Vector getDir(Point dot);
 
 private:
 	Vector directionV;

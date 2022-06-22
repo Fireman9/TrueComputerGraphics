@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <iostream>
 
 #include "../Color.h"
 #include "../../Geometry/Vector.h"
@@ -20,7 +21,7 @@ public:
 
 	Color color();
 	double intensity();
-	virtual Vector getDir(Point dot);
+	virtual const Vector getDir(Point dot);
 
 	Color apply(Color startColor, Vector normal, Point dot);
 private:

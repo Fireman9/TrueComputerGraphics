@@ -21,7 +21,7 @@ void PPMWriter::convert() {
 	for (int i = 0; i < mPixels.size(); ++i) {
 		for (int j = 0; j < mPixels[i].size(); ++j) {
 			Vector white(255, 255, 255);
-			if (mPixels[i][j].a() == -2) {
+			if (mPixels[i][j].a() == -300) {
 				mOutput[i][j] = {0, 0, 0};
 			} else {
 				mPixels[i][j].normalize();
