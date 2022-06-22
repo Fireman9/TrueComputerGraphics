@@ -13,9 +13,14 @@ public:
 		TwoPointIntersection
 	};
 
-	Sphere(double radius, Point center);
+	enum Material {
+		Mirror,
+		Lambert
+	};
 
-	Sphere(double radius, double x, double y, double z);
+	Sphere(double radius, Point center, Material material = Lambert);
+
+	Sphere(double radius, double x, double y, double z, Material material = Lambert);
 
 	void getIntersectionVars(double &a, double &b, double &c, double &delta, Ray ray) const;
 
@@ -33,10 +38,12 @@ public:
 
 	void setCenter(Point center);
 
+	Material material();
+
 private:
 	double mRadius;
 	Point mCenter;
-
+	Material mMaterial;
 };
 
 #endif //TRUECOMPUTERGRAPHICS_GEOMETRY_SPHERE_H_

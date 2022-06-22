@@ -6,6 +6,7 @@
 #include <thread>
 #include <algorithm>
 #include <functional>
+#include <memory>
 
 #include "Screen.h"
 #include "../Geometry/Vector.h"

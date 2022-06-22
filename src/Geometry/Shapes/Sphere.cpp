@@ -2,9 +2,11 @@
 #include <exception>
 #include "Sphere.h"
 
-Sphere::Sphere(double radius, Point center) : mRadius(radius), mCenter(center) {}
+Sphere::Sphere(double radius, Point center, Material material)
+	: mRadius(radius), mCenter(center), mMaterial(material) {}
 
-Sphere::Sphere(double radius, double x, double y, double z) : mRadius(radius), mCenter(Point(x, y, z)) {}
+Sphere::Sphere(double radius, double x, double y, double z, Material material)
+	: mRadius(radius), mCenter(Point(x, y, z)), mMaterial(material) {}
 
 void Sphere::getIntersectionVars(double &a, double &b, double &c, double &delta, Ray ray) const {
 	a = pow(ray.direction().x(), 2) +

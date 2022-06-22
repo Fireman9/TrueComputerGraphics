@@ -351,10 +351,22 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 	normal = Vector(sphere.center(), intersectPoint);
 	normal.normalize();
 	Color pxl(0,0,0,0);
-	for (auto& l : mLight) {
-		Color tmp = l->apply(Color::white(), normal, intersectPoint);
-		tmp.normalize();
-		pxl = pxl + tmp;
+	switch (sphere.material()) {
+		case Sphere::Mirror: {
+
+			break;
+		}
+		default: {
+			for (auto& l : mLight) {
+//				Color tmp = l->apply(Color::white(), normal, intersectPoint);
+				int r = (int) (Color::white().r() * (l->color().r() / 255.0) * l->intensity() * Vector::dotProduct(normal, l->getDirInner(intersectPoint)) * -1);
+				int g = (int) (Color::white().g() * (l->color().g() / 255.0) * l->intensity() * Vector::dotProduct(normal, l->getDirInner(intersectPoint)) * -1);
+				int b = (int) (Color::white().b() * (l->color().b() / 255.0) * l->intensity() * Vector::dotProduct(normal, l->getDirInner(intersectPoint)) * -1);
+				Color tmp(r,g,b,Color::white().a());
+				tmp.normalize();
+				pxl = pxl + tmp;
+			}
+		}
 	}
 	//pxl.normalize();
 	return pxl;
