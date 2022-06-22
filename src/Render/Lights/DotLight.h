@@ -17,7 +17,9 @@ public:
 	void setPosition(Point p);
 	Point position();
 
-	Vector getDir(Point dot) override;
+	virtual const Vector getDir(Point dot);
+	virtual const Vector getDirInner(Point dot);
+	virtual const bool isApropriate(Point dot, Point start);
 private:
 	Point positionL;
 };

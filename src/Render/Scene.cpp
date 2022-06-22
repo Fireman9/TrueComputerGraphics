@@ -95,7 +95,7 @@ void Scene::showRenderToConsole() {
 char Scene::getSymbol(Color c) {
 	//if we want colored background
 	int x = (c.r() + c.g() + c.b())/3;
-	if (x == -2) return '.';
+	if (x == -300) return '.';
 	else if (x <= 0) return ' ';
 	else if (x < 0.2 * 255) return '-';
 	else if (x < 0.5 * 255) return '*';
@@ -105,7 +105,7 @@ char Scene::getSymbol(Color c) {
 
 Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tree) {
 	Point intersectPoint;
-	Color px(-2,-2,-2,-2);
+	Color px(-300,-300,-300,-300);
 	double dist;
 	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
 		mScreen.getHeight() * mScreen.getCoordPerPixel()  * 0.5, 0);
@@ -125,7 +125,7 @@ Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tr
 		for (auto& triangle : leaf->triangles()) {
 			Color h_px = triangleIntersection(triangle, ray, intersectPoint,norm);
 			dist = intersectPoint.distanceTo(mCamera);
-			if (h_px.a() != -2 && minDist > dist) {
+			if (h_px.a() > -256 && minDist > dist) {
 				px = h_px;
 				minDist = dist;
 				normal = norm;
@@ -137,7 +137,7 @@ Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tr
 	for (auto& plane : mPlanes) {
 		Color  h_px = planeIntersection(plane, ray, intersectPoint,norm);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			normal = norm;
@@ -147,7 +147,7 @@ Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tr
 	for (auto& sphere : mSpheres) {
 		Color h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera, norm);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			normal = norm;
@@ -156,7 +156,7 @@ Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tr
 	}
 	Color tmp(0, 0, 0, 0);
 	bool isShadow = shadowTree(intersection, mLight,tree, tmp, Color::white(), normal);
-	if (px.a() != -2 && isShadow) px = px - tmp;
+	if (px.a() > -256 && isShadow) { px = px - tmp; px.normalize(); }
 	return px;
 }
 
@@ -165,25 +165,26 @@ bool Scene::shadowTree(Point start, vector<Light*> lightDir, Node* tree, Color& 
 	bool isShadow = false;
 	for (auto& l : lightDir) {
 		Color c = firstIntersectionTree(start, l, startColor, norm, tree);
-		if (c.a() != -1) {
-			col = col + firstIntersectionTree(start, l, startColor, norm, tree);
+		if (c.a() > -256) {
+			col = col + c;
 			isShadow = true;
 		}
 	}
 	c = col;
+	c.normalize();
 	return isShadow;
 }
 
 Color Scene::firstIntersectionTree(Point start, Light* l, Color startColor, Vector norm,Node* tree) {
 	Ray ray = Ray(start, l->getDir(start));
 	Point intersectPoint;
-	Color col(-2, -2, -2, -2);
+	Color col(-300, -300, -300, -300);
 	Vector normal;
 	for (auto& sphere : mSpheres) {
 		Color h_px = sphereIntersection(sphere, ray, intersectPoint, start, normal);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px.a() != -2) {
+			h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 			col = l->apply(startColor, norm, start);
 			return col;
 		}
@@ -192,7 +193,7 @@ Color Scene::firstIntersectionTree(Point start, Light* l, Color startColor, Vect
 		Color h_px = planeIntersection(plane, ray, intersectPoint, normal);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px.a() != -2) {
+			h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 			col = l->apply(startColor, norm, start);
 			return col;
 		}
@@ -204,7 +205,7 @@ Color Scene::firstIntersectionTree(Point start, Light* l, Color startColor, Vect
 	for (auto& leaf : leafs) {
 		for (auto& triangle : leaf->triangles()) {
 			Color h_px = triangleIntersection(triangle, ray, intersectPoint, normal);
-			if (!intersectPoint.isEqual(start) && h_px.a() != -2) {
+			if (!intersectPoint.isEqual(start) && h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 				col = l->apply(startColor, norm, start);
 				return col;
 			}
@@ -215,7 +216,7 @@ Color Scene::firstIntersectionTree(Point start, Light* l, Color startColor, Vect
 
 Color Scene::intersections(double x, double y, Point &intersection) {
 	Point intersectPoint;
-	Color px(-2,-2,-2,-2);
+	Color px(-300,-300,-300,-300);
 	double dist;
 	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
 											  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5, 0);
@@ -230,7 +231,7 @@ Color Scene::intersections(double x, double y, Point &intersection) {
 	for (auto &sphere : mSpheres) {
 		Color h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera, norm);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			normal = norm;
@@ -240,7 +241,7 @@ Color Scene::intersections(double x, double y, Point &intersection) {
 	for (auto &plane : mPlanes) {
 		Color h_px = planeIntersection(plane, ray, intersectPoint, norm);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() != -2 && minDist > dist) {
+		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			normal = norm;
@@ -250,7 +251,7 @@ Color Scene::intersections(double x, double y, Point &intersection) {
 	for (auto &triangle : mTriangles) {
 		Color h_px = triangleIntersection(triangle, ray, intersectPoint,norm);
 		dist = intersectPoint.distanceTo(mCamera);
-		if (h_px.a() != -2 && minDist > dist) {
+		if (h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
 			normal = norm;
@@ -259,7 +260,7 @@ Color Scene::intersections(double x, double y, Point &intersection) {
 	}
 	Color tmp(0,0,0,0);
 	bool isShadow = shadow(intersection, mLight, tmp, Color::white(), normal);
-	if (px.a() != -2 && isShadow) px = px - tmp;
+	if (px.a() > -256 && isShadow) { px = px - tmp; px.normalize(); }
 	return px;
 }
 
@@ -268,25 +269,26 @@ bool Scene::shadow(Point start, vector<Light*> lightDir, Color& c, Color startCo
 	bool isShadow = false;
 	for (auto& l : lightDir) {
 		Color c = firstIntersection(start, l, startColor, norm);
-		if (c.a() != -1) {
-			col = col + firstIntersection(start, l, startColor, norm);
+		if (c.a() > -256) {
+			col = col + c;
 			isShadow = true;
 		}
 	}
 	c = col;
+	c.normalize();
 	return isShadow;
 }
 
 Color Scene::firstIntersection(Point start, Light* l, Color startColor, Vector norm) {
 	Ray ray = Ray(start, l->getDir(start));
 	Point intersectPoint;
-	Color col(-2, -2, -2, -2);
+	Color col(-300, -300, -300, -300);
 	Vector normal;
 	for (auto& sphere : mSpheres) {
 		Color h_px = sphereIntersection(sphere, ray, intersectPoint, start, normal);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px.a() != -2) {
+			h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 			col = l->apply(startColor, norm, start);
 			return col;
 		}
@@ -295,14 +297,14 @@ Color Scene::firstIntersection(Point start, Light* l, Color startColor, Vector n
 		Color h_px = planeIntersection(plane, ray, intersectPoint, normal);
 		if (!intersectPoint.isEqual(start) &&
 			Scene::isForward(intersectPoint, ray, start) &&
-			h_px.a() != -2) {
+			h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 			col = l->apply(startColor, norm, start);
 			return col;
 		}
 	}
 	for (auto& triangle : mTriangles) {
 		Color h_px = triangleIntersection(triangle, ray, intersectPoint, normal);
-		if (!intersectPoint.isEqual(start) && h_px.a() != -2) { 
+		if (!intersectPoint.isEqual(start) && h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 			col = l->apply(startColor, norm, start);
 			return col; 
 		}
@@ -321,7 +323,7 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 	Point first, sec;
 	bool firstIsForward, secondIsForward;
 	switch (ans) {
-		case Sphere::NoIntersection: return Color(-2,-2,-2,-2);
+		case Sphere::NoIntersection: return Color(-300,-300,-300,-300);
 		case Sphere::OnePointIntersection: {
 			intersectPoint = sphere.getOnePointRayIntersection(ray);
 			break;
@@ -332,7 +334,7 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 			firstIsForward = isForward(first, ray, start);
 			secondIsForward = isForward(sec, ray, start);
 			if (!firstIsForward) {
-				if (!secondIsForward) return Color(-2,-2,-2,-2);
+				if (!secondIsForward) return Color(-300,-300,-300,-300);
 				intersectPoint = sec;
 			} else {
 				if (!secondIsForward) intersectPoint = first;
@@ -344,13 +346,15 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 			}
 			break;
 		}
-		default: return Color(-2,-2,-2,-2);
+		default: return Color(-300,-300,-300,-300);
 	}
 	normal = Vector(sphere.center(), intersectPoint);
 	normal.normalize();
 	Color pxl(0,0,0,0);
 	for (auto& l : mLight) {
-		pxl = pxl + l->apply(Color::white(), normal, intersectPoint);
+		Color tmp = l->apply(Color::white(), normal, intersectPoint);
+		tmp.normalize();
+		pxl = pxl + tmp;
 	}
 	pxl.normalize();
 	return pxl;
@@ -358,14 +362,16 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 }
 
 Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vector& normal) {
-	Color px(-2,-2,-2,-2);
+	Color px(-300,-300,-300,-300);
 	if (plane.getRayIntersection(ray, intersectPoint)) {
 		normal = plane.getNormal();
 		normal.normalize();
 		if (!isFaced(normal, ray.direction())) normal = normal * -1;
 		Color pxl(0, 0, 0, 0);
 		for (auto& l : mLight) {
-			pxl = pxl + l->apply(Color::white(), normal, intersectPoint);
+			Color tmp = l->apply(Color::white(), normal, intersectPoint);
+			tmp.normalize();
+			pxl = pxl + tmp;
 		}
 		pxl.normalize();
 		px = pxl;
@@ -374,7 +380,7 @@ Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vect
 }
 
 Color Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint, Vector& normal) {
-	Color px(-2,-2,-2,-2);
+	Color px(-300, -300, -300, -300);
 	if (triangle.getRayIntersection(ray, intersectPoint)) {
 		Vector v0v1 = Vector(triangle.v0(), triangle.v1());
 		Vector v0v2 = Vector(triangle.v0(), triangle.v2());
@@ -383,7 +389,9 @@ Color Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPo
 		if (!isFaced(normal, ray.direction())) normal = normal * -1;
 		Color pxl(0, 0, 0, 0);
 		for (auto& l : mLight) {
-			pxl = pxl + l->apply(Color::white(), normal, intersectPoint);
+			Color tmp = l->apply(Color::white(), normal, intersectPoint);
+			tmp.normalize();
+			pxl = pxl + tmp;
 		}
 		pxl.normalize();
 		px = pxl;

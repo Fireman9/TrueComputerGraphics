@@ -16,7 +16,16 @@ DotLight::DotLight(Point p, Color c, double i) {
 void DotLight::setPosition(Point p) { this->positionL = p; }
 Point DotLight::position() { return this->positionL; }
 
-Vector DotLight::getDir(Point dot) { 
+const Vector DotLight::getDir(Point dot) {
+	Vector v = Vector(dot, position());
+	v.normalize();
+	return v;
+}
+const Vector DotLight::getDirInner(Point dot) {
 	Vector v = Vector(position(), dot);
 	v.normalize();
-	return v; }
+	return v;
+}
+const bool DotLight::isApropriate(Point dot, Point start) {
+	return start.distanceTo(dot) < start.distanceTo(position());
+}

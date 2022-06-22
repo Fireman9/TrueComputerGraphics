@@ -38,26 +38,38 @@ vector<Triangle> Enviroment::transformTriangles(Matrix4x4 matrix, OBJReader objR
 }
 
 Scene Enviroment::prepare() {
-	
-	OBJReader objReader = readTriangles();
+
+	//  OBJReader objReader = readTriangles();
 
 	Screen screen(width(), height());
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color::red()),new DotLight(Point(-2,-2,2),Color::green()), new DotLight(Point(0,3,0), Color::blue())};
 	//vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color(255,0,255,255), 0.7) };
-	vector<Light*> light = { new DirectLight(Vector(2, -4, -3),Color::red(), 0.7),
-	new DotLight(Point(-2,-2,2),Color::green()), new DotLight(Point(0,3,0), Color::blue()),
-	new Light(Color(255,0,255,255), 0.03)};
-	Scene scene(screen, light, Point(0, 0, -2), 250);
+
+	DirectLight l1 = DirectLight(Vector(2, -4, -3), Color::white(), 0.7);
+	DotLight l2 = DotLight(Point(-2, -2, 2), Color::white());
+	DotLight l3 = DotLight(Point(0, 3, 0), Color::white());
+	Light l4 = Light(Color(255, 0, 255, 255), 0.03);
+	vector<Light*> light = { new DotLight(Point(0, -10, 0), Color::white())};
+	//vector<Light*> light = { new DirectLight(Vector(0, 3, 0), Color::white())};
+	Scene scene(screen, light, Point(0, 0, -10), 100);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
-	Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
+  //  Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
 	//Matrix4x4 matrix = Matrix4x4::rotateX(-4.0) * Matrix4x4::rotateY(-1.235) * Matrix4x4::transpose(0, 0.3, 0);
 	//Matrix4x4 matrix = Matrix4x4::rotateX(0) * Matrix4x4::rotateY(0);
 
-	triangles = transformTriangles(matrix, objReader, Point(0,0,0));
+  //  triangles = transformTriangles(matrix, objReader, Point(0,0,0));
 
-	scene.setTriangles(triangles);
+  //  scene.setTriangles(triangles);
+	Vector v = Vector(0, 1, 0);
+	v.normalize();
+	Plane plane(v, -1);
+	Sphere sphere1(1, { 0, 0, 0 });
+	Sphere sphere2(1, { 3, -4, 0 });
+
+	scene.setSpheres({ sphere1, sphere2 });
+	scene.setPlanes({ plane });
 
 	return scene;
 }
