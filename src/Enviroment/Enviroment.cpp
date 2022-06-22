@@ -50,7 +50,8 @@ Scene Enviroment::prepare() {
 	DotLight l2 = DotLight(Point(-2, -2, 2), Color::white());
 	DotLight l3 = DotLight(Point(0, 3, 0), Color::white());
 	Light l4 = Light(Color(255, 0, 255, 255), 0.03);
-	vector<Light*> light = { new  DotLight(Point(0, 3, 0), Color::white()) };
+	vector<Light*> light = { new DotLight(Point(0, -10, 0), Color::white())};
+	//vector<Light*> light = { new DirectLight(Vector(0, 3, 0), Color::white())};
 	Scene scene(screen, light, Point(0, 0, -10), 100);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 

@@ -24,6 +24,8 @@ public:
 	virtual const Vector getDir(Point dot);
 
 	Color apply(Color startColor, Vector normal, Point dot);
+	virtual const Vector getDirInner(Point dot);
+	virtual const bool isApropriate(Point dot, Point start);
 private:
 	Color colorW;
 	double intens;

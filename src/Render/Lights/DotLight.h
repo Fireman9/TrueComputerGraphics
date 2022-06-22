@@ -18,6 +18,8 @@ public:
 	Point position();
 
 	virtual const Vector getDir(Point dot);
+	virtual const Vector getDirInner(Point dot);
+	virtual const bool isApropriate(Point dot, Point start);
 private:
 	Point positionL;
 };
