@@ -21,15 +21,23 @@ Sphere::Intersections Sphere::isRayIntersection(Ray ray) const {
 	double a, b, c, delta;
 	getIntersectionVars(a, b, c, delta, ray);
 	if (delta < 0) return NoIntersection;
-	else if (delta == 0) return OnePointIntersection;
-	else return TwoPointIntersection;
+	else if (delta == 0) {
+		double t = -b / (2 * a);
+		if (t < 0) return NoIntersection;
+		return OnePointIntersection;
+	} else {
+		double t1 = (-b - sqrt(delta)) / (2 * a);
+		double t2 = (-b + sqrt(delta)) / (2 * a);
+		if (t1 < 0 || t2 < 0) return NoIntersection;
+		return TwoPointIntersection;
+	}
 }
 
 Point Sphere::getOnePointRayIntersection(Ray ray) const {
 	double a, b, c, delta;
 	getIntersectionVars(a, b, c, delta, ray);
 	if (delta == 0) {
-		double t = -b / 2 * a;
+		double t = -b / (2 * a);
 		return {ray.origin() + ray.direction().toPoint() * t};
 	} else throw std::exception();
 }
