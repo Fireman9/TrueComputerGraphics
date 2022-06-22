@@ -16,7 +16,7 @@ TEST(SphereIntersectionWithRay, NoIntersection) {
 
 TEST(SphereIntersectionWithRay, OnePointIntersection) {
 	Sphere sphere1(2, {2, 0, 0});
-	Ray ray1({0, 0, 3}, {0, 0, 1});
+	Ray ray1({0, 0, 3}, {0, 0, -1});
 
 	EXPECT_EQ(sphere1.isRayIntersection(ray1), sphere1.OnePointIntersection);
 	EXPECT_ANY_THROW(sphere1.getTwoPointRayIntersection(ray1));
@@ -29,7 +29,7 @@ TEST(SphereIntersectionWithRay, OnePointIntersection) {
 
 
 	Sphere sphere2(2, {3, 0, 0});
-	Ray ray2({1, 0, 3}, {0, 0, 1});
+	Ray ray2({1, 0, 3}, {0, 0, -1});
 
 	EXPECT_EQ(sphere2.isRayIntersection(ray2), sphere2.OnePointIntersection);
 	EXPECT_ANY_THROW(sphere2.getTwoPointRayIntersection(ray2));
