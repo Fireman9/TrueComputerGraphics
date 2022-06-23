@@ -29,14 +29,6 @@ OBJReader  Enviroment::readTriangles() {
 	return objReader;
 }
 
-vector<Triangle> Enviroment::transformTriangles(Matrix4x4 matrix, OBJReader objReader, Point start) {
-	vector<Triangle> triangles = objReader.getTriangles();
-	for (auto& triangle : triangles) {
-		triangle = triangle.transform(matrix, start);
-	}
-	return triangles;
-}
-
 Scene Enviroment::prepare() {
 
 	//  OBJReader objReader = readTriangles();
@@ -46,10 +38,10 @@ Scene Enviroment::prepare() {
 	//vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color(255,0,255,255), 0.7) };
 
-	auto l1 = std::make_shared < DirectLight>(Vector(2, -4, -3), Color::white(), 0.4);
-	auto l3 = std::make_shared < DotLight>(Point(-2, -4, -3), Color::red(),0.7);
-	auto l4 = std::make_shared < Light>(Color(255, 0, 255, 255), 0.03);
-	auto l2 = std::make_shared<DotLight>(Point(4, -8, -4), Color::white(),0.4);
+	auto l1 = std::make_shared<DirectLight>(Vector(2, -4, -3), Color::white(), 0.4);
+	auto l3 = std::make_shared<DotLight>(Point(-2, -4, -3), Color::white(), 0.7);
+	auto l4 = std::make_shared<Light>(Color(255, 0, 255, 255), 0.03);
+	auto l2 = std::make_shared<DotLight>(Point(4, -8, -4), Color::white(), 0.4);
 	vector<std::shared_ptr<Light>> light;
 	light.push_back(l2);
 	light.push_back(l3);
@@ -57,23 +49,23 @@ Scene Enviroment::prepare() {
 	Scene scene(screen, light, Point(0, 0, -10), 100);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
-  //  Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
+	//  Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
 	//Matrix4x4 matrix = Matrix4x4::rotateX(-4.0) * Matrix4x4::rotateY(-1.235) * Matrix4x4::transpose(0, 0.3, 0);
 	//Matrix4x4 matrix = Matrix4x4::rotateX(0) * Matrix4x4::rotateY(0);
 
-  //  triangles = transformTriangles(matrix, objReader, Point(0,0,0));
+	//  triangles = transformTriangles(matrix, objReader, Point(0,0,0));
 
-  //  scene.setTriangles(triangles);
-	Plane plane1({ 0, 1, 0 }, 9);
-	Plane plane2({ 0, 1, 0 }, -3);
-	Plane plane3({ 1, 0, 0 }, -10);
-	Plane plane4({ 1, 0, 0 }, 10);
-	Plane plane5({ 0, 0, 1 }, -10);
-	Sphere sphere1(1, { 0, 2, 0 });
-	Sphere sphere2(2, { 1, -10, 10 });
+	//  scene.setTriangles(triangles);
+	Plane plane1({0, 1, 0}, 9);
+	Plane plane2({0, 1, 0}, -3);
+	Plane plane3({1, 0, 0}, -10);
+	Plane plane4({1, 0, 0}, 10);
+	Plane plane5({0, 0, 1}, -10);
+	Sphere sphere1(1, {0, 2, 0});
+	Sphere sphere2(2, {1, -10, 10}, Sphere::Mirror);
 
-	scene.setSpheres({ sphere1, sphere2 });
-	scene.setPlanes({ plane1, plane2, plane3, plane4, plane5 });
+	scene.setSpheres({sphere1, sphere2});
+	scene.setPlanes({plane1, plane2, plane3, plane4, plane5});
 
 	return scene;
 }
