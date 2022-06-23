@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <random>
 
 #include "../Color.h"
 #include "../../Geometry/Vector.h"

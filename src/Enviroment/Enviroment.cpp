@@ -46,13 +46,14 @@ Scene Enviroment::prepare() {
 	//vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color(255,0,255,255), 0.7) };
 
-	auto l1 = std::make_shared < DirectLight>(Vector(2, -4, -3), Color::white(), 0.7);
-	auto l3 = std::make_shared < DotLight>(Point(-2, -4, -3), Color::red());
+	auto l1 = std::make_shared < DirectLight>(Vector(2, -4, -3), Color::white(), 0.4);
+	auto l3 = std::make_shared < DotLight>(Point(-2, -4, -3), Color::red(),0.7);
 	auto l4 = std::make_shared < Light>(Color(255, 0, 255, 255), 0.03);
-	auto l2 = std::make_shared<DotLight>(Point(4, -8, -4), Color::white());
+	auto l2 = std::make_shared<DotLight>(Point(4, -8, -4), Color::white(),0.4);
 	vector<std::shared_ptr<Light>> light;
 	light.push_back(l2);
 	light.push_back(l3);
+	light.push_back(l4);
 	Scene scene(screen, light, Point(0, 0, -10), 100);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
@@ -79,7 +80,6 @@ Scene Enviroment::prepare() {
 
 void Enviroment::writeTofile(Scene scene) {
 	PPMWriter ppmWriter(arg);
-	std::srand(time(NULL));
 	if (isTesting()) {
 		this->tStart = clock();
 		scene.renderScene();
