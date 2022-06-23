@@ -18,16 +18,24 @@ Color Light::apply(Color startColor, Vector normal, Point dot) {
 	return { r,g,b,startColor.a() };
 }
 const Vector Light::getDir(Point d) { 
-	double x = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
-	double y = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
-	double z = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
+	std::random_device rd;
+	std::default_random_engine eng(rd());
+	std::uniform_real_distribution<double> distr(-20, 20);
+
+	double x = distr(eng);
+	double y = distr(eng);
+	double z = distr(eng);
 	Vector v(x,y,z);
 	v.normalize();
 	return v; }
 const Vector Light::getDirInner(Point d) {
-	double x = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
-	double y = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
-	double z = -20 + (double)std::rand() / ((double)(RAND_MAX / (20 - (-20))));
+	std::random_device rd;
+	std::default_random_engine eng(rd());
+	std::uniform_real_distribution<double> distr(-20, 20);
+
+	double x = distr(eng);
+	double y = distr(eng);
+	double z = distr(eng);
 	Vector v(x, y, z);
 	v.normalize();
 	return v;

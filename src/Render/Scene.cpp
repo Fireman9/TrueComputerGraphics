@@ -1,12 +1,12 @@
 #include "Scene.h"
 
 Scene::Scene()
-	: Scene(Screen(), { new DotLight(Color::white()) }, Point(0, 0, 0), 50) {}
+	: Scene(Screen(), { std::make_shared<DotLight>(Color::white()) }, Point(0, 0, 0), 50) {}
 
 Scene::Scene(Screen screen)
-	: Scene(screen, { new DotLight(Color::white()) }, Point(0, 0, 0), 50) {}
+	: Scene(screen, { std::make_shared<DotLight>(Color::white()) }, Point(0, 0, 0), 50) {}
 
-Scene::Scene(Screen screen, vector<Light*> light, Point camera, double cameraToScreenDist) {
+Scene::Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist) {
 	setScreen(screen);
 	setLight(light);
 	setCamera(camera);
@@ -160,18 +160,18 @@ Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tr
 	return px;
 }
 
-bool Scene::shadowTree(Point start, vector<Light*> lightDir, Node* tree, Color& c, Color startColor, Vector norm) {
+bool Scene::shadowTree(Point start, vector<std::shared_ptr<Light>> lightDir, Node* tree, Color& c, Color startColor, Vector norm) {
 	Color col(0, 0, 0, 0);
 	bool isShadow = false;
 	for (auto& l : lightDir) {
-		Color c = firstIntersectionTree(start, l, startColor, norm, tree);
+		Color c = firstIntersectionTree(start, l.get(), startColor, norm, tree);
 		if (c.a() > -256) {
 			col = col + c;
 			isShadow = true;
 		}
 	}
 	c = col;
-	c.normalize();
+	c.normalizeMin();
 	return isShadow;
 }
 
@@ -264,18 +264,18 @@ Color Scene::intersections(double x, double y, Point &intersection) {
 	return px;
 }
 
-bool Scene::shadow(Point start, vector<Light*> lightDir, Color& c, Color startColor, Vector norm) {
+bool Scene::shadow(Point start, vector<std::shared_ptr<Light>> lightDir, Color& c, Color startColor, Vector norm) {
 	Color col(0, 0, 0, 0);
 	bool isShadow = false;
 	for (auto& l : lightDir) {
-		Color c = firstIntersection(start, l, startColor, norm);
+		Color c = firstIntersection(start, l.get(), startColor, norm);
 		if (c.a() > -256) {
 			col = col + c;
 			isShadow = true;
 		}
 	}
 	c = col;
-	c.normalize();
+	c.normalizeMin();
 	return isShadow;
 }
 
@@ -356,7 +356,7 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 		tmp.normalize();
 		pxl = pxl + tmp;
 	}
-	pxl.normalize();
+	//pxl.normalize();
 	return pxl;
 	//return Color::white() * Vector::dotProduct(norm, mLight);
 }
@@ -373,7 +373,7 @@ Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vect
 			tmp.normalize();
 			pxl = pxl + tmp;
 		}
-		pxl.normalize();
+		//pxl.normalize();
 		px = pxl;
 	}
 	return px;
@@ -393,14 +393,14 @@ Color Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPo
 			tmp.normalize();
 			pxl = pxl + tmp;
 		}
-		pxl.normalize();
+		//pxl.normalize();
 		px = pxl;
 	}
 	return px;
 }
 
 bool Scene::isFaced(Vector normal, Vector direction) {
-	if (Vector::dotProduct(normal, direction) < 0) return true;
+	if (Vector::dotProduct(normal, direction) <= 0) return true;
 	else return false;
 }
 
@@ -410,7 +410,7 @@ Point Scene::getCamera() { return mCamera; }
 
 void Scene::setCamera(Point camera) { mCamera = camera; }
 
-void Scene::setLight(vector<Light*> light) {
+void Scene::setLight(vector<std::shared_ptr<Light>> light) {
 	mLight = light;
 }
 

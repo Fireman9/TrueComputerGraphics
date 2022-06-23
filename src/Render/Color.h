@@ -28,6 +28,7 @@ public:
 	Color operator+ (Color c) const;
 	Color operator- (Color c) const;
 	void normalize();
+	void normalizeMin();
 
 private:
 	int redW;

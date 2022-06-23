@@ -6,6 +6,8 @@
 #include <string>
 #include <time.h>
 #include <stdlib.h>
+#include <memory>
+
 #include "../File/PPMWriter.h"
 #include "../File/OBJReader.h"
 #include "../Geometry/Shapes/Triangle.h"
