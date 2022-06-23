@@ -171,7 +171,7 @@ bool Scene::shadowTree(Point start, vector<std::shared_ptr<Light>> lightDir, Nod
 		}
 	}
 	c = col;
-	c.normalize();
+	c.normalizeMin();
 	return isShadow;
 }
 
@@ -275,7 +275,7 @@ bool Scene::shadow(Point start, vector<std::shared_ptr<Light>> lightDir, Color& 
 		}
 	}
 	c = col;
-	c.normalize();
+	c.normalizeMin();
 	return isShadow;
 }
 
@@ -356,7 +356,7 @@ Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, P
 		tmp.normalize();
 		pxl = pxl + tmp;
 	}
-	pxl.normalize();
+	//pxl.normalize();
 	return pxl;
 	//return Color::white() * Vector::dotProduct(norm, mLight);
 }
@@ -373,7 +373,7 @@ Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vect
 			tmp.normalize();
 			pxl = pxl + tmp;
 		}
-		pxl.normalize();
+		//pxl.normalize();
 		px = pxl;
 	}
 	return px;
@@ -393,7 +393,7 @@ Color Scene::triangleIntersection(Triangle triangle, Ray ray, Point &intersectPo
 			tmp.normalize();
 			pxl = pxl + tmp;
 		}
-		pxl.normalize();
+		//pxl.normalize();
 		px = pxl;
 	}
 	return px;

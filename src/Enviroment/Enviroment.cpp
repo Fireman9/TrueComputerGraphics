@@ -53,7 +53,7 @@ Scene Enviroment::prepare() {
 	vector<std::shared_ptr<Light>> light;
 	light.push_back(l2);
 	light.push_back(l3);
-	Scene scene(screen, light, Point(0, 0, -50), 100);
+	Scene scene(screen, light, Point(0, 0, -10), 100);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
   //  Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);

@@ -45,3 +45,9 @@ void Color::normalize() {
 	setBlue(b()<0 ? 0 : b()>255 ? 255 : b());
 	setAlpha(a()<0 ? 0 : a()>255 ? 255 : a());
 }
+void Color::normalizeMin() {
+	setRed(r() < 0 ? 0 : r());
+	setGreen(g() < 0 ? 0 : g());
+	setBlue(b() < 0 ? 0 : b());
+	setAlpha(a() < 0 ? 0 : a());
+}
