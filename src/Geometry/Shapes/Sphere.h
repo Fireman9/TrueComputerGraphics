@@ -3,9 +3,9 @@
 
 #include "../Point.h"
 #include "../Ray.h"
+#include "../Shapes/Shape.h"
 
-class Sphere {
-
+class Sphere : public Shape {
 public:
 	enum Intersections {
 		NoIntersection,
@@ -13,37 +13,25 @@ public:
 		TwoPointIntersection
 	};
 
-	enum Material {
-		Mirror,
-		Lambert
-	};
-
-	Sphere(double radius, Point center, Material material = Lambert);
-
-	Sphere(double radius, double x, double y, double z, Material material = Lambert);
+	Sphere(double radius, Point center, Material m = Lambert);
+	Sphere(double radius, double x, double y, double z, Material m = Lambert);
 
 	void getIntersectionVars(double &a, double &b, double &c, double &delta, Ray ray) const;
 
 	Intersections isRayIntersection(Ray ray) const;
 
 	Point getOnePointRayIntersection(Ray ray) const;
-
 	std::pair<Point, Point> getTwoPointRayIntersection(Ray ray) const;
 
 	double radius() const;
-
 	Point center() const;
 
 	void setRadius(double radius);
-
 	void setCenter(Point center);
-
-	Material material();
 
 private:
 	double mRadius;
 	Point mCenter;
-	Material mMaterial;
 };
 
 #endif //TRUECOMPUTERGRAPHICS_GEOMETRY_SPHERE_H_

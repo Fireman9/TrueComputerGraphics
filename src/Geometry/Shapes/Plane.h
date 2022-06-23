@@ -3,12 +3,12 @@
 
 #include "../Vector.h"
 #include "../Ray.h"
+#include "../Shapes/Shape.h"
 
-class Plane {
+class Plane : public Shape {
 public:
-	Plane(double a, double b, double c, double d);
-
-	Plane(Vector normalizedNormal, double d);
+	Plane(double a, double b, double c, double d, Material m = Lambert);
+	Plane(Vector normalizedNormal, double d, Material m = Lambert);
 
 	Vector getNormal() const;
 
@@ -16,7 +16,6 @@ public:
 
 private:
 	double mA, mB, mC, mD;
-
 };
 
 #endif //TRUECOMPUTERGRAPHICS_GEOMETRY_PLANE_H_
