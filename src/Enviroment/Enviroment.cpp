@@ -46,13 +46,14 @@ Scene Enviroment::prepare() {
 	//vector<Light*> light = { new Light(Color::green(),0.005), new Light(Color::red(),0.01),new DotLight(Point(2,2,2),Color(255,0,255,255), 0.5) };
 	//vector<Light*> light = { new DotLight(Point(2,2,2),Color(255,0,255,255), 0.7) };
 
-	DirectLight l1 = DirectLight(Vector(2, -4, -3), Color::white(), 0.7);
-	DotLight l2 = DotLight(Point(-2, -2, 2), Color::white());
-	DotLight l3 = DotLight(Point(0, 3, 0), Color::white());
-	Light l4 = Light(Color(255, 0, 255, 255), 0.03);
-	vector<Light*> light = { new DotLight(Point(0, -10, 0), Color::white())};
-	//vector<Light*> light = { new DirectLight(Vector(0, 3, 0), Color::white())};
-	Scene scene(screen, light, Point(0, 0, -10), 100);
+	auto l1 = std::make_shared < DirectLight>(Vector(2, -4, -3), Color::white(), 0.7);
+	auto l3 = std::make_shared < DotLight>(Point(-2, -4, -3), Color::red());
+	auto l4 = std::make_shared < Light>(Color(255, 0, 255, 255), 0.03);
+	auto l2 = std::make_shared<DotLight>(Point(4, -8, -4), Color::white());
+	vector<std::shared_ptr<Light>> light;
+	light.push_back(l2);
+	light.push_back(l3);
+	Scene scene(screen, light, Point(0, 0, -50), 100);
 	//Scene scene(screen, light, Point(0, 0, -5), 250);
 
   //  Matrix4x4 matrix = Matrix4x4::rotateX(-1.57) * Matrix4x4::rotateY(-0.735);
@@ -62,14 +63,16 @@ Scene Enviroment::prepare() {
   //  triangles = transformTriangles(matrix, objReader, Point(0,0,0));
 
   //  scene.setTriangles(triangles);
-	Vector v = Vector(0, 1, 0);
-	v.normalize();
-	Plane plane(v, -1);
-	Sphere sphere1(1, { 0, 0, 0 });
-	Sphere sphere2(1, { 3, -4, 0 });
+	Plane plane1({ 0, 1, 0 }, 9);
+	Plane plane2({ 0, 1, 0 }, -3);
+	Plane plane3({ 1, 0, 0 }, -10);
+	Plane plane4({ 1, 0, 0 }, 10);
+	Plane plane5({ 0, 0, 1 }, -10);
+	Sphere sphere1(1, { 0, 2, 0 });
+	Sphere sphere2(2, { 1, -10, 10 });
 
 	scene.setSpheres({ sphere1, sphere2 });
-	scene.setPlanes({ plane });
+	scene.setPlanes({ plane1, plane2, plane3, plane4, plane5 });
 
 	return scene;
 }

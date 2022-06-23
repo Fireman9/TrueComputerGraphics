@@ -17,9 +17,9 @@ public:
 	void setDirection(Vector p);
 	Vector direction();
 
-	virtual const Vector getDir(Point dot);
-	virtual const Vector getDirInner(Point dot);
-	virtual const bool isApropriate(Point dot, Point start);
+	const Vector getDir(Point dot) override;
+	const Vector getDirInner(Point dot) override;
+	const bool isApropriate(Point dot, Point start) override;
 private:
 	Vector directionV;
 };
