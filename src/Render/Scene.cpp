@@ -319,34 +319,28 @@ bool Scene::isForward(Point &intersectPoint, Ray ray, Point camera) {
 }
 
 Color Scene::sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start, Vector &normal) {
-	Sphere::Intersections ans = sphere.isRayIntersection(ray);
-	Point first, sec;
-	bool firstIsForward, secondIsForward;
-	switch (ans) {
-		case Sphere::NoIntersection: return Color(-300,-300,-300,-300);
-		case Sphere::OnePointIntersection: {
-			intersectPoint = sphere.getOnePointRayIntersection(ray);
-			break;
-		}
-		case Sphere::TwoPointIntersection: {
-			first = sphere.getTwoPointRayIntersection(ray).first;
-			sec = sphere.getTwoPointRayIntersection(ray).second;
-			firstIsForward = isForward(first, ray, start);
-			secondIsForward = isForward(sec, ray, start);
-			if (!firstIsForward) {
-				if (!secondIsForward) return Color(-300,-300,-300,-300);
-				intersectPoint = sec;
-			} else {
-				if (!secondIsForward) intersectPoint = first;
-				else {
-					if (sec.distanceTo(start) > first.distanceTo(start))
-						intersectPoint = first;
-					else intersectPoint = sec;
-				}
+	auto intersectionPoints = sphere.getRayIntersection(ray);
+	if (intersectionPoints.size() == 1) {
+		intersectPoint = intersectionPoints[0];
+	} else if (intersectionPoints.size() == 2) {
+		Point first = intersectionPoints[0];
+		Point second = intersectionPoints[1];
+		bool firstIsForward, secondIsForward;
+		firstIsForward = isForward(first, ray, start);
+		secondIsForward = isForward(second, ray, start);
+		if (!firstIsForward) {
+			if (!secondIsForward) return {-300, -300, -300, -300};
+			intersectPoint = second;
+		} else {
+			if (!secondIsForward) intersectPoint = first;
+			else {
+				if (second.distanceTo(start) > first.distanceTo(start))
+					intersectPoint = first;
+				else intersectPoint = second;
 			}
-			break;
 		}
-		default: return Color(-300,-300,-300,-300);
+	} else {
+		return {-300, -300, -300, -300};
 	}
 	normal = Vector(sphere.center(), intersectPoint);
 	normal.normalize();

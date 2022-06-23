@@ -1,6 +1,8 @@
 #ifndef TRUECOMPUTERGRAPHICS_GEOMETRY_SHAPES_TRIANGLE_H_
 #define TRUECOMPUTERGRAPHICS_GEOMETRY_SHAPES_TRIANGLE_H_
 
+#include <cmath>
+
 #include "../Point.h"
 #include "../Ray.h"
 #include "../Shapes/Shape.h"

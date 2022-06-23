@@ -1,4 +1,3 @@
-#include <cmath>
 #include "Triangle.h"
 
 Triangle::Triangle(Point v0, Point v1, Point v2, Material m)
