@@ -1,21 +1,20 @@
 #include "Scene.h"
 
 Scene::Scene()
-	: Scene(Screen(), { std::make_shared<DotLight>(Color::white()) }, Point(0, 0, 0), 50) {}
+	: Scene(Screen(), {std::make_shared<DotLight>(Color::white())},
+			Point(0, 0, 0), 50) {}
 
 Scene::Scene(Screen screen)
-	: Scene(screen, { std::make_shared<DotLight>(Color::white()) }, Point(0, 0, 0), 50) {}
+	: Scene(screen, {std::make_shared<DotLight>(Color::white())},
+			Point(0, 0, 0), 50) {}
 
-Scene::Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist) {
-	setScreen(screen);
-	setLight(light);
-	setCamera(camera);
-	mCameraToScreenDist = cameraToScreenDist;
-}
+Scene::Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist)
+	: mScreen(screen), mLight(light), mCamera(camera), mCameraToScreenDist(cameraToScreenDist) {}
 
-void Scene::setTree(Node* t) { this->tree = t; }
+void Scene::setTree(Node* t) { mTree = t; }
 
 void Scene::renderSceneTree() {
+	// TODO: OpenMP
 	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
@@ -23,25 +22,26 @@ void Scene::renderSceneTree() {
 	for (i = 0; i < numOfThreads - 1; i++) {
 		threads.emplace_back([this, &pixels](int yFrom, int yTo) {
 			renderSceneRangeTree(yFrom, yTo, pixels);
-			}, i * itemsPerThread, i * itemsPerThread + itemsPerThread);
+		}, i * itemsPerThread, i * itemsPerThread + itemsPerThread);
 	}
 	renderSceneRangeTree(i * itemsPerThread, pixels.size(), pixels);
 	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 	mScreen.setPixels(pixels);
 }
 
-void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>>& pixels) {
-	Point intersectionPoint;
+void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixels) {
 	for (int y = yFrom; y < yTo; y++) {
 		for (int x = 0; x < pixels[y].size(); x++) {
-			pixels[y][x] = intersectionsTree(x * mScreen.getCoordPerPixel(),
+			pixels[y][x] = intersectionOnScreenFromCameraTree(
+				x * mScreen.getCoordPerPixel(),
 				y * mScreen.getCoordPerPixel(),
-				intersectionPoint,tree);
+				mTree);
 		}
 	}
 }
 
 void Scene::renderScene() {
+	// TODO: OpenMP
 	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
@@ -57,12 +57,10 @@ void Scene::renderScene() {
 }
 
 void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels) {
-	Point intersectionPoint;
 	for (int y = yFrom; y < yTo; y++) {
 		for (int x = 0; x < pixels[y].size(); x++) {
-			pixels[y][x] = intersections(x * mScreen.getCoordPerPixel(),
-										 y * mScreen.getCoordPerPixel(),
-										 intersectionPoint);
+			pixels[y][x] = intersectionOnScreenFromCamera(x * mScreen.getCoordPerPixel(),
+														  y * mScreen.getCoordPerPixel());
 		}
 	}
 }
@@ -103,60 +101,72 @@ char Scene::getSymbol(Color c) {
 	else return '#';
 }
 
-Color Scene::intersectionsTree(double x, double y, Point& intersection, Node* tree) {
-	Point intersectPoint;
-	Color px(-300,-300,-300,-300);
-	double dist;
-	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
-		mScreen.getHeight() * mScreen.getCoordPerPixel()  * 0.5, 0);
+Color Scene::intersectionOnScreenFromCameraTree(double x, double y, Node *tree) {
+	Point screenTopLeft = getCamera() -
+		Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
+			  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5,
+			  0);
 	screenTopLeft.setZ(mCameraToScreenDist);
 	Point curPoint = screenTopLeft + Point(x, y, 0);
 	Vector dir = Vector(mCamera, curPoint);
 	dir.normalize();
-	Ray ray(mCamera, dir);
+	return castRayTree(Ray(mCamera, dir), tree);
+}
+
+Color Scene::castRayTree(Ray ray, Node *tree) {
+	Point intersectPoint;
+	Color px(-300, -300, -300, -300);
 	double minDist = 999999;
-	vector<Node*> leafs;
-	Vector norm;
 	Vector normal;
-	//find Node(s)
+
+	vector<Node *> leafs;
 	tree->findAllNodes(ray, &leafs);
-	//look in Nodes
-	for (auto& leaf : leafs) {
-		for (auto& triangle : leaf->triangles()) {
-			Color h_px = triangleIntersection(triangle, ray, intersectPoint,norm);
-			dist = intersectPoint.distanceTo(mCamera);
+	for (auto &leaf : leafs) {
+		for (auto &triangle : leaf->triangles()) {
+			Point tempIntersectPoint;
+			Vector tempNormal;
+			Color h_px = triangleIntersection(triangle, ray, tempIntersectPoint, tempNormal);
+			double dist = tempIntersectPoint.distanceTo(mCamera);
 			if (h_px.a() > -256 && minDist > dist) {
 				px = h_px;
 				minDist = dist;
-				normal = norm;
-				intersection = intersectPoint;
+				normal = tempNormal;
+				intersectPoint = tempIntersectPoint;
 			}
 		}
 	}
-	// for not only triangles render
-	for (auto& plane : mPlanes) {
-		Color  h_px = planeIntersection(plane, ray, intersectPoint,norm);
-		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
+
+	for (auto &sphere : mSpheres) {
+		Point tempIntersectPoint;
+		Vector tempNormal;
+		Color h_px = sphereIntersection(sphere, ray, tempIntersectPoint, ray.origin(), tempNormal);
+		double dist = tempIntersectPoint.distanceTo(ray.origin());
+		if (isForward(tempIntersectPoint, ray, ray.origin()) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
-			normal = norm;
-			intersection = intersectPoint;
+			normal = tempNormal;
+			intersectPoint = tempIntersectPoint;
 		}
 	}
-	for (auto& sphere : mSpheres) {
-		Color h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera, norm);
-		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
+	for (auto &plane : mPlanes) {
+		Point tempIntersectPoint;
+		Vector tempNormal;
+		Color h_px = planeIntersection(plane, ray, tempIntersectPoint, tempNormal);
+		double dist = tempIntersectPoint.distanceTo(mCamera);
+		if (isForward(tempIntersectPoint, ray, ray.origin()) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
-			normal = norm;
-			intersection = intersectPoint;
+			normal = tempNormal;
+			intersectPoint = tempIntersectPoint;
 		}
 	}
-	Color tmp(0, 0, 0, 0);
-	bool isShadow = shadowTree(intersection, mLight,tree, tmp, Color::white(), normal);
-	if (px.a() > -256 && isShadow) { px = px - tmp; px.normalize(); }
+
+	Color temp(0, 0, 0, 0);
+	bool isShadow = shadow(intersectPoint, mLight, temp, Color::white(), normal);
+	if (px.a() > -256 && isShadow) {
+		px = px - temp;
+		px.normalize();
+	}
 	return px;
 }
 
@@ -214,53 +224,65 @@ Color Scene::firstIntersectionTree(Point start, Light* l, Color startColor, Vect
 	return col;
 }
 
-Color Scene::intersections(double x, double y, Point &intersection) {
-	Point intersectPoint;
-	Color px(-300,-300,-300,-300);
-	double dist;
-	Point screenTopLeft = getCamera() - Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
-											  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5, 0);
+Color Scene::intersectionOnScreenFromCamera(double x, double y) {
+	Point screenTopLeft = getCamera() -
+		Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
+			  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5,
+			  0);
 	screenTopLeft.setZ(mCameraToScreenDist);
 	Point curPoint = screenTopLeft + Point(x, y, 0);
 	Vector dir = Vector(mCamera, curPoint);
 	dir.normalize();
-	Ray ray(mCamera, dir);
+	return castRay(Ray(mCamera, dir));
+}
+
+Color Scene::castRay(Ray ray) {
+	Point intersectPoint;
+	Color px(-300, -300, -300, -300);
 	double minDist = 999999;
-	Vector norm;
 	Vector normal;
 	for (auto &sphere : mSpheres) {
-		Color h_px = sphereIntersection(sphere, ray, intersectPoint, mCamera, norm);
-		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
+		Point tempIntersectPoint;
+		Vector tempNormal;
+		Color h_px = sphereIntersection(sphere, ray, tempIntersectPoint, ray.origin(), tempNormal);
+		double dist = tempIntersectPoint.distanceTo(ray.origin());
+		if (isForward(tempIntersectPoint, ray, ray.origin()) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
-			normal = norm;
-			intersection = intersectPoint;
+			normal = tempNormal;
+			intersectPoint = tempIntersectPoint;
 		}
 	}
 	for (auto &plane : mPlanes) {
-		Color h_px = planeIntersection(plane, ray, intersectPoint, norm);
-		dist = intersectPoint.distanceTo(mCamera);
-		if (isForward(intersectPoint, ray, mCamera) && h_px.a() > -256 && minDist > dist) {
+		Point tempIntersectPoint;
+		Vector tempNormal;
+		Color h_px = planeIntersection(plane, ray, tempIntersectPoint, tempNormal);
+		double dist = tempIntersectPoint.distanceTo(mCamera);
+		if (isForward(tempIntersectPoint, ray, ray.origin()) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
-			normal = norm;
-			intersection = intersectPoint;
+			normal = tempNormal;
+			intersectPoint = tempIntersectPoint;
 		}
 	}
 	for (auto &triangle : mTriangles) {
-		Color h_px = triangleIntersection(triangle, ray, intersectPoint,norm);
-		dist = intersectPoint.distanceTo(mCamera);
+		Point tempIntersectPoint;
+		Vector tempNormal;
+		Color h_px = triangleIntersection(triangle, ray, tempIntersectPoint, tempNormal);
+		double dist = tempIntersectPoint.distanceTo(mCamera);
 		if (h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
-			normal = norm;
-			intersection = intersectPoint;
+			normal = tempNormal;
+			intersectPoint = tempIntersectPoint;
 		}
 	}
-	Color tmp(0,0,0,0);
-	bool isShadow = shadow(intersection, mLight, tmp, Color::white(), normal);
-	if (px.a() > -256 && isShadow) { px = px - tmp; px.normalize(); }
+	Color temp(0, 0, 0, 0);
+	bool isShadow = shadow(intersectPoint, mLight, temp, Color::white(), normal);
+	if (px.a() > -256 && isShadow) {
+		px = px - temp;
+		px.normalize();
+	}
 	return px;
 }
 
@@ -306,7 +328,7 @@ Color Scene::firstIntersection(Point start, Light* l, Color startColor, Vector n
 		Color h_px = triangleIntersection(triangle, ray, intersectPoint, normal);
 		if (!intersectPoint.isEqual(start) && h_px.a() > -256 && l->isApropriate(intersectPoint, start)) {
 			col = l->apply(startColor, norm, start);
-			return col; 
+			return col;
 		}
 	}
 	return col;
