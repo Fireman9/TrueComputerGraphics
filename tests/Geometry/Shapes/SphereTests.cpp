@@ -2,59 +2,48 @@
 #include "../../../src/Geometry/Shapes/Sphere.h"
 
 TEST(SphereIntersectionWithRay, NoIntersection) {
-
 	Sphere sphere(1, {2, 0, 0});
 	Ray ray({0, 0, 3}, {0, 0, 2});
-	Point point;
-	EXPECT_EQ(sphere.isRayIntersection(ray), sphere.NoIntersection);
-	EXPECT_ANY_THROW(sphere.getOnePointRayIntersection(ray));
-	EXPECT_ANY_THROW(sphere.getTwoPointRayIntersection(ray));
-	EXPECT_EQ(point.x(), 0);
-	EXPECT_EQ(point.y(), 0);
-	EXPECT_EQ(point.z(), 0);
+	EXPECT_EQ(sphere.getRayIntersection(ray).size(), 0);
 }
 
 TEST(SphereIntersectionWithRay, OnePointIntersection) {
 	Sphere sphere1(2, {2, 0, 0});
 	Ray ray1({0, 0, 3}, {0, 0, -1});
 
-	EXPECT_EQ(sphere1.isRayIntersection(ray1), sphere1.OnePointIntersection);
-	EXPECT_ANY_THROW(sphere1.getTwoPointRayIntersection(ray1));
+	auto intersectionPoints1 = sphere1.getRayIntersection(ray1);
 
-	Point point1 = sphere1.getOnePointRayIntersection(ray1);
+	EXPECT_EQ(intersectionPoints1.size(), 1);
 
-	EXPECT_EQ(point1.x(), 0);
-	EXPECT_EQ(point1.y(), 0);
-	EXPECT_EQ(point1.z(), 0);
-
+	EXPECT_EQ(intersectionPoints1[0].x(), 0);
+	EXPECT_EQ(intersectionPoints1[0].y(), 0);
+	EXPECT_EQ(intersectionPoints1[0].z(), 0);
 
 	Sphere sphere2(2, {3, 0, 0});
 	Ray ray2({1, 0, 3}, {0, 0, -1});
 
-	EXPECT_EQ(sphere2.isRayIntersection(ray2), sphere2.OnePointIntersection);
-	EXPECT_ANY_THROW(sphere2.getTwoPointRayIntersection(ray2));
+	auto intersectionPoints2 = sphere2.getRayIntersection(ray2);
 
-	Point point2 = sphere2.getOnePointRayIntersection(ray2);
+	EXPECT_EQ(intersectionPoints2.size(), 1);
 
-	EXPECT_EQ(point2.x(), 1);
-	EXPECT_EQ(point2.y(), 0);
-	EXPECT_EQ(point2.z(), 0);
+	EXPECT_EQ(intersectionPoints2[0].x(), 1);
+	EXPECT_EQ(intersectionPoints2[0].y(), 0);
+	EXPECT_EQ(intersectionPoints2[0].z(), 0);
 }
 
 TEST(SphereIntersectionWithRay, TwoPointIntersection) {
 	Sphere sphere(1, {0, 0, 0});
-	Ray ray({0, 0, 2}, {0, 0, 1});
+	Ray ray({0, 0, 2}, {0, 0, -1});
 
-	EXPECT_EQ(sphere.isRayIntersection(ray), sphere.TwoPointIntersection);
-	EXPECT_ANY_THROW(sphere.getOnePointRayIntersection(ray));
+	auto intersectionPoints = sphere.getRayIntersection(ray);
 
-	std::pair<Point, Point> points = sphere.getTwoPointRayIntersection(ray);
+	EXPECT_EQ(intersectionPoints.size(), 2);
 
-	EXPECT_EQ(points.first.x(), 0);
-	EXPECT_EQ(points.first.y(), 0);
-	EXPECT_EQ(points.first.z(), -1);
+	EXPECT_EQ(intersectionPoints[0].x(), 0);
+	EXPECT_EQ(intersectionPoints[0].y(), 0);
+	EXPECT_EQ(intersectionPoints[0].z(), 1);
 
-	EXPECT_EQ(points.second.x(), 0);
-	EXPECT_EQ(points.second.y(), 0);
-	EXPECT_EQ(points.second.z(), 1);
+	EXPECT_EQ(intersectionPoints[1].x(), 0);
+	EXPECT_EQ(intersectionPoints[1].y(), 0);
+	EXPECT_EQ(intersectionPoints[1].z(), -1);
 }
