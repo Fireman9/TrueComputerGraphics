@@ -38,10 +38,18 @@ public:
 	void writeRenderToPPM(PPMWriter &ppmWriter);
 	void showRenderToConsole();
 
-	Color castRay(Ray ray);
-	Color castRayTree(Ray ray, Node *tree);
 	Color intersectionOnScreenFromCamera(double x, double y);
 	Color intersectionOnScreenFromCameraTree(double x, double y, Node *tree);
+	Color castRay(Ray ray, int depth);
+	Color castRayTree(Ray ray, Node *tree, int depth);
+	Color castRayFirstIntersection(Ray ray, Light *l, Color startColor, Vector normal, int depth, bool forShadow = false);
+	Color castRayFirstIntersectionTree(Ray ray,
+									   Light *l,
+									   Color startColor,
+									   Vector normal,
+									   Node *tree,
+									   int depth,
+									   bool forShadow = false);
 
 	void setScreen(Screen screen);
 	void setLight(vector<std::shared_ptr<Light>> light);
@@ -74,9 +82,26 @@ private:
 	vector<Triangle> mTriangles;
 	Node *mTree;
 
-	Color sphereIntersection(Sphere sphere, Ray ray, Point &intersectPoint, Point start, Vector &normal);
-	Color planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vector &normal);
-	Color triangleIntersection(Triangle triangle, Ray ray, Point &intersectPoint, Vector &normal);
+	Color sphereIntersection(Sphere sphere,
+							 Ray ray,
+							 Point &intersectPoint,
+							 Point start,
+							 Vector &normal,
+							 int depth,
+							 bool shadow = false);
+	Color planeIntersection(Plane plane,
+							Ray ray,
+							Point &intersectPoint,
+							Vector &normal,
+							int depth,
+							bool shadow = false);
+	Color triangleIntersection(Triangle triangle,
+							   Ray ray,
+							   Point &intersectPoint,
+							   Vector &normal,
+							   int depth,
+							   bool shadow = false);
+	Color materialCheck(Shape shape, Ray ray, Vector normal, Point intersectPoint, int depth, bool shadow);
 
 	static bool isFaced(Vector normal, Vector direction);
 	bool static isForward(Point &intersectPoint, Ray ray, Point camera);
