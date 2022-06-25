@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
 	std::vector<std::string> arguments(argv + 1, argv + argc);
 	Enviroment env(arguments);
-	env.setIsTesting(true);
+//	env.setIsTesting(true);
 	Scene s = env.prepare();
 	env.writeTofile(s);
 }
