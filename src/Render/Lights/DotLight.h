@@ -20,6 +20,7 @@ public:
 	const Vector getDir(Point dot) override;
 	const Vector getDirInner(Point dot) override;
 	const bool isApropriate(Point dot, Point start) override;
+	const Color apply(Color startColor, Vector normal, Point dot) override;
 private:
 	Point positionL;
 };
