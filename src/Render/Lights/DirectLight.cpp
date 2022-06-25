@@ -25,3 +25,10 @@ const Vector DirectLight::getDirInner(Point dot) {
 const bool DirectLight::isApropriate(Point dot, Point start) {
 	return true;
 }
+const Color DirectLight::apply(Color startColor, Vector normal, Point dot) {
+	double d = intensity() * Vector::dotProduct(normal, getDirInner(dot)) * -1;
+	int r = startColor.r() * (color().r() / 255.0) * d;
+	int g = startColor.g() * (color().g() / 255.0) * d;
+	int b = startColor.b() * (color().b() / 255.0) * d;
+	return { r,g,b,startColor.a() };
+}

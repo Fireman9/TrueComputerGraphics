@@ -11,10 +11,10 @@ Light::Light(Color c, double i) {
 void Light::setColor(Color c) { this->colorW = c; }
 void Light::setIntensity(double i) { this->intens = i;}
 
-Color Light::apply(Color startColor, Vector normal, Point dot) {
-	int r = startColor.r() * (color().r() / 255.0) * intensity() * Vector::dotProduct(normal, getDirInner(dot)) * -1;
-	int g = startColor.g() * (color().g() / 255.0) * intensity() * Vector::dotProduct(normal, getDirInner(dot)) * -1;
-	int b = startColor.b() * (color().b() / 255.0) * intensity() * Vector::dotProduct(normal, getDirInner(dot)) * -1;
+const Color Light::apply(Color startColor, Vector normal, Point dot) {
+	int r = startColor.r() * (color().r() / 255.0) * intensity();
+	int g = startColor.g() * (color().g() / 255.0) * intensity();
+	int b = startColor.b() * (color().b() / 255.0) * intensity();
 	return { r,g,b,startColor.a() };
 }
 const Vector Light::getDir(Point d) { 
