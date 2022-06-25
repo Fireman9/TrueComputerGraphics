@@ -4,8 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <time.h>
-#include <stdlib.h>
+#include <ctime>
+#include <cstdlib>
 #include <memory>
 
 #include "../File/PPMWriter.h"
@@ -27,7 +27,7 @@ public:
 	Scene prepare();
 	void writeTofile(Scene scene);
 	OBJReader readTriangles();
-	vector<Triangle> transformTriangles(Matrix4x4 matrix, OBJReader objReader, Point start);
+	static vector<Triangle> transformTriangles(Matrix4x4 matrix, vector<Triangle> triangles, Point start);
 
 	void setArg(vector<string> arg);
 	void setInput(string inp);

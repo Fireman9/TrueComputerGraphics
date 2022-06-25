@@ -1,12 +1,16 @@
 #include <cmath>
+
 #include "Plane.h"
 
-Plane::Plane(double a, double b, double c, double d) : mA(a), mB(b), mC(c), mD(d) {}
+Plane::Plane(double a, double b, double c, double d, Material m)
+	: Shape(m), mA(a), mB(b), mC(c), mD(d) {}
 
-Plane::Plane(Vector normalizedNormal, double d) : mA(normalizedNormal.x()),
-												  mB(normalizedNormal.y()),
-												  mC(normalizedNormal.z()),
-												  mD(d) {}
+Plane::Plane(Vector normalizedNormal, double d, Material m)
+	: Shape(m),
+	  mA(normalizedNormal.x()),
+	  mB(normalizedNormal.y()),
+	  mC(normalizedNormal.z()),
+	  mD(d) {}
 
 Vector Plane::getNormal() const {
 	return {mA, mB, mC};

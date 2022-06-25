@@ -1,10 +1,13 @@
-#include <cmath>
 #include "Triangle.h"
 
-Triangle::Triangle(Point v0, Point v1, Point v2) : mV0(v0), mV1(v1), mV2(v2) {}
+Triangle::Triangle(Point v0, Point v1, Point v2, Material m)
+	: Shape(m), mV0(v0), mV1(v1), mV2(v2) {}
 
-Triangle::Triangle(Point v0, Point v1, Point v2, Vector v0Normal, Vector v1Normal, Vector v2Normal)
-	: mV0(v0), mV1(v1), mV2(v2), mV0Normal(v0Normal), mV1Normal(v1Normal), mV2Normal(v2Normal) {}
+Triangle::Triangle(Point v0, Point v1, Point v2,
+				   Vector v0Normal, Vector v1Normal, Vector v2Normal,
+				   Material m)
+	: Shape(m), mV0(v0), mV1(v1), mV2(v2),
+	  mV0Normal(v0Normal), mV1Normal(v1Normal), mV2Normal(v2Normal) {}
 
 bool Triangle::getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon) {
 	Vector v0v1 = Vector(v0(), v1());
