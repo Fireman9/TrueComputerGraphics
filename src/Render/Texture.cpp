@@ -6,7 +6,7 @@ Texture::Texture(Color color) : mColor(color) {}
 
 Texture::Texture(vector<vector<Color>> image) : mImage(std::move(image)) {}
 
-Color Texture::getColor(Point &localHitPoint, Mapper *mapper) {
+Color Texture::getColor(Point &localHitPoint, IMapper *mapper) {
 	if (mImage.empty()) return mColor;
 
 	// pass mapper as parameter
