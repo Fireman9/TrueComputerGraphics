@@ -150,7 +150,7 @@ Color Scene::castRay(Ray ray, int depth) {
 		Point tempIntersectPoint;
 		Vector tempNormal;
 		Color h_px = planeIntersection(plane, ray, tempIntersectPoint, tempNormal, depth);
-		double dist = tempIntersectPoint.distanceTo(mCamera);
+		double dist = tempIntersectPoint.distanceTo(ray.origin());
 		if (isForward(tempIntersectPoint, ray, ray.origin()) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
@@ -162,7 +162,7 @@ Color Scene::castRay(Ray ray, int depth) {
 		Point tempIntersectPoint;
 		Vector tempNormal;
 		Color h_px = triangleIntersection(triangle, ray, tempIntersectPoint, tempNormal, depth);
-		double dist = tempIntersectPoint.distanceTo(mCamera);
+		double dist = tempIntersectPoint.distanceTo(ray.origin());
 		if (h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
@@ -174,8 +174,8 @@ Color Scene::castRay(Ray ray, int depth) {
 	bool isShadow = shadow(intersectPoint, mLight, temp, Color::white(), normal);
 	if (px.a() > -256 && isShadow) {
 		px = px - temp;
-		px.normalize();
 	}
+	px.normalize();
 	return px;
 }
 
@@ -196,7 +196,7 @@ Color Scene::castRayTree(Ray ray, Node *tree, int depth) {
 			Point tempIntersectPoint;
 			Vector tempNormal;
 			Color h_px = triangleIntersection(triangle, ray, tempIntersectPoint, tempNormal, depth);
-			double dist = tempIntersectPoint.distanceTo(mCamera);
+			double dist = tempIntersectPoint.distanceTo(ray.origin());
 			if (h_px.a() > -256 && minDist > dist) {
 				px = h_px;
 				minDist = dist;
@@ -222,7 +222,7 @@ Color Scene::castRayTree(Ray ray, Node *tree, int depth) {
 		Point tempIntersectPoint;
 		Vector tempNormal;
 		Color h_px = planeIntersection(plane, ray, tempIntersectPoint, tempNormal, depth);
-		double dist = tempIntersectPoint.distanceTo(mCamera);
+		double dist = tempIntersectPoint.distanceTo(ray.origin());
 		if (isForward(tempIntersectPoint, ray, ray.origin()) && h_px.a() > -256 && minDist > dist) {
 			px = h_px;
 			minDist = dist;
@@ -235,8 +235,8 @@ Color Scene::castRayTree(Ray ray, Node *tree, int depth) {
 	bool isShadow = shadow(intersectPoint, mLight, temp, Color::white(), normal);
 	if (px.a() > -256 && isShadow) {
 		px = px - temp;
-		px.normalize();
 	}
+	px.normalize();
 	return px;
 }
 
