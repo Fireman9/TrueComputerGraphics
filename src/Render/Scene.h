@@ -20,6 +20,7 @@
 #include "Lights/Light.h"
 #include "Lights/DotLight.h"
 #include "Lights/DirectLight.h"
+#include "Mappers/SphereMapper.h"
 
 using std::vector;
 using std::cout;
@@ -101,7 +102,6 @@ private:
 							   Vector &normal,
 							   int depth,
 							   bool shadow = false);
-	Color materialCheck(Shape shape, Ray ray, Vector normal, Point intersectPoint, int depth, bool shadow);
 
 	static bool isFaced(Vector normal, Vector direction);
 	bool static isForward(Point &intersectPoint, Ray ray, Point camera);

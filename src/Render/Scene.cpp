@@ -403,7 +403,24 @@ Color Scene::sphereIntersection(Sphere sphere,
 	}
 	normal = Vector(sphere.center(), intersectPoint);
 	normal.normalize();
-	return materialCheck(sphere, ray, normal, intersectPoint, depth, shadow);
+	Color px(0, 0, 0, 0);
+	if (sphere.material() == Shape::Material::Mirror && !shadow) {
+		Vector reflectionDir = ray.direction() -
+			normal * Vector::dotProduct(ray.direction(), normal) * 2;
+		px = px + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
+	} else {
+		SphereMapper mapper;
+		for (auto &l : mLight) {
+			Point localHitPoint(intersectPoint.x() - sphere.center().x(),
+								(intersectPoint.y() - sphere.center().y()) / sphere.radius(),
+								intersectPoint.z() - sphere.center().z());
+			Color startColor = sphere.getTexture().getColor(localHitPoint, mapper);
+			Color tmp = l->apply(startColor, normal, intersectPoint);
+			tmp.normalize();
+			px = px + tmp;
+		}
+	}
+	return px;
 }
 
 Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vector &normal, int depth, bool shadow) {
@@ -412,7 +429,20 @@ Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vect
 		normal = plane.getNormal();
 		normal.normalize();
 		if (!isFaced(normal, ray.direction())) normal = normal * -1;
-		px = materialCheck(plane, ray, normal, intersectPoint, depth, shadow);
+		Color pxl(0, 0, 0, 0);
+		if (plane.material() == Shape::Material::Mirror && !shadow) {
+			Vector reflectionDir = ray.direction() -
+				normal * Vector::dotProduct(ray.direction(), normal) * 2;
+			pxl = pxl + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
+		} else {
+			for (auto &l : mLight) {
+//				Color startColor = plane.getTexture().getColor();
+				Color tmp = l->apply(Color::white(), normal, intersectPoint);
+				tmp.normalize();
+				pxl = pxl + tmp;
+			}
+		}
+		px = pxl;
 	}
 	return px;
 }
@@ -423,32 +453,27 @@ Color Scene::triangleIntersection(Triangle triangle,
 								  Vector &normal,
 								  int depth,
 								  bool shadow) {
-	Color px(-300, -300, -300, -300);
+	Color px(0, 0, 0, 0);
 	if (triangle.getRayIntersection(ray, intersectPoint)) {
 		Vector v0v1 = Vector(triangle.v0(), triangle.v1());
 		Vector v0v2 = Vector(triangle.v0(), triangle.v2());
 		normal = Vector::crossProduct(v0v1, v0v2);
 		normal.normalize();
 		if (!isFaced(normal, ray.direction())) normal = normal * -1;
-		px = materialCheck(triangle, ray, normal, intersectPoint, depth, shadow);
-	}
-	return px;
-}
-
-Color Scene::materialCheck(Shape shape, Ray ray, Vector normal, Point intersectPoint, int depth, bool shadow) {
-	Color pxl(0, 0, 0, 0);
-	if (shape.material() == Shape::Material::Mirror && !shadow) {
-		Vector reflectionDir = ray.direction() -
-			normal * Vector::dotProduct(ray.direction(), normal) * 2;
-		pxl = pxl + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
-	} else {
-		for (auto &l : mLight) {
-			Color tmp = l->apply(Color::white(), normal, intersectPoint);
-			tmp.normalize();
-			pxl = pxl + tmp;
+		if (triangle.material() == Shape::Material::Mirror && !shadow) {
+			Vector reflectionDir = ray.direction() -
+				normal * Vector::dotProduct(ray.direction(), normal) * 2;
+			px = px + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
+		} else {
+			for (auto &l : mLight) {
+//				Color startColor = triangle.getTexture().getColor();
+				Color tmp = l->apply(Color::white(), normal, intersectPoint);
+				tmp.normalize();
+				px = px + tmp;
+			}
 		}
 	}
-	return pxl;
+	return px;
 }
 
 bool Scene::isFaced(Vector normal, Vector direction) {
