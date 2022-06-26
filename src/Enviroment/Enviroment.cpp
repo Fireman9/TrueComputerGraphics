@@ -54,12 +54,16 @@ Scene Enviroment::prepare() {
 	Plane plane3({1, 0, 0}, -10);
 	Plane plane4({1, 0, 0}, 10);
 	Plane plane5({0, 0, 1}, -10);
-	Sphere sphere1(1, {0, 2, 0}, Shape::Material::Mirror);
-	Sphere sphere2(2, {1, -10, 10}, Shape::Material::Mirror);
-	Sphere sphere3(1, {3, 2, 0}, Shape::Material::Mirror);
+	Sphere sphere1(2, {0, 0, 0});
 
-	scene.setSpheres({sphere1, sphere2, sphere3});
+	PPMReader ppmReader("earth.ppm");
+	Texture earthTexture(ppmReader.read());
+	sphere1.setTexture(earthTexture);
+	Texture greenTexture(Color::green());
+	Texture blueTexture(Color::blue());
+
 	scene.setPlanes({plane1, plane2, plane3, plane4, plane5});
+	scene.setSpheres({sphere1});
 
 	return scene;
 }
@@ -76,7 +80,6 @@ void Enviroment::writeTofile(Scene scene) {
 	}
 	ppmWriter.setFilepath(output());
 	this->tStart = clock();
-	Node *n = Node::createNode(triangles);
 	scene.setTree(Node::createNode(triangles));
 	printf("Time taken for tree creating: %.5fs\n", (double) (clock() - tStart) / CLOCKS_PER_SEC);
 
