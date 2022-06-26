@@ -15,7 +15,7 @@ public:
 	Texture(Color color);
 	Texture(vector<vector<Color>> image);
 
-	Color getColor(Point &localHitPoint, IMapper *mapper);
+	Color getColor(Point &localHitPoint, IMapper &mapper);
 	vector<vector<Color>> getImage();
 
 	void setColor(Color color);
