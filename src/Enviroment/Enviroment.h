@@ -16,6 +16,7 @@
 #include "../Geometry/Point.h"
 #include "../Tree/Node.h"
 #include "../File/PPMReader.h"
+#include "Clock.h"
 
 using std::vector;
 using std::endl;

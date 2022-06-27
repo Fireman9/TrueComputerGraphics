@@ -73,22 +73,25 @@ Scene Enviroment::prepare() {
 
 void Enviroment::writeTofile(Scene scene) {
 	PPMWriter ppmWriter(arg);
+	Clock clock;
 	if (isTesting()) {
-		this->tStart = clock();
+		clock.start();
 		scene.renderScene();
-		printf("Time taken for simple rendering: %.5fs\n", (double) (clock() - tStart) / CLOCKS_PER_SEC);
-		const string out = "TEST_RENDER.ppm";
-		ppmWriter.setFilepath(out);
+		clock.stop();
+		clock.printResultMs("Time taken for simple rendering");
+		ppmWriter.setFilepath("TEST_RENDER.ppm");
 		scene.writeRenderToPPM(ppmWriter);
 	}
 	ppmWriter.setFilepath(output());
-	this->tStart = clock();
+	clock.start();
 	scene.setTree(Node::createNode(triangles));
-	printf("Time taken for tree creating: %.5fs\n", (double) (clock() - tStart) / CLOCKS_PER_SEC);
+	clock.stop();
+	clock.printResultMs("Time taken for tree creating");
 
-	this->tStart = clock();
+	clock.start();
 	scene.renderSceneTree();
-	printf("Time taken for tree rendering: %.5fs\n", (double) (clock() - tStart) / CLOCKS_PER_SEC);
+	clock.stop();
+	clock.printResultS("Time taken for tree rendering");
 
 	scene.writeRenderToPPM(ppmWriter);
 }
