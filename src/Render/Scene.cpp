@@ -289,7 +289,7 @@ bool Scene::shadowTree(Point start,
 	for (auto &l : lightDir) {
 		double num = 1;
 		bool lightType = false;
-		if (l.get()->isMain()) { num = 8; lightType = true; }
+		if (l.get()->isMain()) { num = 16; lightType = true; }
 		for (int i = 0; i < num; i++) {
 			Vector d;
 			Ray ray;

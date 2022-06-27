@@ -24,12 +24,12 @@ const Color Light::apply(Color startColor, Vector normal, Point dot) {
 const Vector Light::getDir(Point d) { 
 	std::random_device rd;
 	std::default_random_engine eng(rd());
-	std::uniform_real_distribution<double> distr(-20, 20);
+	std::uniform_real_distribution<double> distr(0, 1);
 
 	double u = distr(eng);
 	double v = distr(eng);
 	double t = 2 * M_PI * u;
-	double p = acos(2 * v - 1);
+	double p = acos(1 - 2 * v);
 
 	double x = sin(p) * cos(t);
 	double y = sin(p) * sin(t);
@@ -41,12 +41,12 @@ const Vector Light::getDir(Point d) {
 const Vector Light::getDirInner(Point d) {
 	std::random_device rd;
 	std::default_random_engine eng(rd());
-	std::uniform_real_distribution<double> distr(-20, 20);
+	std::uniform_real_distribution<double> distr(0, 1);
 
 	double u = distr(eng);
 	double v = distr(eng);
 	double t = 2 * M_PI * u;
-	double p = acos(2 * v - 1);
+	double p = acos(1 - 2 * v);
 
 	double x = sin(p) * cos(t);
 	double y = sin(p) * sin(t);
