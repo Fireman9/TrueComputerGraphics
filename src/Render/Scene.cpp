@@ -256,7 +256,7 @@ bool Scene::shadow(Point start, vector<std::shared_ptr<Light>> lightDir, Color &
 	for (auto &l : lightDir) {
 		double num = 1; 
 		bool lightType = false;
-		if (typeid(l.get()).name() == "Light") { num = 8; lightType = true; }
+		if (l.get()->isMain()) { num = 8; lightType = true; }
 		for (int i = 0; i < num; i++) {
 			Vector d;
 			Ray ray;
@@ -289,7 +289,7 @@ bool Scene::shadowTree(Point start,
 	for (auto &l : lightDir) {
 		double num = 1;
 		bool lightType = false;
-		if (typeid(l.get()).name() == "Light") { num = 8; lightType = true; }
+		if (l.get()->isMain()) { num = 8; lightType = true; }
 		for (int i = 0; i < num; i++) {
 			Vector d;
 			Ray ray;

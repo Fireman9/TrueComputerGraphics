@@ -21,6 +21,7 @@ public:
 	const Vector getDirInner(Point dot) override;
 	const bool isApropriate(Point dot, Point start) override;
 	const Color apply(Color startColor, Vector normal, Point dot) override;
+	const bool isMain() override;
 private:
 	Vector directionV;
 };

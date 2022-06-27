@@ -36,3 +36,4 @@ const Color DotLight::apply(Color startColor, Vector normal, Point dot) {
 	int b = startColor.b() * (color().b() / 255.0) * d;
 	return { r,g,b,startColor.a() };
 }
+const bool DotLight::isMain() { return false; }

@@ -32,3 +32,4 @@ const Color DirectLight::apply(Color startColor, Vector normal, Point dot) {
 	int b = startColor.b() * (color().b() / 255.0) * d;
 	return { r,g,b,startColor.a() };
 }
+const bool DirectLight::isMain() { return false; }

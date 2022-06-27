@@ -60,3 +60,4 @@ double Light::intensity() { return this->intens; }
 const bool Light::isApropriate(Point dot, Point start) {
 	return true;
 }
+const bool Light::isMain() { return true; }
