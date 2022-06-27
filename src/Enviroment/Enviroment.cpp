@@ -59,6 +59,8 @@ Scene Enviroment::prepare() {
 	PPMReader ppmReader("earth.ppm");
 	Texture earthTexture(ppmReader.read());
 	sphere1.setTexture(earthTexture);
+	//Texture t(Color::blue());
+	//sphere1.setTexture(t);
 	Texture greenTexture(Color::green());
 	Texture blueTexture(Color::blue());
 

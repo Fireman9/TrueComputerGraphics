@@ -244,12 +244,17 @@ bool Scene::shadow(Point start, vector<std::shared_ptr<Light>> lightDir, Color &
 	Color col(0, 0, 0, 0);
 	bool isShadow = false;
 	for (auto &l : lightDir) {
-		Ray ray = Ray(start, l->getDir(start));
-		Color tempColor = castRayFirstIntersection(ray, l.get(), startColor, norm, 0, true);
-		if (tempColor.a() > -256) {
-			col = col + tempColor;
-			isShadow = true;
+		double num = 1;
+		if (typeid(l) == typeid(Light)) { num = 8; }
+		for (int i = 0; i < num; i++) {
+			Ray ray = Ray(start, l->getDir(start));
+			Color tempColor = castRayFirstIntersection(ray, l.get(), startColor, norm, 0, true);
+			if (tempColor.a() > -256) {
+				col = col + tempColor;
+				isShadow = true;
+			}
 		}
+		col = col * (1.0 / num);
 	}
 	c = col;
 	c.normalizeMin();
