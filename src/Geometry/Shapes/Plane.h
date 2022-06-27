@@ -10,10 +10,12 @@ public:
 	Plane(double a, double b, double c, double d, Material m = Lambert);
 	Plane(Vector normalizedNormal, double d, Material m = Lambert);
 
-	Vector getNormal() const;
+	Vector getNormal(Point dot) override;
 	double d() const;
 
-	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01) const;
+	Point center() override;
+
+	vector<Point> getRayIntersection(Ray ray, double epsilon = 0.01) override;
 
 private:
 	double mA, mB, mC, mD;

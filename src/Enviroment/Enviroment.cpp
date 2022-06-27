@@ -41,12 +41,12 @@ Scene Enviroment::prepare() {
 
 	auto l1 = std::make_shared<DirectLight>(Vector(2, -4, -3), Color::white(), 0.4);
 	auto l3 = std::make_shared<DotLight>(Point(-2, -4, -3), Color::white(), 0.7);
-	auto l4 = std::make_shared<Light>(Color(255, 255, 255, 255), 0.03);
+	auto l4 = std::make_shared<Light>(Color(255, 255, 255, 255), 1.0);
 	auto l2 = std::make_shared<DotLight>(Point(4, -8, -4), Color::white(), 0.4);
 	vector<std::shared_ptr<Light>> light;
-	light.push_back(l2);
+	//light.push_back(l2);
 	light.push_back(l3);
-	light.push_back(l4);
+	//light.push_back(l4);
 	Scene scene(screen, light, Point(0, 0, -10), 100);
 
 	Plane plane1({0, 1, 0}, 9);
@@ -58,13 +58,14 @@ Scene Enviroment::prepare() {
 
 	PPMReader ppmReader("earth.ppm");
 	Texture earthTexture(ppmReader.read());
-	sphere1.setTexture(earthTexture);
-	//Texture t(Color::blue());
-	//sphere1.setTexture(t);
+	//sphere1.setTexture(earthTexture);
+	Texture t(Color::white());
+	sphere1.setTexture(t);
 	Texture greenTexture(Color::green());
 	Texture blueTexture(Color::blue());
 
 	scene.setPlanes({plane1, plane2, plane3, plane4, plane5});
+	//scene.setPlanes({plane2});
 	scene.setSpheres({sphere1});
 
 	return scene;

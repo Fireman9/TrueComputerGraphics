@@ -15,13 +15,16 @@ public:
 	Sphere(double radius, Point center, Material m = Lambert);
 	Sphere(double radius, double x, double y, double z, Material m = Lambert);
 
-	vector<Point> getRayIntersection(Ray ray) const;
+	vector<Point> getRayIntersection(Ray ray, double epsilon = 0.01) override;
 
 	double radius() const;
-	Point center() const;
+	Point center() override;
 
 	void setRadius(double radius);
 	void setCenter(Point center);
+
+	Vector getNormal(Point dot) override;
+	Color getStartColor(Point inter) override;
 
 private:
 	double mRadius;

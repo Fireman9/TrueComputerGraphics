@@ -1,4 +1,5 @@
 #include "Sphere.h"
+#include <iostream>
 
 Sphere::Sphere(double radius, Point center, Material m)
 	: Shape(m), mRadius(radius), mCenter(center) {}
@@ -6,7 +7,7 @@ Sphere::Sphere(double radius, Point center, Material m)
 Sphere::Sphere(double radius, double x, double y, double z, Material m)
 	: Shape(m), mRadius(radius), mCenter(Point(x, y, z)) {}
 
-vector<Point> Sphere::getRayIntersection(Ray ray) const {
+vector<Point> Sphere::getRayIntersection(Ray ray, double epsilon) {
 	vector<Point> result;
 	double a = pow(ray.direction().x(), 2) +
 		pow(ray.direction().y(), 2) +
@@ -37,7 +38,7 @@ double Sphere::radius() const {
 	return this->mRadius;
 }
 
-Point Sphere::center() const {
+Point Sphere::center() {
 	return this->mCenter;
 }
 
@@ -47,4 +48,18 @@ void Sphere::setRadius(double radius) {
 
 void Sphere::setCenter(Point center) {
 	this->mCenter = center;
+}
+
+Vector Sphere::getNormal(Point dot) {
+	Vector n(center(), dot);
+	n.normalize();
+	return n;
+}
+
+Color Sphere::getStartColor(Point inter) {
+	Point localHitPoint(inter.x() - center().x(),
+		(inter.y() - center().y()) / radius(),
+		inter.z() - center().z());
+	Color startColor = getTexture().getColorSphere(localHitPoint);
+	return startColor;
 }

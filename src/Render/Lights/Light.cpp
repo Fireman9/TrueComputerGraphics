@@ -24,7 +24,7 @@ const Color Light::apply(Color startColor, Vector normal, Point dot) {
 const Vector Light::getDir(Point d) { 
 	std::random_device rd;
 	std::default_random_engine eng(rd());
-	std::uniform_real_distribution<double> distr(0, 1);
+	std::uniform_real_distribution<double> distr(0, 0.99999999999);
 
 	double u = distr(eng);
 	double v = distr(eng);
