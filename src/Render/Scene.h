@@ -88,19 +88,19 @@ private:
 							 Point &intersectPoint,
 							 Point start,
 							 Vector &normal,
-							 int depth,
+							 int depth, Color startColor,
 							 bool shadow = false);
 	Color planeIntersection(Plane plane,
 							Ray ray,
 							Point &intersectPoint,
 							Vector &normal,
-							int depth,
+							int depth, Color startColor,
 							bool shadow = false);
 	Color triangleIntersection(Triangle triangle,
 							   Ray ray,
 							   Point &intersectPoint,
 							   Vector &normal,
-							   int depth,
+							   int depth, Color startColor,
 							   bool shadow = false);
 
 	static bool isFaced(Vector normal, Vector direction);
