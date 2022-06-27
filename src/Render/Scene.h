@@ -118,9 +118,6 @@ private:
 
 	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels);
 	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixels);
-
-	Color firstIntersection(Point start, Light *l, Color startColor, Vector norm);
-	Color firstIntersectionTree(Point start, Light *l, Color startColor, Vector norm, Node *tree);
 };
 
 #endif //SCENE_H
