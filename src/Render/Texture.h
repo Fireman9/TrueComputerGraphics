@@ -3,10 +3,11 @@
 
 #include <vector>
 #include <utility>
+#include <cmath>
 
 #include "Color.h"
-#include "Mappers/SphereMapper.h"
-#include "Mappers/PlaneMapper.h"
+#include "../Geometry/Point.h"
+#include "../Geometry/Vector.h"
 
 using std::vector;
 

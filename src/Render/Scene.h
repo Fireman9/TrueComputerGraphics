@@ -20,7 +20,6 @@
 #include "Lights/Light.h"
 #include "Lights/DotLight.h"
 #include "Lights/DirectLight.h"
-#include "Mappers/SphereMapper.h"
 
 using std::vector;
 using std::cout;

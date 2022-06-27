@@ -14,7 +14,6 @@ Scene::Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, 
 void Scene::setTree(Node* t) { mTree = t; }
 
 void Scene::renderSceneTree() {
-	// TODO: OpenMP
 	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
@@ -41,7 +40,6 @@ void Scene::renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixe
 }
 
 void Scene::renderScene() {
-	// TODO: OpenMP
 	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
@@ -408,28 +406,26 @@ bool Scene::isForward(Point &intersectPoint, Ray ray, Point camera) {
 }
 
 Color Scene::objectIntersection(std::shared_ptr<Shape> s,
-	Ray ray,
-	Point& intersectPoint,
-	Vector& normal,
-	int depth,
-	Color startColor,
-	bool shadow) {
-	auto intersectionPoints = s.get()->getRayIntersection(ray);
+								Ray ray,
+								Point &intersectPoint,
+								Vector &normal,
+								int depth,
+								Color startColor,
+								bool shadow) {
+	auto intersectionPoints = s->getRayIntersection(ray);
 
 	if (intersectionPoints.size() == 1) {
 		intersectPoint = intersectionPoints[0];
-	}
-	else if (intersectionPoints.size() == 2) {
+	} else if (intersectionPoints.size() == 2) {
 		Point first = intersectionPoints[0];
 		Point second = intersectionPoints[1];
 		bool firstIsForward, secondIsForward;
 		firstIsForward = isForward(first, ray, ray.origin());
 		secondIsForward = isForward(second, ray, ray.origin());
 		if (!firstIsForward) {
-			if (!secondIsForward) return { -300, -300, -300, -300 };
+			if (!secondIsForward) return {-300, -300, -300, -300};
 			intersectPoint = second;
-		}
-		else {
+		} else {
 			if (!secondIsForward) intersectPoint = first;
 			else {
 				if (second.distanceTo(ray.origin()) > first.distanceTo(ray.origin()))
@@ -437,22 +433,20 @@ Color Scene::objectIntersection(std::shared_ptr<Shape> s,
 				else intersectPoint = second;
 			}
 		}
+	} else {
+		return {-300, -300, -300, -300};
 	}
-	else {
-		return { -300, -300, -300, -300 };
-	}
-	normal = s.get()->getNormal(intersectPoint);
+	normal = s->getNormal(intersectPoint);
 	normal.normalize();
 	if (!isFaced(normal, ray.direction())) normal = normal * -1;
 	Color px(0, 0, 0, 0);
-	if (s.get()->material() == Shape::Material::Mirror && !shadow) {
+	if (s->material() == Shape::Material::Mirror && !shadow) {
 		Vector reflectionDir = ray.direction() -
 			normal * Vector::dotProduct(ray.direction(), normal) * 2;
 		px = px + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
-	}
-	else {
-		for (auto& l : mLight) {
-			Color startColor = s.get()->getStartColor(intersectPoint);
+	} else {
+		for (auto &l : mLight) {
+			startColor = s->getStartColor(intersectPoint);
 			Color tmp = l->apply(startColor, normal, intersectPoint);
 			tmp.normalize();
 			px = px + tmp;
