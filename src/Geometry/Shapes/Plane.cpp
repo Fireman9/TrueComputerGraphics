@@ -16,6 +16,10 @@ Vector Plane::getNormal() const {
 	return {mA, mB, mC};
 }
 
+double Plane::d() const {
+	return mD;
+}
+
 bool Plane::getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon) const {
 	double denominator = Vector::dotProduct(this->getNormal(), ray.direction());
 	if (std::abs(denominator) > epsilon) {
