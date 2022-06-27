@@ -25,9 +25,9 @@ public:
 	virtual vector<Point> getRayIntersection(Ray ray, double epsilon = 0.01);
 	virtual Color getStartColor(Point inter);
 
-private:
-	Material mMaterial;
+protected:
 	Texture mTexture;
+	Material mMaterial;
 };
 
 #endif //TRUECOMPUTERGRAPHICS_SRC_GEOMETRY_SHAPES_SHAPE_H_

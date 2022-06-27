@@ -58,8 +58,8 @@ Vector Sphere::getNormal(Point dot) {
 
 Color Sphere::getStartColor(Point inter) {
 	Point localHitPoint(inter.x() - center().x(),
-		(inter.y() - center().y()) / radius(),
-		inter.z() - center().z());
-	Color startColor = getTexture().getColorSphere(localHitPoint);
+						(inter.y() - center().y()) / radius(),
+						inter.z() - center().z());
+	Color startColor = mTexture.getColorSphere(localHitPoint);
 	return startColor;
 }
