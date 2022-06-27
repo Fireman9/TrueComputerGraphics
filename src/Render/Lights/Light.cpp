@@ -1,4 +1,8 @@
 #include "Light.h"
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#include <math.h>
 
 Light::Light(): Light(Color::white(), 1) {}
 Light::Light(Color c): Light(c, 1) {}
@@ -22,23 +26,34 @@ const Vector Light::getDir(Point d) {
 	std::default_random_engine eng(rd());
 	std::uniform_real_distribution<double> distr(-20, 20);
 
-	double x = distr(eng);
-	double y = distr(eng);
-	double z = distr(eng);
-	Vector v(x,y,z);
-	v.normalize();
-	return v; }
+	double u = distr(eng);
+	double v = distr(eng);
+	double t = 2 * M_PI * u;
+	double p = acos(2 * v - 1);
+
+	double x = sin(p) * cos(t);
+	double y = sin(p) * sin(t);
+	double z = cos(p);
+	Vector vec(x,y,z);
+	vec.normalize();
+	return vec; 
+}
 const Vector Light::getDirInner(Point d) {
 	std::random_device rd;
 	std::default_random_engine eng(rd());
 	std::uniform_real_distribution<double> distr(-20, 20);
 
-	double x = distr(eng);
-	double y = distr(eng);
-	double z = distr(eng);
-	Vector v(x, y, z);
-	v.normalize();
-	return v;
+	double u = distr(eng);
+	double v = distr(eng);
+	double t = 2 * M_PI * u;
+	double p = acos(2 * v - 1);
+
+	double x = sin(p) * cos(t);
+	double y = sin(p) * sin(t);
+	double z = cos(p);
+	Vector vec(x, y, z);
+	vec.normalize();
+	return vec;
 }
 Color Light::color() { return this->colorW; }
 double Light::intensity() { return this->intens; }

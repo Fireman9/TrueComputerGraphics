@@ -16,11 +16,11 @@ Enviroment::Enviroment(vector<string> mArg) {
 	find = false;
 	tmp = findKey("--h=", &find);
 	if (find) setHeight(stoi(tmp));
-	else setHeight(120);
+	else setHeight(100);
 	find = false;
 	tmp = findKey("--w=", &find);
 	if (find) setWidth(stoi(tmp));
-	else setWidth(200);
+	else setWidth(100);
 }
 
 OBJReader Enviroment::readTriangles() {
