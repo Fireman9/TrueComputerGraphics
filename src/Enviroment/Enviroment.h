@@ -15,6 +15,7 @@
 #include "../Render/Screen.h"
 #include "../Geometry/Point.h"
 #include "../Tree/Node.h"
+#include "../File/PPMReader.h"
 
 using std::vector;
 using std::endl;

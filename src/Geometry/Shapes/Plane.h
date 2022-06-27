@@ -11,6 +11,7 @@ public:
 	Plane(Vector normalizedNormal, double d, Material m = Lambert);
 
 	Vector getNormal() const;
+	double d() const;
 
 	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.01) const;
 
