@@ -81,13 +81,14 @@ private:
 	vector<Sphere> mSpheres;
 	vector<Triangle> mTriangles;
 	Node *mTree;
-	Color objectIntersection(std::shared_ptr<Shape> s,
-		Ray ray,
-		Point& intersectPoint,
-		Vector& normal,
-		int depth,
-		Color startColor,
-		bool shadow=false);
+
+	Color objectIntersection(Shape &s,
+							 Ray ray,
+							 Point &intersectPoint,
+							 Vector &normal,
+							 int depth,
+							 Color startColor,
+							 bool shadow = false);
 
 	static bool isFaced(Vector normal, Vector direction);
 	bool static isForward(Point &intersectPoint, Ray ray, Point camera);
