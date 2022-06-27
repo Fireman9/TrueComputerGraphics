@@ -4,11 +4,10 @@
 #include <cmath>
 
 #include "../../Geometry/Point.h"
-#include "IMapper.h"
 
-class SphereMapper : public IMapper {
+class SphereMapper {
 public:
-	void getCoordinates(Point &localHitPoint, int hRes, int vRes, int &row, int &column) override;
+	static void getCoordinates(Point &localHitPoint, int hRes, int vRes, int &row, int &column);
 };
 
 #endif //TRUECOMPUTERGRAPHICS_SRC_RENDER_MAPPERS_SPHEREMAPPER_H_
