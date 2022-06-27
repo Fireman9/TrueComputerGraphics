@@ -6,10 +6,17 @@ Texture::Texture(Color color) : mColor(color) {}
 
 Texture::Texture(vector<vector<Color>> image) : mImage(std::move(image)) {}
 
-Color Texture::getColor(Point &localHitPoint, IMapper &mapper) {
+Color Texture::getColorSphere(Point &localHitPoint) {
 	if (mImage.empty()) return mColor;
 	int row, column;
-	mapper.getCoordinates(localHitPoint, mImage[0].size(), mImage.size(), row, column);
+	SphereMapper::getCoordinates(localHitPoint, mImage[0].size(), mImage.size(), row, column);
+	return mImage[row][column];
+}
+
+Color Texture::getColorPlane(Point &globalHitPoint, Vector normal) {
+	if (mImage.empty()) return mColor;
+	int row, column;
+	PlaneMapper::getCoordinates(globalHitPoint, normal, mImage[0].size(), mImage.size(), row, column);
 	return mImage[row][column];
 }
 

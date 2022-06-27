@@ -409,12 +409,11 @@ Color Scene::sphereIntersection(Sphere sphere,
 			normal * Vector::dotProduct(ray.direction(), normal) * 2;
 		px = px + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
 	} else {
-		SphereMapper mapper;
 		for (auto &l : mLight) {
 			Point localHitPoint(intersectPoint.x() - sphere.center().x(),
 								(intersectPoint.y() - sphere.center().y()) / sphere.radius(),
 								intersectPoint.z() - sphere.center().z());
-			Color startColor = sphere.getTexture().getColor(localHitPoint, mapper);
+			Color startColor = sphere.getTexture().getColorSphere(localHitPoint);
 			Color tmp = l->apply(startColor, normal, intersectPoint);
 			tmp.normalize();
 			px = px + tmp;
@@ -436,8 +435,8 @@ Color Scene::planeIntersection(Plane plane, Ray ray, Point &intersectPoint, Vect
 			pxl = pxl + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
 		} else {
 			for (auto &l : mLight) {
-//				Color startColor = plane.getTexture().getColor();
-				Color tmp = l->apply(Color::white(), normal, intersectPoint);
+				Color startColor = plane.getTexture().getColorPlane(intersectPoint, plane.getNormal());
+				Color tmp = l->apply(startColor, normal, intersectPoint);
 				tmp.normalize();
 				pxl = pxl + tmp;
 			}

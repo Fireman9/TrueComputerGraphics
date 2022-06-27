@@ -5,7 +5,8 @@
 #include <utility>
 
 #include "Color.h"
-#include "Mappers/IMapper.h"
+#include "Mappers/SphereMapper.h"
+#include "Mappers/PlaneMapper.h"
 
 using std::vector;
 
@@ -15,7 +16,8 @@ public:
 	Texture(Color color);
 	Texture(vector<vector<Color>> image);
 
-	Color getColor(Point &localHitPoint, IMapper &mapper);
+	Color getColorSphere(Point &localHitPoint);
+	Color getColorPlane(Point &globalHitPoint, Vector normal);
 	vector<vector<Color>> getImage();
 
 	void setColor(Color color);
