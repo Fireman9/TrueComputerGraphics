@@ -17,7 +17,7 @@ public:
 
 	Vector getNormal(Point dot) override;
 
-	vector<Point> getRayIntersection(Ray ray, double epsilon = 0.0000001) override;
+	vector<Point> getRayIntersection(Ray ray, double epsilon = 0.001) override;
 
 	Triangle transform(Matrix4x4 matrix, Point transPoint);
 

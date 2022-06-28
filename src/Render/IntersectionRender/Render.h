@@ -6,8 +6,7 @@
 #include "../Lights/Light.h"
 
 class Render {
-	
-	Color intersectionOnScreenFromCamera(double x, double y, Node* tree=NULL);
+	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>>& pixels);
 };
 
 #endif //RENDER_H

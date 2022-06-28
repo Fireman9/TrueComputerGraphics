@@ -10,6 +10,12 @@
 
 class Intersection {
 public:
+
+	Intersection(vector<Plane> mPlanes,
+	vector<Sphere> mSpheres,
+	vector<Triangle> mTriangles,
+	vector<std::shared_ptr<Light>> mLight, Node* tree=NULL);
+
 	Color objectIntersection(Shape& s, Ray ray, Point& intersectPoint, Vector& normal,
 		int depth, Color startColor,bool shadow = false);
 
@@ -30,6 +36,7 @@ private:
 	vector<Sphere> mSpheres;
 	vector<Triangle> mTriangles;
 	vector<std::shared_ptr<Light>> mLight;
+	Node* tree;
 };
 
 #endif //INTERSECTION_H

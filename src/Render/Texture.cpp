@@ -1,5 +1,9 @@
 #include "Texture.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 Texture::Texture() = default;
 
 Texture::Texture(Color color) : mColor(color) {}

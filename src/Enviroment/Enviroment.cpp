@@ -37,8 +37,7 @@ vector<Triangle> Enviroment::transformTriangles(Matrix4x4 matrix, vector<Triangl
 }
 
 Scene Enviroment::prepare() {
-	Screen screen(width(), height());
-
+	Screen screen (width(), height());
 	auto l1 = std::make_shared<DirectLight>(Vector(2, -4, -3), Color::white(), 0.4);
 	auto l3 = std::make_shared<DotLight>(Point(-2, -4, -3), Color::white(), 0.7);
 	auto l4 = std::make_shared<Light>(Color(255, 255, 255, 255), 1.0);
@@ -48,24 +47,24 @@ Scene Enviroment::prepare() {
 	light.push_back(l3);
 	//light.push_back(l4);
 	Scene scene(screen, light, Point(0, 0, -10), 100);
-
+	
 	Plane plane1({0, 1, 0}, 9);
 	Plane plane2({0, 1, 0}, -3);
 	Plane plane3({1, 0, 0}, -10);
 	Plane plane4({1, 0, 0}, 10);
 	Plane plane5({0, 0, 1}, -10);
 	Sphere sphere1(2, {0, 0, 0});
+	Triangle t1(Point(1,1,1),Point(2,2,1),Point(4,2,2));
 
 	PPMReader ppmReader("earth.ppm");
 	Texture earthTexture(ppmReader.read());
-	//sphere1.setTexture(earthTexture);
-	Texture t(Color::white());
-	sphere1.setTexture(t);
+	sphere1.setTexture(earthTexture);
 	Texture greenTexture(Color::green());
 	Texture blueTexture(Color::blue());
 
 	scene.setPlanes({plane1, plane2, plane3, plane4, plane5});
 	//scene.setPlanes({plane2});
+	scene.setTriangles({t1});
 	scene.setSpheres({sphere1});
 
 	return scene;
@@ -80,20 +79,19 @@ void Enviroment::writeTofile(Scene scene) {
 		clock.stop();
 		clock.printResultMs("Time taken for simple rendering");
 		ppmWriter.setFilepath("TEST_RENDER.ppm");
-		scene.writeRenderToPPM(ppmWriter);
+		RenderUtils::writeRenderToPPM(scene.getScreen(), ppmWriter);
 	}
 	ppmWriter.setFilepath(output());
 	clock.start();
 	scene.setTree(Node::createNode(triangles));
 	clock.stop();
 	clock.printResultMs("Time taken for tree creating");
-
 	clock.start();
-	scene.renderSceneTree();
+	scene.renderScene(scene.getTree());
 	clock.stop();
 	clock.printResultS("Time taken for tree rendering");
 
-	scene.writeRenderToPPM(ppmWriter);
+	RenderUtils::writeRenderToPPM(scene.getScreen(),ppmWriter);
 }
 
 void Enviroment::setArg(vector<string> mArg) { this->arg = mArg; }

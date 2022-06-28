@@ -43,7 +43,7 @@ private:
 	Point endP;
 	vector<Triangle> trianglesList;
 	static int const MAX_SIZE = 3000; //500 for cow, 3k? for dragon
-	double const EPSILON = 0.01;
+	double const EPSILON = 0.001;
 	int const MAX_DEEP = 100;
 	Node* leftN;
 	Node* rightN;

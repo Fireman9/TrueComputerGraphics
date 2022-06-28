@@ -8,8 +8,10 @@
 #include "../../Geometry/Point.h"
 #include "../../Geometry/Ray.h"
 #include "../../Geometry/Vector.h"
+#include "../../Geometry/Shapes/Triangle.h"
 #include "../Screen.h"
 #include "../../File/PPMWriter.h"
+#include "../../Tree/Node.h"
 
 using std::cout;
 
@@ -24,6 +26,8 @@ public:
 	static void showRenderToConsole(Screen mScreen);
 
 	static void writeRenderToPPM(Screen mScreen, PPMWriter& ppmWriter);
+
+	static vector<Triangle> findAllTriangle(Node* tree, Ray ray);
 private:
 	RenderUtils();
 };

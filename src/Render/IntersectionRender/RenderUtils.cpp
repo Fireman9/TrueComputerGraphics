@@ -1,4 +1,5 @@
 #include "RenderUtils.h"
+#include <iostream>
 
 bool RenderUtils::isFaced(Vector normal, Vector direction) {
 	if (Vector::dotProduct(normal, direction) <= 0) return true;
@@ -45,4 +46,17 @@ void RenderUtils::writeRenderToPPM(Screen mScreen, PPMWriter& ppmWriter) {
 	ppmWriter.setPixels(mScreen.getPixels());
 	ppmWriter.convert();
 	ppmWriter.write();
+}
+
+vector<Triangle> RenderUtils::findAllTriangle(Node* tree, Ray ray) {
+	vector<Node*> leafs;
+	tree->findAllNodes(ray, &leafs);
+	vector<Triangle>t;
+	
+	for (auto& leaf : leafs) {
+		for (auto& triangle : leaf->triangles()) {
+			t.push_back(triangle);
+		}
+	}
+	return t;
 }

@@ -1,5 +1,16 @@
 #include "Intersection.h"
 
+Intersection::Intersection(vector<Plane> myPlanes,
+	vector<Sphere> mySpheres,
+	vector<Triangle> myTriangles,
+	vector<std::shared_ptr<Light>> myLight, Node* myTree) {
+	mPlanes = myPlanes;
+	mSpheres = mySpheres;
+	mTriangles = myTriangles;
+	mLight = myLight;
+	tree = myTree;
+}
+
 Color Intersection::objectIntersection(Shape& s, Ray ray, Point& intersectPoint, Vector& normal,
 	int depth, Color startColor, bool shadow) {
 	auto intersectionPoints = s.getRayIntersection(ray);
@@ -88,7 +99,9 @@ Color Intersection::castRay(Ray ray, int depth) {
 	for (auto& plane : mPlanes) {
 		inRayHelper(plane, ray, depth, startColor, minDist, px, normal, intersectPoint);
 	}
-	for (auto& triangle : mTriangles) {
+	vector<Triangle> t = mTriangles;
+	if (tree != NULL) t = RenderUtils::findAllTriangle(tree, ray);
+	for (auto& triangle : t) {
 		inRayHelper(triangle, ray, depth, startColor, minDist, px, normal, intersectPoint);
 	}
 	Color temp(0, 0, 0, 0);
@@ -155,7 +168,9 @@ Color Intersection::castRayFirstIntersection(Ray ray, Light* l, Color startColor
 	for (auto& plane : mPlanes) {
 		if (inShadowHelper(plane, ray, depth, startColor, forShadow, l, normal, col)) return col;
 	}
-	for (auto& triangle : mTriangles) {
+	vector<Triangle> t = mTriangles;
+	if (tree != NULL) t = RenderUtils::findAllTriangle(tree, ray);
+	for (auto& triangle : t) {
 		if (inShadowHelper(triangle, ray, depth, startColor, forShadow, l, normal, col)) return col;
 	}
 	return col;
