@@ -33,9 +33,9 @@ public:
 	Scene(Screen screen);
 	Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist);
 
-	void renderScene( Node* tree = NULL);
+	void renderScene(Node *tree = nullptr);
 
-	Color intersectionOnScreenFromCamera(double x, double y, Node *tree = NULL);
+	Color intersectionOnScreenFromCamera(double x, double y, Node *tree = nullptr);
 
 	void setScreen(Screen screen);
 	void setLight(vector<std::shared_ptr<Light>> light);
@@ -46,7 +46,7 @@ public:
 	double getCameraToScreenDist();
 	Point getCamera();
 	Screen getScreen();
-	Node* getTree();
+	Node *getTree();
 
 	void addNewSphere(Sphere sphere);
 	void addNewSpheres(vector<Sphere> spheres);
@@ -70,7 +70,7 @@ private:
 	vector<Triangle> mTriangles;
 	Node *mTree;
 
-	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, Node* tree = NULL);
+	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, Node *tree = nullptr);
 };
 
 #endif //SCENE_H

@@ -1,23 +1,21 @@
 #include "Scene.h"
 
-Scene::Scene()
-	: Scene(Screen(), {std::make_shared<DotLight>(Color::white())},
-			Point(0, 0, 0), 50) {}
+Scene::Scene() : Scene(Screen(), {std::make_shared<DotLight>(Color::white())},
+					   Point(0, 0, 0), 50) {}
 
-Scene::Scene(Screen screen)
-	: Scene(screen, {std::make_shared<DotLight>(Color::white())},
-			Point(0, 0, 0), 50) {}
+Scene::Scene(Screen screen) : Scene(screen, {std::make_shared<DotLight>(Color::white())},
+									Point(0, 0, 0), 50) {}
 
 Scene::Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist)
-	: mScreen(screen), mLight(light), mCamera(camera), mCameraToScreenDist(cameraToScreenDist), mTree(NULL) {}
+	: mScreen(screen), mLight(light), mCamera(camera), mCameraToScreenDist(cameraToScreenDist), mTree(nullptr) {}
 
 Screen Scene::getScreen() {
 	return mScreen;
 }
 
-void Scene::setTree(Node* t) { mTree = t; }
+void Scene::setTree(Node *t) { mTree = t; }
 
-void Scene::renderScene(Node* tree) {
+void Scene::renderScene(Node *tree) {
 	vector<vector<Color>> pixels(mScreen.getHeight(), vector<Color>(mScreen.getWidth()));
 	unsigned int numOfThreads = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads;
@@ -32,7 +30,7 @@ void Scene::renderScene(Node* tree) {
 	mScreen.setPixels(pixels);
 }
 
-void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, Node* tree) {
+void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, Node *tree) {
 	for (int y = yFrom; y < yTo; y++) {
 		for (int x = 0; x < pixels[y].size(); x++) {
 			pixels[y][x] = intersectionOnScreenFromCamera(x * mScreen.getCoordPerPixel(),
@@ -41,7 +39,7 @@ void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, 
 	}
 }
 
-Color Scene::intersectionOnScreenFromCamera(double x, double y, Node* tree) {
+Color Scene::intersectionOnScreenFromCamera(double x, double y, Node *tree) {
 	Point screenTopLeft = getCamera() -
 		Point(mScreen.getWidth() * mScreen.getCoordPerPixel() * 0.5,
 			  mScreen.getHeight() * mScreen.getCoordPerPixel() * 0.5,
@@ -50,7 +48,7 @@ Color Scene::intersectionOnScreenFromCamera(double x, double y, Node* tree) {
 	Point curPoint = screenTopLeft + Point(x, y, 0);
 	Vector dir = Vector(mCamera, curPoint);
 	dir.normalize();
-	Intersection i(mPlanes, mSpheres, mTriangles,mLight, getTree());
+	Intersection i(mPlanes, mSpheres, mTriangles, mLight, getTree());
 	return i.castRay(Ray(mCamera, dir), 0);
 }
 
@@ -58,7 +56,7 @@ void Scene::setScreen(Screen screen) { mScreen = screen; }
 
 Point Scene::getCamera() { return mCamera; }
 
-Node* Scene::getTree() { return mTree; }
+Node *Scene::getTree() { return mTree; }
 
 void Scene::setCamera(Point camera) { mCamera = camera; }
 

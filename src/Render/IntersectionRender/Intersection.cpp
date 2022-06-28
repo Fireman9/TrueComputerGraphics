@@ -1,34 +1,30 @@
 #include "Intersection.h"
 
-Intersection::Intersection(vector<Plane> myPlanes,
-	vector<Sphere> mySpheres,
-	vector<Triangle> myTriangles,
-	vector<std::shared_ptr<Light>> myLight, Node* myTree) {
-	mPlanes = myPlanes;
-	mSpheres = mySpheres;
-	mTriangles = myTriangles;
-	mLight = myLight;
-	tree = myTree;
+Intersection::Intersection(vector<Plane> planes, vector<Sphere> spheres,
+						   vector<Triangle> triangles,
+						   vector<std::shared_ptr<Light>> light, Node *tree) {
+	mPlanes = planes;
+	mSpheres = spheres;
+	mTriangles = triangles;
+	mLight = light;
+	this->tree = tree;
 }
 
-Color Intersection::objectIntersection(Shape& s, Ray ray, Point& intersectPoint, Vector& normal,
-	int depth, Color startColor, bool shadow) {
+Color Intersection::objectIntersection(Shape &s, Ray ray, Point &intersectPoint, Vector &normal,
+									   int depth, Color startColor, bool shadow) {
 	auto intersectionPoints = s.getRayIntersection(ray);
-
 	if (intersectionPoints.size() == 1) {
 		intersectPoint = intersectionPoints[0];
-	}
-	else if (intersectionPoints.size() == 2) {
+	} else if (intersectionPoints.size() == 2) {
 		Point first = intersectionPoints[0];
 		Point second = intersectionPoints[1];
 		bool firstIsForward, secondIsForward;
 		firstIsForward = RenderUtils::isForward(first, ray, ray.origin());
 		secondIsForward = RenderUtils::isForward(second, ray, ray.origin());
 		if (!firstIsForward) {
-			if (!secondIsForward) return { -300, -300, -300, -300 };
+			if (!secondIsForward) return {-300, -300, -300, -300};
 			intersectPoint = second;
-		}
-		else {
+		} else {
 			if (!secondIsForward) intersectPoint = first;
 			else {
 				if (second.distanceTo(ray.origin()) > first.distanceTo(ray.origin()))
@@ -36,14 +32,14 @@ Color Intersection::objectIntersection(Shape& s, Ray ray, Point& intersectPoint,
 				else intersectPoint = second;
 			}
 		}
-	}
-	else {
-		return { -300, -300, -300, -300 };
+	} else {
+		return {-300, -300, -300, -300};
 	}
 	return doWithIntersection(ray, s, depth, startColor, normal, intersectPoint, shadow);
 }
 
-Color Intersection::doWithIntersection(Ray ray, Shape& s, int depth, Color& startColor, Vector& normal, Point& intersectPoint, bool shadow) {
+Color Intersection::doWithIntersection(Ray ray, Shape &s, int depth, Color &startColor,
+									   Vector &normal, Point &intersectPoint, bool shadow) {
 	normal = s.getNormal(intersectPoint);
 	normal.normalize();
 	if (!RenderUtils::isFaced(normal, ray.direction())) normal = normal * -1;
@@ -52,9 +48,8 @@ Color Intersection::doWithIntersection(Ray ray, Shape& s, int depth, Color& star
 		Vector reflectionDir = ray.direction() -
 			normal * Vector::dotProduct(ray.direction(), normal) * 2;
 		px = px + castRay(Ray(intersectPoint, reflectionDir), depth + 1);
-	}
-	else {
-		for (auto& l : mLight) {
+	} else {
+		for (auto &l : mLight) {
 			startColor = s.getStartColor(intersectPoint);
 			Color tmp = l->apply(startColor, normal, intersectPoint);
 			tmp.normalize();
@@ -64,9 +59,9 @@ Color Intersection::doWithIntersection(Ray ray, Shape& s, int depth, Color& star
 	return px;
 }
 
-void Intersection::inRayHelper(Shape& s, Ray ray, int depth, Color& startColor, double& minDist, Color& px
-	, Vector& normal, Point& intersectPoint ) {
-	
+void Intersection::inRayHelper(Shape &s, Ray ray, int depth, Color &startColor,
+							   double &minDist, Color &px, Vector &normal, Point &intersectPoint) {
+
 	Point tempIntersectPoint;
 	Vector tempNormal;
 	Color startColorLocal;
@@ -81,7 +76,6 @@ void Intersection::inRayHelper(Shape& s, Ray ray, int depth, Color& startColor, 
 	}
 }
 
-
 Color Intersection::castRay(Ray ray, int depth) {
 	Color px(-300, -300, -300, -300);
 	if (depth > 5) {
@@ -93,15 +87,15 @@ Color Intersection::castRay(Ray ray, int depth) {
 	Vector normal;
 	Color startColor;
 	Color startColorLocal;
-	for (auto& sphere : mSpheres) {
-		inRayHelper(sphere, ray, depth,startColor,minDist,px,normal,intersectPoint);
+	for (auto &sphere : mSpheres) {
+		inRayHelper(sphere, ray, depth, startColor, minDist, px, normal, intersectPoint);
 	}
-	for (auto& plane : mPlanes) {
+	for (auto &plane : mPlanes) {
 		inRayHelper(plane, ray, depth, startColor, minDist, px, normal, intersectPoint);
 	}
 	vector<Triangle> t = mTriangles;
-	if (tree != NULL) t = RenderUtils::findAllTriangle(tree, ray);
-	for (auto& triangle : t) {
+	if (tree != nullptr) t = RenderUtils::findAllTriangle(tree, ray);
+	for (auto &triangle : t) {
 		inRayHelper(triangle, ray, depth, startColor, minDist, px, normal, intersectPoint);
 	}
 	Color temp(0, 0, 0, 0);
@@ -113,13 +107,16 @@ Color Intersection::castRay(Ray ray, int depth) {
 	return px;
 }
 
-bool Intersection::shadow(Point start, Color& c, Color startColor, Vector norm) {
+bool Intersection::shadow(Point start, Color &c, Color startColor, Vector norm) {
 	Color col(0, 0, 0, 0);
 	bool isShadow = false;
-	for (auto& l : mLight) {
+	for (auto &l : mLight) {
 		double num = 1;
 		bool lightType = false;
-		if (l.get()->isMain()) { num = 8; lightType = true; }
+		if (l->isMain()) {
+			num = 8;
+			lightType = true;
+		}
 		for (int i = 0; i < num; i++) {
 			Vector d;
 			Ray ray;
@@ -141,7 +138,8 @@ bool Intersection::shadow(Point start, Color& c, Color startColor, Vector norm) 
 	return isShadow;
 }
 
-bool Intersection::inShadowHelper(Shape& s, Ray ray, int depth, Color& startColor, bool forShadow, Light *l, Vector& normal, Color& col) {
+bool Intersection::inShadowHelper(Shape &s, Ray ray, int depth, Color &startColor, bool forShadow,
+								  Light *l, Vector &normal, Color &col) {
 	Point tempIntersectPoint;
 	Vector tempNormal;
 	Color startColorLocal;
@@ -156,23 +154,23 @@ bool Intersection::inShadowHelper(Shape& s, Ray ray, int depth, Color& startColo
 	return false;
 }
 
-Color Intersection::castRayFirstIntersection(Ray ray, Light* l, Color startColor, Vector normal, int depth, bool forShadow) {
+Color Intersection::castRayFirstIntersection(Ray ray, Light *l, Color startColor,
+											 Vector normal, int depth, bool forShadow) {
 	Color col(-300, -300, -300, -300);
 	if (depth > 5) {
 		col.normalize();
 		return col;
 	}
-	for (auto& sphere : mSpheres) {
+	for (auto &sphere : mSpheres) {
 		if (inShadowHelper(sphere, ray, depth, startColor, forShadow, l, normal, col)) return col;
 	}
-	for (auto& plane : mPlanes) {
+	for (auto &plane : mPlanes) {
 		if (inShadowHelper(plane, ray, depth, startColor, forShadow, l, normal, col)) return col;
 	}
 	vector<Triangle> t = mTriangles;
-	if (tree != NULL) t = RenderUtils::findAllTriangle(tree, ray);
-	for (auto& triangle : t) {
+	if (tree != nullptr) t = RenderUtils::findAllTriangle(tree, ray);
+	for (auto &triangle : t) {
 		if (inShadowHelper(triangle, ray, depth, startColor, forShadow, l, normal, col)) return col;
 	}
 	return col;
 }
-

@@ -1,6 +1,8 @@
 #ifndef TRUECOMPUTERGRAPHICS_GEOMETRY_PLANE_H_
 #define TRUECOMPUTERGRAPHICS_GEOMETRY_PLANE_H_
 
+#include <cmath>
+
 #include "../Vector.h"
 #include "../Ray.h"
 #include "../Shapes/Shape.h"

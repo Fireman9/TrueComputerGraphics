@@ -1,4 +1,3 @@
-#include <cmath>
 #include "Point.h"
 
 Point::Point() : mX(0), mY(0), mZ(0) {}

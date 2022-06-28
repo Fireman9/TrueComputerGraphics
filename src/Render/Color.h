@@ -1,5 +1,6 @@
 #ifndef COLOR_H
 #define COLOR_H
+
 #include <algorithm>
 
 class Color {
@@ -24,9 +25,9 @@ public:
 	void setAlpha(int aW);
 	void setAll(int rW, int gW, int bW, int aW);
 
-	Color operator* (double x) const;
-	Color operator+ (Color c) const;
-	Color operator- (Color c) const;
+	Color operator*(double x) const;
+	Color operator+(Color c) const;
+	Color operator-(Color c) const;
 	void normalize();
 	void normalizeMin();
 

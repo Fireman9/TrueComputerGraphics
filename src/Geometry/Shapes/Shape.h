@@ -1,6 +1,8 @@
 #ifndef TRUECOMPUTERGRAPHICS_SRC_GEOMETRY_SHAPES_SHAPE_H_
 #define TRUECOMPUTERGRAPHICS_SRC_GEOMETRY_SHAPES_SHAPE_H_
 
+#include <utility>
+
 #include "../../Render/Texture.h"
 #include "../Ray.h"
 

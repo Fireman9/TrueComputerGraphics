@@ -1,12 +1,11 @@
 #include "RenderUtils.h"
-#include <iostream>
 
 bool RenderUtils::isFaced(Vector normal, Vector direction) {
 	if (Vector::dotProduct(normal, direction) <= 0) return true;
 	else return false;
 }
 
-bool RenderUtils::isForward(Point& intersectPoint, Ray ray, Point camera) {
+bool RenderUtils::isForward(Point &intersectPoint, Ray ray, Point camera) {
 	Vector intersectDir = Vector(camera, intersectPoint);
 	intersectDir.normalize();
 	return Vector::dotProduct(intersectDir, ray.direction()) > 0;
@@ -14,7 +13,7 @@ bool RenderUtils::isForward(Point& intersectPoint, Ray ray, Point camera) {
 
 char RenderUtils::getSymbol(Color c) {
 	//if we want colored background
-	int x = (c.r() +  c.g() + c.b()) / 3;
+	int x = (c.r() + c.g() + c.b()) / 3;
 	if (x == -300) return '.';
 	else if (x <= 0) return ' ';
 	else if (x < 0.2 * 255) return '-';
@@ -28,33 +27,33 @@ void RenderUtils::showRenderToConsole(Screen mScreen) {
 	int width = mScreen.getWidth();
 	vector<vector<Color>> pixels = mScreen.getPixels();
 	for (int y = 0; y < width + 1; y++) cout << "--";
-	cout << std::endl;
+	cout << endl;
 
 	for (int y = 0; y < height; y++) {
 		cout << '|';
 		for (int x = 0; x < width; x++) {
 			cout << getSymbol(pixels[y][x]) << ' ';
 		}
-		cout << '|' << std::endl;
+		cout << '|' << endl;
 	}
 
 	for (int y = 0; y < width + 1; y++) cout << "--";
-	cout << std::endl;
+	cout << endl;
 }
 
-void RenderUtils::writeRenderToPPM(Screen mScreen, PPMWriter& ppmWriter) {
+void RenderUtils::writeRenderToPPM(Screen mScreen, PPMWriter &ppmWriter) {
 	ppmWriter.setPixels(mScreen.getPixels());
 	ppmWriter.convert();
 	ppmWriter.write();
 }
 
-vector<Triangle> RenderUtils::findAllTriangle(Node* tree, Ray ray) {
-	vector<Node*> leafs;
+vector<Triangle> RenderUtils::findAllTriangle(Node *tree, Ray ray) {
+	vector<Node *> leafs;
 	tree->findAllNodes(ray, &leafs);
-	vector<Triangle>t;
-	
-	for (auto& leaf : leafs) {
-		for (auto& triangle : leaf->triangles()) {
+	vector<Triangle> t;
+
+	for (auto &leaf : leafs) {
+		for (auto &triangle : leaf->triangles()) {
 			t.push_back(triangle);
 		}
 	}

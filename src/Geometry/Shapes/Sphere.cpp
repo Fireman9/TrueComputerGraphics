@@ -60,6 +60,5 @@ Color Sphere::getStartColor(Point inter) {
 	Point localHitPoint(inter.x() - center().x(),
 						(inter.y() - center().y()) / radius(),
 						inter.z() - center().z());
-	Color startColor = mTexture.getColorSphere(localHitPoint);
-	return startColor;
+	return mTexture.getColorSphere(localHitPoint);
 }

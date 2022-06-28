@@ -40,7 +40,7 @@ vector<Point> Triangle::getRayIntersection(Ray ray, double epsilon) {
 	c = Vector::crossProduct(edge2, v2IntPoint);
 	if (Vector::dotProduct(normal, c) < 0) return {};
 
-	return { intersectionPoint };
+	return {intersectionPoint};
 }
 
 Triangle Triangle::transform(Matrix4x4 matrix, Point transPoint) {
