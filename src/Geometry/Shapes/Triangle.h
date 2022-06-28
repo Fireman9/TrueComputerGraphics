@@ -15,7 +15,9 @@ public:
 			 Vector v0Normal, Vector v1Normal, Vector v2Normal,
 			 Material m = Lambert);
 
-	bool getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon = 0.0000001);
+	Vector getNormal(Point dot) override;
+
+	vector<Point> getRayIntersection(Ray ray, double epsilon = 0.001) override;
 
 	Triangle transform(Matrix4x4 matrix, Point transPoint);
 
@@ -27,7 +29,7 @@ public:
 	Vector v1Normal();
 	Vector v2Normal();
 
-	Point center();
+	Point center() override;
 
 	void setV0(Point v0);
 	void setV1(Point v1);

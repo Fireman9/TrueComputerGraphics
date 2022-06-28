@@ -1,7 +1,5 @@
 #include "Shape.h"
 
-#include <utility>
-
 Shape::Shape(Shape::Material m) : mMaterial(m), mTexture(Color::white()) {}
 
 Shape::Shape(Shape::Material m, Texture texture) : mMaterial(m), mTexture(std::move(texture)) {}
@@ -20,4 +18,20 @@ void Shape::setTexture(Texture texture) {
 
 Texture Shape::getTexture() {
 	return mTexture;
+}
+
+Vector Shape::getNormal(Point dot) {
+	return {};
+}
+
+vector<Point> Shape::getRayIntersection(Ray ray, double epsilon) {
+	return {};
+}
+
+Point Shape::center() {
+	return {};
+}
+
+Color Shape::getStartColor(Point inter) {
+	return Color::white();
 }

@@ -5,6 +5,7 @@
 #include <vector>
 #include <thread>
 #include <algorithm>
+#include <utility>
 #include <functional>
 #include <memory>
 
@@ -20,7 +21,7 @@
 #include "Lights/Light.h"
 #include "Lights/DotLight.h"
 #include "Lights/DirectLight.h"
-#include "Mappers/SphereMapper.h"
+#include "IntersectionRender/Intersection.h"
 
 using std::vector;
 using std::cout;
@@ -33,24 +34,9 @@ public:
 	Scene(Screen screen);
 	Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist);
 
-	void renderScene();
-	void renderSceneTree();
+	void renderScene(Node *tree = nullptr);
 
-	void writeRenderToPPM(PPMWriter &ppmWriter);
-	void showRenderToConsole();
-
-	Color intersectionOnScreenFromCamera(double x, double y);
-	Color intersectionOnScreenFromCameraTree(double x, double y, Node *tree);
-	Color castRay(Ray ray, int depth);
-	Color castRayTree(Ray ray, Node *tree, int depth);
-	Color castRayFirstIntersection(Ray ray, Light *l, Color startColor, Vector normal, int depth, bool forShadow = false);
-	Color castRayFirstIntersectionTree(Ray ray,
-									   Light *l,
-									   Color startColor,
-									   Vector normal,
-									   Node *tree,
-									   int depth,
-									   bool forShadow = false);
+	Color intersectionOnScreenFromCamera(double x, double y, Node *tree = nullptr);
 
 	void setScreen(Screen screen);
 	void setLight(vector<std::shared_ptr<Light>> light);
@@ -60,6 +46,8 @@ public:
 
 	double getCameraToScreenDist();
 	Point getCamera();
+	Screen getScreen();
+	Node *getTree();
 
 	void addNewSphere(Sphere sphere);
 	void addNewSpheres(vector<Sphere> spheres);
@@ -83,41 +71,7 @@ private:
 	vector<Triangle> mTriangles;
 	Node *mTree;
 
-	Color sphereIntersection(Sphere sphere,
-							 Ray ray,
-							 Point &intersectPoint,
-							 Point start,
-							 Vector &normal,
-							 int depth,
-							 bool shadow = false);
-	Color planeIntersection(Plane plane,
-							Ray ray,
-							Point &intersectPoint,
-							Vector &normal,
-							int depth,
-							bool shadow = false);
-	Color triangleIntersection(Triangle triangle,
-							   Ray ray,
-							   Point &intersectPoint,
-							   Vector &normal,
-							   int depth,
-							   bool shadow = false);
-
-	static bool isFaced(Vector normal, Vector direction);
-	bool static isForward(Point &intersectPoint, Ray ray, Point camera);
-
-	static char getSymbol(Color x);
-
-	bool shadow(Point start, vector<std::shared_ptr<Light>> lightDir, Color &c, Color startColor, Vector norm);
-	bool shadowTree(Point start,
-					vector<std::shared_ptr<Light>> lightDir,
-					Node *tree,
-					Color &c,
-					Color startColor,
-					Vector norm);
-
-	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels);
-	void renderSceneRangeTree(int yFrom, int yTo, vector<vector<Color>> &pixels);
+	void renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, Node *tree = nullptr);
 };
 
 #endif //SCENE_H

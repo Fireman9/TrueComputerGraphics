@@ -1,7 +1,10 @@
 #ifndef TRUECOMPUTERGRAPHICS_SRC_GEOMETRY_SHAPES_SHAPE_H_
 #define TRUECOMPUTERGRAPHICS_SRC_GEOMETRY_SHAPES_SHAPE_H_
 
+#include <utility>
+
 #include "../../Render/Texture.h"
+#include "../Ray.h"
 
 class Shape {
 public:
@@ -19,9 +22,14 @@ public:
 	void setTexture(Texture texture);
 	Texture getTexture();
 
-private:
-	Material mMaterial;
+	virtual Vector getNormal(Point dot);
+	virtual Point center();
+	virtual vector<Point> getRayIntersection(Ray ray, double epsilon = 0.01);
+	virtual Color getStartColor(Point inter);
+
+protected:
 	Texture mTexture;
+	Material mMaterial;
 };
 
 #endif //TRUECOMPUTERGRAPHICS_SRC_GEOMETRY_SHAPES_SHAPE_H_

@@ -9,38 +9,38 @@ Triangle::Triangle(Point v0, Point v1, Point v2,
 	: Shape(m), mV0(v0), mV1(v1), mV2(v2),
 	  mV0Normal(v0Normal), mV1Normal(v1Normal), mV2Normal(v2Normal) {}
 
-bool Triangle::getRayIntersection(Ray ray, Point &intersectionPoint, double epsilon) {
+vector<Point> Triangle::getRayIntersection(Ray ray, double epsilon) {
 	Vector v0v1 = Vector(v0(), v1());
 	Vector v0v2 = Vector(v0(), v2());
 	Vector normal = Vector::crossProduct(v0v1, v0v2);
 
 	double denominator = Vector::dotProduct(normal, ray.direction());
-	if (std::abs(denominator) < epsilon) return false; // parallel
+	if (std::abs(denominator) < epsilon) return {}; // parallel
 
 	double D = -Vector::dotProduct(normal, Vector(v0()));
 	double t = -(Vector::dotProduct(normal, Vector(ray.origin())) + D) / denominator;
 
-	if (t < 0) return false; // triangle behind ray
+	if (t < 0) return {}; // triangle behind ray
 
-	intersectionPoint = ray.origin() + ray.direction().toPoint() * t;
+	Point intersectionPoint = ray.origin() + ray.direction().toPoint() * t;
 
 	Vector c;
 	Vector edge0 = Vector(v0(), v1());
 	Vector v0IntPoint = Vector(v0(), intersectionPoint);
 	c = Vector::crossProduct(edge0, v0IntPoint);
-	if (Vector::dotProduct(normal, c) < 0) return false;
+	if (Vector::dotProduct(normal, c) < 0) return {};
 
 	Vector edge1 = Vector(v1(), v2());
 	Vector v1IntPoint = Vector(v1(), intersectionPoint);
 	c = Vector::crossProduct(edge1, v1IntPoint);
-	if (Vector::dotProduct(normal, c) < 0) return false;
+	if (Vector::dotProduct(normal, c) < 0) return {};
 
 	Vector edge2 = Vector(v2(), v0());
 	Vector v2IntPoint = Vector(v2(), intersectionPoint);
 	c = Vector::crossProduct(edge2, v2IntPoint);
-	if (Vector::dotProduct(normal, c) < 0) return false;
+	if (Vector::dotProduct(normal, c) < 0) return {};
 
-	return true;
+	return {intersectionPoint};
 }
 
 Triangle Triangle::transform(Matrix4x4 matrix, Point transPoint) {
@@ -112,4 +112,12 @@ void Triangle::setV2Normal(Vector v2Normal) {
 
 Point Triangle::center() {
 	return (v0() + v1() + v2()) * (1.0 / 3.0);
+}
+
+Vector Triangle::getNormal(Point dot) {
+	Vector v0v1 = Vector(v0(), v1());
+	Vector v0v2 = Vector(v0(), v2());
+	Vector normal = Vector::crossProduct(v0v1, v0v2);
+	normal.normalize();
+	return normal;
 }

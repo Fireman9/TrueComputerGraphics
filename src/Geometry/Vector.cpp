@@ -1,4 +1,3 @@
-#include <cmath>
 #include "Vector.h"
 
 Vector::Vector() : mX(0), mY(0), mZ(0) {}
