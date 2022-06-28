@@ -14,14 +14,17 @@ public:
 	DirectLight(Color c, double i);
 	DirectLight(Vector p, Color c, double i);
 
-	void setDirection(Vector p);
+	Color apply(Color startColor, Vector normal, Point dot) override;
+
+	bool isAppropriate(Point dot, Point start) override;
+	bool isMain() override;
+
 	Vector direction();
 
-	const Vector getDir(Point dot) override;
-	const Vector getDirInner(Point dot) override;
-	const bool isApropriate(Point dot, Point start) override;
-	const Color apply(Color startColor, Vector normal, Point dot) override;
-	const bool isMain() override;
+	Vector getDir(Point dot) override;
+	Vector getDirInner(Point dot) override;
+	void setDirection(Vector p);
+
 private:
 	Vector directionV;
 };

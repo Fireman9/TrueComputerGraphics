@@ -1,9 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include <stdlib.h>
-#include <time.h>
-#include <iostream>
+#include <cmath>
 #include <random>
 
 #include "../Color.h"
@@ -21,16 +19,17 @@ public:
 	void setIntensity(double i);
 
 	Color color();
-	double intensity();
-	virtual const Vector getDir(Point dot);
+	double intensity() const;
+	virtual Vector getDir(Point dot);
 
-	virtual const Color apply(Color startColor, Vector normal, Point dot);
-	virtual const Vector getDirInner(Point dot);
-	virtual const bool isApropriate(Point dot, Point start);
-	virtual const bool isMain();
+	virtual Color apply(Color startColor, Vector normal, Point dot);
+	virtual Vector getDirInner(Point dot);
+	virtual bool isAppropriate(Point dot, Point start);
+	virtual bool isMain();
+
 private:
-	Color colorW;
-	double intens;
+	Color mColorW;
+	double mIntens;
 };
 
 #endif //LIGHT_H

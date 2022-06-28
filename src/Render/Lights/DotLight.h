@@ -3,7 +3,7 @@
 
 #include "Light.h"
 
-class DotLight :public Light {
+class DotLight : public Light {
 public:
 	DotLight();
 	DotLight(Color c);
@@ -13,15 +13,16 @@ public:
 	DotLight(Point p, double i);
 	DotLight(Color c, double i);
 	DotLight(Point p, Color c, double i);
-	
+
 	void setPosition(Point p);
 	Point position();
 
-	const Vector getDir(Point dot) override;
-	const Vector getDirInner(Point dot) override;
-	const bool isApropriate(Point dot, Point start) override;
-	const Color apply(Color startColor, Vector normal, Point dot) override;
-	const bool isMain() override;
+	Vector getDir(Point dot) override;
+	Vector getDirInner(Point dot) override;
+	bool isAppropriate(Point dot, Point start) override;
+	Color apply(Color startColor, Vector normal, Point dot) override;
+	bool isMain() override;
+
 private:
 	Point positionL;
 };

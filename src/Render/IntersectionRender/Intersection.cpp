@@ -146,7 +146,7 @@ bool Intersection::inShadowHelper(Shape &s, Ray ray, int depth, Color &startColo
 	if (!tempIntersectPoint.isEqual(ray.origin()) &&
 		RenderUtils::isForward(tempIntersectPoint, ray, ray.origin()) &&
 		h_px.a() > -256 &&
-		l->isApropriate(tempIntersectPoint, ray.origin())) {
+		l->isAppropriate(tempIntersectPoint, ray.origin())) {
 		col = l->apply(startColor, normal, ray.origin());
 		return true;
 	}
