@@ -3,11 +3,12 @@
 Scene::Scene() : Scene(Screen(), {std::make_shared<DotLight>(Color::white())},
 					   Point(0, 0, 0), 50) {}
 
-Scene::Scene(Screen screen) : Scene(screen, {std::make_shared<DotLight>(Color::white())},
+Scene::Scene(Screen screen) : Scene(std::move(screen), {std::make_shared<DotLight>(Color::white())},
 									Point(0, 0, 0), 50) {}
 
 Scene::Scene(Screen screen, vector<std::shared_ptr<Light>> light, Point camera, double cameraToScreenDist)
-	: mScreen(screen), mLight(light), mCamera(camera), mCameraToScreenDist(cameraToScreenDist), mTree(nullptr) {}
+	: mScreen(std::move(screen)), mLight(std::move(light)), mCamera(camera),
+	  mCameraToScreenDist(cameraToScreenDist), mTree(nullptr) {}
 
 Screen Scene::getScreen() {
 	return mScreen;
@@ -34,7 +35,8 @@ void Scene::renderSceneRange(int yFrom, int yTo, vector<vector<Color>> &pixels, 
 	for (int y = yFrom; y < yTo; y++) {
 		for (int x = 0; x < pixels[y].size(); x++) {
 			pixels[y][x] = intersectionOnScreenFromCamera(x * mScreen.getCoordPerPixel(),
-														  y * mScreen.getCoordPerPixel(), tree);
+														  y * mScreen.getCoordPerPixel(),
+														  tree);
 		}
 	}
 }
@@ -48,11 +50,11 @@ Color Scene::intersectionOnScreenFromCamera(double x, double y, Node *tree) {
 	Point curPoint = screenTopLeft + Point(x, y, 0);
 	Vector dir = Vector(mCamera, curPoint);
 	dir.normalize();
-	Intersection i(mPlanes, mSpheres, mTriangles, mLight, getTree());
+	Intersection i(mPlanes, mSpheres, mTriangles, mLight, tree);
 	return i.castRay(Ray(mCamera, dir), 0);
 }
 
-void Scene::setScreen(Screen screen) { mScreen = screen; }
+void Scene::setScreen(Screen screen) { mScreen = std::move(screen); }
 
 Point Scene::getCamera() { return mCamera; }
 
@@ -61,7 +63,7 @@ Node *Scene::getTree() { return mTree; }
 void Scene::setCamera(Point camera) { mCamera = camera; }
 
 void Scene::setLight(vector<std::shared_ptr<Light>> light) {
-	mLight = light;
+	mLight = std::move(light);
 }
 
 double Scene::getCameraToScreenDist() { return mCameraToScreenDist; }

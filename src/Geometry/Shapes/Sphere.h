@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 #include "../Point.h"
 #include "../Ray.h"

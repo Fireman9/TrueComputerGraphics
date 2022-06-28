@@ -1,8 +1,8 @@
 #include "Intersection.h"
 
-Intersection::Intersection(vector<Plane> planes, vector<Sphere> spheres,
-						   vector<Triangle> triangles,
-						   vector<std::shared_ptr<Light>> light, Node *tree) {
+Intersection::Intersection(vector<Plane> &planes, vector<Sphere> &spheres,
+						   vector<Triangle> &triangles,
+						   vector<std::shared_ptr<Light>> &light, Node *tree) {
 	mPlanes = planes;
 	mSpheres = spheres;
 	mTriangles = triangles;
@@ -61,7 +61,6 @@ Color Intersection::doWithIntersection(Ray ray, Shape &s, int depth, Color &star
 
 void Intersection::inRayHelper(Shape &s, Ray ray, int depth, Color &startColor,
 							   double &minDist, Color &px, Vector &normal, Point &intersectPoint) {
-
 	Point tempIntersectPoint;
 	Vector tempNormal;
 	Color startColorLocal;
@@ -86,7 +85,6 @@ Color Intersection::castRay(Ray ray, int depth) {
 	double minDist = 999999;
 	Vector normal;
 	Color startColor;
-	Color startColorLocal;
 	for (auto &sphere : mSpheres) {
 		inRayHelper(sphere, ray, depth, startColor, minDist, px, normal, intersectPoint);
 	}
@@ -100,8 +98,9 @@ Color Intersection::castRay(Ray ray, int depth) {
 	}
 	Color temp(0, 0, 0, 0);
 	if (px.a() > -256) {
-		bool isShadow = shadow(intersectPoint, temp, startColor, normal);
-		px = px - temp;
+		if (shadow(intersectPoint, temp, startColor, normal)) {
+			px = px - temp;
+		}
 	}
 	px.normalize();
 	return px;

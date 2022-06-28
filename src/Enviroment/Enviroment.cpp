@@ -77,7 +77,7 @@ void Enviroment::writeTofile(Scene scene) {
 		clock.start();
 		scene.renderScene();
 		clock.stop();
-		clock.printResultMs("Time taken for simple rendering");
+		clock.printResultS("Time taken for simple rendering");
 		ppmWriter.setFilepath("TEST_RENDER.ppm");
 		RenderUtils::writeRenderToPPM(scene.getScreen(), ppmWriter);
 	}

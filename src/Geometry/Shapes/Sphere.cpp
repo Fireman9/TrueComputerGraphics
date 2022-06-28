@@ -1,5 +1,4 @@
 #include "Sphere.h"
-#include <iostream>
 
 Sphere::Sphere(double radius, Point center, Material m)
 	: Shape(m), mRadius(radius), mCenter(center) {}

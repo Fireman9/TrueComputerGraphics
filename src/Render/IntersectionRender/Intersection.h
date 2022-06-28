@@ -13,10 +13,10 @@
 class Intersection {
 public:
 
-	Intersection(vector<Plane> planes,
-				 vector<Sphere> spheres,
-				 vector<Triangle> triangles,
-				 vector<std::shared_ptr<Light>> light,
+	Intersection(vector<Plane> &planes,
+				 vector<Sphere> &spheres,
+				 vector<Triangle> &triangles,
+				 vector<std::shared_ptr<Light>> &light,
 				 Node *tree = nullptr);
 
 	Color objectIntersection(Shape &s, Ray ray, Point &intersectPoint, Vector &normal,
