@@ -1,6 +1,6 @@
-#include "Enviroment.h"
+#include "Environment.h"
 
-Enviroment::Enviroment(vector<string> mArg) {
+Environment::Environment(vector<string> mArg) {
 	string tmp;
 	bool find = false;
 	setArg(mArg);
@@ -23,20 +23,20 @@ Enviroment::Enviroment(vector<string> mArg) {
 	else setWidth(100);
 }
 
-OBJReader Enviroment::readTriangles() {
+OBJReader Environment::readTriangles() {
 	OBJReader objReader(input());
 	objReader.read();
 	return objReader;
 }
 
-vector<Triangle> Enviroment::transformTriangles(Matrix4x4 matrix, vector<Triangle> triangles, Point start) {
+vector<Triangle> Environment::transformTriangles(Matrix4x4 matrix, vector<Triangle> triangles, Point start) {
 	for (auto &triangle : triangles) {
 		triangle = triangle.transform(matrix, start);
 	}
 	return triangles;
 }
 
-Scene Enviroment::prepare() {
+Scene Environment::prepare() {
 	Screen screen(width(), height());
 	auto l1 = std::make_shared<DirectLight>(Vector(2, -4, -3), Color::white(), 0.4);
 	auto l3 = std::make_shared<DotLight>(Point(-2, -4, -3), Color::white(), 0.7);
@@ -70,7 +70,7 @@ Scene Enviroment::prepare() {
 	return scene;
 }
 
-void Enviroment::writeTofile(Scene scene) {
+void Environment::writeTofile(Scene scene) {
 	PPMWriter ppmWriter(arg);
 	Clock clock;
 	if (isTesting()) {
@@ -94,29 +94,29 @@ void Enviroment::writeTofile(Scene scene) {
 	RenderUtils::writeRenderToPPM(scene.getScreen(), ppmWriter);
 }
 
-void Enviroment::setArg(vector<string> mArg) { this->arg = mArg; }
+void Environment::setArg(vector<string> mArg) { this->arg = mArg; }
 
-void Enviroment::setInput(string inp) { this->inputfileName = inp; }
+void Environment::setInput(string inp) { this->inputFilename = inp; }
 
-void Enviroment::setOut(string out) { this->outPutFileName = out; }
+void Environment::setOut(string out) { this->outputFilename = out; }
 
-void Enviroment::setHeight(int px) { this->heightS = px; }
+void Environment::setHeight(int px) { this->heightS = px; }
 
-void Enviroment::setWidth(int px) { this->widthS = px; }
+void Environment::setWidth(int px) { this->widthS = px; }
 
-void Enviroment::setIsTesting(bool b) { this->isTestImg = b; }
+void Environment::setIsTesting(bool b) { this->isTestImg = b; }
 
-string Enviroment::input() { return this->inputfileName; }
+string Environment::input() { return this->inputFilename; }
 
-string Enviroment::output() { return this->outPutFileName; }
+string Environment::output() { return this->outputFilename; }
 
-int Enviroment::height() { return this->heightS; }
+int Environment::height() { return this->heightS; }
 
-int Enviroment::width() { return this->widthS; }
+int Environment::width() { return this->widthS; }
 
-bool Enviroment::isTesting() { return this->isTestImg; }
+bool Environment::isTesting() { return this->isTestImg; }
 
-string Enviroment::findKey(string ex, bool *find) {
+string Environment::findKey(string ex, bool *find) {
 	string tmp;
 	for (auto argument : arg) {
 		if (argument.find(ex) != std::string::npos) {

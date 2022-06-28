@@ -22,9 +22,9 @@ using std::vector;
 using std::endl;
 using std::string;
 
-class Enviroment {
+class Environment {
 public:
-	Enviroment(vector<string> arg);
+	Environment(vector<string> arg);
 
 	Scene prepare();
 	void writeTofile(Scene scene);
@@ -46,14 +46,13 @@ public:
 
 private:
 	bool isTestImg;
-	string inputfileName;
-	string outPutFileName;
+	string inputFilename;
+	string outputFilename;
 	int heightS;
 	int widthS;
 	vector<string> arg;
 	vector<Triangle> triangles;
 	string findKey(string ex, bool* find);
-	clock_t tStart;
 };
 
 #endif //ENVIROMENT_H
